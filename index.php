@@ -172,8 +172,11 @@
         <!-- 排位賽大廳（排位賽模式取代 2D 編輯區） -->
         <section class="ranked-lobby" id="rankedLobby" aria-label="排位賽大廳">
             <div class="lobby-head">
-                <p class="lobby-kicker">RANKED ARENA</p>
-                <h1 class="lobby-title">排位賽</h1>
+                <div>
+                    <p class="lobby-kicker">RANKED ARENA</p>
+                    <h1 class="lobby-title">排位賽</h1>
+                </div>
+                <button type="button" class="tool-btn icon-btn sfx-toggle" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#volume"></use></svg></button>
             </div>
             <div class="lobby-hero">
                 <svg class="lobby-crest" aria-hidden="true"><use id="lobbyCrestUse" href="assets/icons.svg#crest-1"></use></svg>
@@ -306,6 +309,7 @@
                 <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>試跑</button>
                 <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="停止"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-stop"></use></svg>停止</button>
                 <button type="button" class="sim-btn" id="btnResetCar" title="車子回到起點"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>回起點</button>
+                <button type="button" class="sim-btn sfx-toggle sfx-live" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#volume"></use></svg></button>
                 
                 <!-- 計時器居中顯示，避免被右側懸浮功能擋住 -->
                 <div class="timer-display" id="timerDisplay">
@@ -774,6 +778,7 @@
     <script src="assets/js/OrbitControls.js"></script>
     <script src="assets/js/maze-editor.js?v=<?= time() ?>"></script>
     <script src="assets/js/maze-3d.js?v=<?= time() ?>"></script>
+    <script src="assets/js/ranked-fx.js?v=<?= time() ?>"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -2563,6 +2568,7 @@
                     loadRankedMatch(currentRankedSize);
                 } else {
                     currentGameMode = 'practice';
+                    RankedFx.cancelIntro();
 
                     btnModePractice.classList.add('active');
                     btnModeRanked.classList.remove('active');
@@ -2635,6 +2641,8 @@
                 }
                 currentRankedSize = size;
                 applyTierTheme(size);
+                RankedFx.cancelIntro();
+                document.body.classList.remove('ranked-live');
 
                 maze3D.stopDriving();
                 resetTimer();
@@ -2723,7 +2731,22 @@
                     })
                     .catch(() => {});
             }
-            document.getElementById('btnLobbyStart').addEventListener('click', () => btnStartDrive.click());
+            // 開始挑戰：先播開賽儀式（段位橫幅 → 3、2、1），GO! 時才真正開始比賽
+            document.getElementById('btnLobbyStart').addEventListener('click', () => {
+                if (!currentRankedMapId || maze3D.isDriving) return;
+                const tier = RANKED_TIERS[currentRankedSize];
+                document.body.classList.add('ranked-live');
+                RankedFx.intro(
+                    document.querySelector('.sim-stage'),
+                    tier,
+                    `${currentRankedSize.replace('x', ' × ')}・${currentRankedMapId}・限時 ${tier.limit}`,
+                    () => {
+                        maze3D.placePlayerAtStart();
+                        maze3D.setMode('driver');
+                    },
+                    () => btnStartDrive.click()
+                );
+            });
             document.getElementById('btnLobbyLeaderboard').addEventListener('click', () => openLeaderboardModal(currentRankedSize));
 
             // 排位賽級別選擇按鈕事件
