@@ -250,12 +250,26 @@ if ($action === 'leaderboard') {
         $uStmt->close();
     }
 
+    // 若有登入，統計該用戶發布至排位圖庫的地圖數量 (全部 / 本級別)
+    $myMapCount = null;
+    if (!empty($_SESSION['user_id'])) {
+        $myMapCount = ['total' => 0, 'size' => 0];
+        foreach (glob(__DIR__ . '/data/ranked_maps/*/map_*.json') as $f) {
+            $m = json_decode(file_get_contents($f), true);
+            if (intval($m['authorId'] ?? 0) === intval($_SESSION['user_id'])) {
+                $myMapCount['total']++;
+                if (basename(dirname($f)) === $size) $myMapCount['size']++;
+            }
+        }
+    }
+
     echo json_encode([
         'success' => true,
         'size' => $size,
         'allowedSizes' => array_keys($allowedSizes),
         'list' => $list,
-        'userBest' => $userBest
+        'userBest' => $userBest,
+        'myMapCount' => $myMapCount
     ]);
     exit;
 }

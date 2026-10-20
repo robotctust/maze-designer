@@ -2737,6 +2737,9 @@
                             <span id="userBestRankText">${currentUser ? '完成此級別排位賽即登錄天梯！' : '請先登入帳號以登錄天梯'}</span>
                         `;
                     }
+                    if (data.myMapCount) {
+                        userBestBanner.innerHTML += `<span>🗺️ 我建立的排位地圖：本級別 <strong>${data.myMapCount.size}</strong> 張 / 共 <strong>${data.myMapCount.total}</strong> 張</span>`;
+                    }
                 }
 
                 if (list.length === 0) {
