@@ -2069,8 +2069,140 @@ kbd {
     display: flex !important;
 }
 
+/* 排位賽完賽：段位徽章、評級蓋章、新紀錄印章；四周壓暗 */
 .victory-modal.ranked {
-    border-color: #7C5410;
+    width: min(480px, calc(100% - 32px));
+    padding: 0 28px 26px;
+    gap: 8px;
+    background: rgba(11, 16, 32, 0.97);
+    border-color: var(--tier-line);
+    border-radius: 6px;
+    box-shadow: 0 0 0 100vmax rgba(4, 7, 15, 0.6), 0 0 60px color-mix(in srgb, var(--tier) 25%, transparent);
+    animation: rs-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.result-crest {
+    width: 112px;
+    height: 112px;
+    margin: -56px 0 0;
+    color: var(--tier);
+    filter: drop-shadow(0 0 14px var(--tier-glow));
+}
+
+.result-tier {
+    margin: 0;
+    font: 600 13px var(--font-mono);
+    letter-spacing: 0.2em;
+    color: var(--tier);
+}
+
+.victory-modal.ranked h2 {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.result-main {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 10px 0 4px;
+    text-align: left;
+}
+
+.result-main .result-time.ranked {
+    font-size: 44px;
+    color: #FFFFFF;
+}
+
+.result-grade {
+    width: 96px;
+    height: 108px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tier);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    animation: rs-stamp 0.5s 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+.result-grade span {
+    width: 88px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #10172B;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    font: 700 64px/1 var(--font-mono);
+    color: var(--tier);
+    text-shadow: 0 0 18px var(--tier-glow);
+}
+
+.result-record {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 4px 12px;
+    border: 3px solid var(--ranked);
+    border-radius: 6px;
+    color: var(--ranked);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    transform: rotate(-14deg);
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.4);
+    animation: rs-record 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+.result-record[hidden] {
+    display: none;
+}
+
+.confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 101;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti span {
+    position: absolute;
+    top: -30px;
+    width: 10px;
+    height: 16px;
+    border-radius: 2px;
+    animation: rs-fall linear both;
+}
+
+@keyframes rs-rise {
+    from { opacity: 0; transform: translate(-50%, calc(-50% + 40px)); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes rs-stamp {
+    from { opacity: 0; transform: scale(2.4) rotate(-12deg); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes rs-record {
+    from { opacity: 0; transform: scale(2) rotate(-14deg); }
+    to { opacity: 1; transform: rotate(-14deg); }
+}
+
+@keyframes rs-fall {
+    from { transform: translateY(0) rotate(0); }
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .victory-modal.ranked,
+    .result-grade,
+    .result-record {
+        animation: none;
+    }
 }
 
 .victory-modal h2 {
@@ -2152,6 +2284,34 @@ kbd {
     border: 1px solid #7C5410;
     color: var(--ranked-soft);
     font-size: 13px;
+}
+
+.victory-modal.ranked .result-rank {
+    width: 100%;
+    margin-top: 4px;
+    padding: 12px;
+    border: 0;
+    border-block: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-2);
+    font-size: 18px;
+}
+
+.victory-modal.ranked .result-rank strong {
+    display: inline-block;
+    min-width: 2.4ch;
+    margin: 0 6px;
+    font: 700 40px/1 var(--font-mono);
+    color: var(--tier);
+    vertical-align: -6px;
+}
+
+.victory-modal.ranked .tool-btn.btn-ranked,
+.victory-modal.ranked .tool-btn.btn-ranked:hover {
+    background: var(--tier);
+    border-color: var(--tier);
+    color: var(--on-tier);
 }
 
 .result-actions {

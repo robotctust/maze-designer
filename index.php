@@ -347,10 +347,18 @@
             </div>
 
             <div class="victory-modal ranked" id="rankedVictoryModal" style="display: none;" role="dialog" aria-labelledby="rankedVictoryTitle">
-                <div class="result-badge ranked"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg></div>
+                <svg class="result-crest" aria-hidden="true"><use id="resultCrestUse" href="assets/icons.svg#crest-1"></use></svg>
+                <span class="result-record" id="rankedRecordStamp" hidden>新紀錄！</span>
                 <h2 id="rankedVictoryTitle">排位賽完賽</h2>
-                <div class="result-time ranked" id="rankedVictoryTimeValue">00:00.0</div>
-                <p class="result-sub" id="rankedVictoryTimeSub">耗時 0 秒・剩餘 0 秒</p>
+                <p class="result-tier" id="rankedResultTier">—</p>
+                <div class="result-main">
+                    <div class="result-grade" title="評級：剩餘時間 ≥ 50% 為 S，≥ 25% 為 A，其餘為 B"><span id="rankedGradeLetter">S</span></div>
+                    <div class="result-main-text">
+                        <p class="result-label">完賽時間</p>
+                        <div class="result-time ranked" id="rankedVictoryTimeValue">00:00.0</div>
+                        <p class="result-sub" id="rankedVictoryTimeSub">耗時 0 秒・剩餘 0 秒</p>
+                    </div>
+                </div>
                 <div class="result-rank" id="rankedVictoryRankBadge">全服第 <strong id="rankedVictoryRankNum">1</strong> 名</div>
                 <p class="result-msg" id="rankedVictoryMsg"></p>
                 <div class="result-actions">
@@ -918,6 +926,7 @@
                             if (rankedTimeoutValue) rankedTimeoutValue.textContent = formatTimeDisplay(countdownLimitMs);
                             if (rankedTimeoutSub) rankedTimeoutSub.textContent = `沒在 ${currentRankedSize.replace('x', ' × ')} 的 ${countdownDesc} 內抵達終點`;
                             if (rankedTimeoutModal) rankedTimeoutModal.style.display = 'block';
+                            RankedFx.play('timeout');
                         } else {
                             const timeoutModal = document.getElementById('timeoutModal');
                             const timeoutTimeValue = document.getElementById('timeoutTimeValue');
@@ -1165,12 +1174,24 @@
                         const rankNumEl = document.getElementById('rankedVictoryRankNum');
                         const victoryMsgEl = document.getElementById('rankedVictoryMsg');
 
+                        // 評級：剩餘時間 ≥ 50% 為 S，≥ 25% 為 A，其餘為 B
+                        const remainRatio = timeRemainMs / countdownLimitMs;
+                        const grade = remainRatio >= 0.5 ? 'S' : remainRatio >= 0.25 ? 'A' : 'B';
+                        const tier = RANKED_TIERS[currentRankedSize];
+                        const recordStamp = document.getElementById('rankedRecordStamp');
+
+                        document.getElementById('resultCrestUse').setAttribute('href', `assets/icons.svg#crest-${tier.level}`);
+                        document.getElementById('rankedResultTier').textContent = `${tier.en}・${currentRankedSize.replace('x', ' × ')}・${currentRankedMapId}`;
+                        document.getElementById('rankedGradeLetter').textContent = grade;
+                        recordStamp.hidden = true;
                         if (timeValEl) timeValEl.textContent = formatTimeDisplay(timerElapsedMs);
                         if (timeSubEl) timeSubEl.textContent = `耗時 ${totalSec} 秒・剩餘 ${remainSec} 秒`;
                         if (rankNumEl) rankNumEl.textContent = '…';
                         if (victoryMsgEl) victoryMsgEl.textContent = '正在登錄成績…';
 
                         if (rankedModal) rankedModal.style.display = 'block';
+                        RankedFx.play('finish');
+                        RankedFx.celebrate(document.querySelector('.sim-stage'));
 
                         fetch('ranked_api.php?action=submit_score', {
                             method: 'POST',
@@ -1186,7 +1207,11 @@
                         .then(res => {
                             if (res.success) {
                                 refreshLobbyScore(currentRankedSize);
-                                if (rankNumEl) rankNumEl.textContent = res.rank ? res.rank : '1';
+                                RankedFx.countRank(rankNumEl, res.rank || 1);
+                                if (res.isBest) {
+                                    recordStamp.hidden = false;
+                                    RankedFx.play('record');
+                                }
                                 if (victoryMsgEl) {
                                     if (res.isBest) {
                                         victoryMsgEl.textContent = '刷新個人最佳紀錄';

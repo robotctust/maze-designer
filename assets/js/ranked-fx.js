@@ -122,10 +122,51 @@ const RankedFx = (() => {
         introTimer = setTimeout(next, 1800);
     }
 
+    const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 完賽慶祝：評級蓋章音效＋彩帶（減少動態效果時不撒彩帶）
+    function celebrate(host) {
+        setTimeout(() => play('stamp'), 450);
+        if (reducedMotion()) return;
+        const box = document.createElement('div');
+        box.className = 'confetti';
+        const colors = ['var(--tier)', '#FBBF24', '#FFFFFF', '#38BDF8'];
+        for (let i = 0; i < 36; i++) {
+            const p = document.createElement('span');
+            p.style.left = `${(i * 37) % 100}%`;
+            p.style.background = colors[i % colors.length];
+            p.style.animationDuration = `${2.6 + (i % 5) * 0.4}s`;
+            p.style.animationDelay = `${0.3 + (i % 9) * 0.18}s`;
+            box.appendChild(p);
+        }
+        host.appendChild(box);
+        setTimeout(() => box.remove(), 6000);
+    }
+
+    // 名次往下滾到最終名次，停下時響一聲
+    function countRank(el, rank) {
+        if (!el) return;
+        if (reducedMotion()) {
+            el.textContent = rank;
+            play('rank');
+            return;
+        }
+        let n = rank + 30;
+        el.textContent = n;
+        const id = setInterval(() => {
+            n--;
+            el.textContent = n;
+            if (n <= rank) {
+                clearInterval(id);
+                play('rank');
+            }
+        }, 28);
+    }
+
     document.addEventListener('click', (e) => {
         if (e.target.closest('.sfx-toggle')) toggleMute();
     });
     document.addEventListener('DOMContentLoaded', syncButtons);
 
-    return { play, intro, cancelIntro, isMuted: () => muted };
+    return { play, intro, cancelIntro, celebrate, countRank, isMuted: () => muted };
 })();
