@@ -1718,15 +1718,18 @@ kbd {
     flex-direction: column;
     align-items: center;
     gap: 0;
+    min-width: 260px;
     padding: 10px 28px 12px;
-    background: rgba(18, 24, 41, 0.92);
-    border: 1px solid #7C5410;
+    background: rgba(8, 12, 26, 0.88);
+    border: 1px solid var(--tier-line);
     border-radius: 8px;
+    box-shadow: 0 0 28px color-mix(in srgb, var(--tier) 20%, transparent);
 }
 
 .ranked-live .timer-label {
-    color: var(--ranked);
+    color: var(--tier);
     font-weight: 500;
+    letter-spacing: 0.2em;
 }
 
 .ranked-live .timer-digits {
@@ -1734,16 +1737,111 @@ kbd {
     line-height: 1.1;
 }
 
+.ranked-live .timer-display.countdown .timer-digits {
+    color: #FFFFFF;
+}
+
+/* 剩餘時間條：只在排位賽顯示 */
+.timer-bar {
+    display: none;
+}
+
+.ranked-live .timer-bar {
+    display: block;
+    width: 100%;
+    height: 5px;
+    margin-top: 8px;
+    border-radius: 3px;
+    background: var(--surface-raised);
+    overflow: hidden;
+}
+
+#timerBarFill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--tier);
+}
+
+/* 最後衝刺：計時器變紅並跳動，畫面邊緣泛紅光 */
+.ranked-live .timer-display.danger {
+    border-color: var(--danger-fill);
+    box-shadow: 0 0 32px rgba(239, 68, 68, 0.45);
+}
+
+.ranked-live .timer-display.danger .timer-label {
+    color: var(--danger-soft);
+}
+
+.ranked-live .timer-display.danger .timer-digits {
+    display: inline-block;
+    color: var(--danger);
+    text-shadow: 0 0 18px rgba(239, 68, 68, 0.5);
+    animation: hud-beat 1s ease-in-out infinite;
+}
+
+.ranked-live .timer-display.danger #timerBarFill {
+    background: var(--danger-fill);
+}
+
+.ranked-warn .sim-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    box-shadow: inset 0 0 120px rgba(239, 68, 68, 0.55);
+    animation: hud-edge 1s ease-in-out infinite;
+}
+
+/* 比賽畫面四角的 HUD 括號 */
+.ranked-live .sim-stage::after {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.7;
+    background:
+        linear-gradient(var(--tier), var(--tier)) top left / 40px 2px,
+        linear-gradient(var(--tier), var(--tier)) top left / 2px 40px,
+        linear-gradient(var(--tier), var(--tier)) top right / 40px 2px,
+        linear-gradient(var(--tier), var(--tier)) top right / 2px 40px,
+        linear-gradient(var(--tier), var(--tier)) bottom left / 40px 2px,
+        linear-gradient(var(--tier), var(--tier)) bottom left / 2px 40px,
+        linear-gradient(var(--tier), var(--tier)) bottom right / 40px 2px,
+        linear-gradient(var(--tier), var(--tier)) bottom right / 2px 40px;
+    background-repeat: no-repeat;
+}
+
+@keyframes hud-beat {
+    0%, 100% { transform: scale(1); }
+    12% { transform: scale(1.07); }
+    24% { transform: scale(1); }
+}
+
+@keyframes hud-edge {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ranked-live .timer-display.danger .timer-digits,
+    .ranked-warn .sim-stage::before {
+        animation: none;
+    }
+}
+
 .ranked-live .ranked-live-chip {
     position: absolute;
-    left: 24px;
-    top: 24px;
+    left: 28px;
+    top: 28px;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
-    background: rgba(18, 24, 41, 0.92);
-    border: 1px solid var(--border);
+    padding: 6px 14px 6px 8px;
+    background: rgba(8, 12, 26, 0.88);
+    border: 1px solid var(--tier-line);
     border-radius: 8px;
     font-size: 13px;
     color: var(--text-2);
@@ -1767,6 +1865,28 @@ kbd {
     z-index: 6;
 }
 
+.live-crest {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    color: var(--tier);
+}
+
+.ranked-live-chip strong {
+    color: var(--text);
+    font-size: 15px;
+}
+
+.live-map {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.ranked-live-chip .icon {
+    color: var(--tier);
+}
+
+.ranked-live-chip .sep,
 .ranked-live-keys .sep {
     width: 1px;
     height: 16px;

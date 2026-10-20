@@ -284,7 +284,7 @@
                 </div>
 
                 <!-- 排位賽比賽中：鎖定提示與按鍵說明 -->
-                <div class="ranked-live-chip"><svg class="icon" style="color:var(--ranked)" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>排位賽進行中・車子視角已鎖定</div>
+                <div class="ranked-live-chip"><svg class="live-crest" aria-hidden="true"><use id="liveCrestUse" href="assets/icons.svg#crest-1"></use></svg><strong id="liveTierName">菁英級</strong><span class="live-map" id="liveMapId">—</span><span class="sep"></span><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>視角已鎖定</div>
                 <div class="ranked-live-keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵操控<span class="sep"></span><kbd>空白鍵</kbd>跳躍</div>
 
                 <!-- 右下：即時座標 -->
@@ -315,6 +315,7 @@
                 <div class="timer-display" id="timerDisplay">
                     <span class="timer-label" id="timerIcon">完賽計時</span>
                     <span class="timer-digits" id="timerDigits">00:00.0</span>
+                    <span class="timer-bar" aria-hidden="true"><span id="timerBarFill"></span></span>
                 </div>
 
                 <span class="drive-bar-spacer"></span>
@@ -809,7 +810,6 @@
             let currentGameMode = 'practice';
             let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25, 30x30
             let currentRankedMapId = 'map_1';
-            let rankedHudLabel = '';
             let currentRankedLimitMs = 90 * 1000;
 
             // ============================================
@@ -845,23 +845,42 @@
                 return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${tenths}`;
             }
 
+            const timerBarFill = document.getElementById('timerBarFill');
+            let warnPlayed = false;   // 排位賽：進入最後衝刺的警示音只響一次
+            let lastTickSec = 0;
+
             function updateTimerUI() {
                 let displayMs = 0;
-                let isDanger = false;
 
                 if (currentTimerMode === 'up') {
                     displayMs = timerElapsedMs;
                     if (timerIcon) timerIcon.textContent = '完賽計時';
                     if (timerDisplay) timerDisplay.className = 'timer-display';
+                    document.body.classList.remove('ranked-warn');
                 } else {
                     const remainMs = Math.max(0, countdownLimitMs - timerElapsedMs);
+                    const isRanked = currentGameMode === 'ranked';
+                    // 排位賽：剩最後 10%（至少 10 秒）進入最後衝刺；練習賽維持最後 10 秒
+                    const dangerMs = isRanked ? Math.max(countdownLimitMs * 0.1, 10000) : 10000;
+                    const isDanger = timerRunning && remainMs <= dangerMs;
                     displayMs = remainMs;
-                    if (timerIcon) timerIcon.textContent = currentGameMode === 'ranked' ? rankedHudLabel : '倒數';
-                    if (remainMs <= 10000 && timerRunning) {
-                        if (timerDisplay) timerDisplay.className = 'timer-display countdown danger';
-                        isDanger = true;
-                    } else {
-                        if (timerDisplay) timerDisplay.className = 'timer-display countdown';
+                    if (timerIcon) timerIcon.textContent = isRanked ? (isDanger ? '最後衝刺！' : '剩餘時間') : '倒數';
+                    if (timerDisplay) timerDisplay.className = isDanger ? 'timer-display countdown danger' : 'timer-display countdown';
+
+                    if (isRanked) {
+                        document.body.classList.toggle('ranked-warn', isDanger);
+                        if (timerBarFill) timerBarFill.style.width = `${(remainMs / countdownLimitMs) * 100}%`;
+                        if (isDanger) {
+                            const sec = Math.ceil(remainMs / 1000);
+                            if (!warnPlayed) {
+                                warnPlayed = true;
+                                lastTickSec = sec;
+                                RankedFx.play('warn');
+                            } else if (sec <= 10 && sec !== lastTickSec) {
+                                lastTickSec = sec;
+                                RankedFx.play('tick');
+                            }
+                        }
                     }
                 }
 
@@ -872,6 +891,7 @@
             function startTimer(reset = true) {
                 if (reset) {
                     timerElapsedMs = 0;
+                    warnPlayed = false;
                 }
                 timerStartTimestamp = performance.now();
                 timerRunning = true;
@@ -928,6 +948,7 @@
                 if (timerDisplay) {
                     timerDisplay.classList.remove('danger');
                 }
+                document.body.classList.remove('ranked-warn');
             }
 
             function resetTimer() {
@@ -2629,6 +2650,8 @@
                 document.getElementById('lobbyCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
                 document.getElementById('lobbyTierEn').textContent = `${t.en}・TIER ${t.level}`;
                 document.getElementById('lobbyTierName').textContent = t.name;
+                document.getElementById('liveCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
+                document.getElementById('liveTierName').textContent = t.name;
                 document.getElementById('lobbyTierSub').textContent = `${size.replace('x', ' × ')} 迷宮・限時 ${t.limit}`;
                 document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.getAttribute('data-size') === size);
@@ -2693,7 +2716,7 @@
                             document.getElementById('rankedMapId').textContent = res.mapId;
                             if (mapNameEl) mapNameEl.textContent = `${res.mapData.author || '官方'}出題・${size.replace('x', ' × ')}`;
                             if (limitTextEl) limitTextEl.textContent = res.timeLimitDesc;
-                            rankedHudLabel = `${tierTitle}・${res.mapId}`;
+                            document.getElementById('liveMapId').textContent = res.mapId;
                             refreshLobbyScore(size);
 
                             // 更新 header 標籤
