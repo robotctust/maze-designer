@@ -23,6 +23,35 @@
 
 ---
 
+## 📁 專案結構
+
+```
+index.php              入口：組合 views/ 的畫面並依序載入 CSS、JS
+config.example.php     資料庫設定範本（複製成 config.php 使用）
+api/                   後端 API（回傳 JSON）
+  auth.php             登入、註冊、登出、登入狀態
+  maps.php             個人地圖的儲存、讀取、刪除
+  ranked.php           排位賽地圖、成績、排行榜、發布
+  share.php            分享碼產生與兌換
+  admin.php            高級使用者：帳號管理、地圖審核
+includes/              後端共用程式
+  db.php               資料庫連線與自動建表
+  api_bootstrap.php    每支 API 共用的開頭
+views/                 畫面區塊（頂部列、編輯區、排位大廳、3D 面板）
+  dialogs/             各種對話框
+assets/
+  css/                 樣式，依畫面區塊分檔（載入順序見 index.php）
+  img/                 地圖底圖
+  icons.svg            線條圖示
+  js/lib/              外部套件（three.js）
+  js/core/             2D 編輯器、3D 引擎、排位特效
+  js/app/              頁面功能，依功能分檔，共用同一個全域範圍，載入順序見 index.php
+data/ranked_maps/      官方排位賽地圖（依規格分資料夾）
+schema.sql             資料表結構參考
+```
+
+---
+
 ## 🚀 快速安裝與使用
 
 ### Windows（XAMPP）
