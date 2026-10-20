@@ -2649,6 +2649,7 @@
 
                     maze3D.stopDriving();
                     resetTimer();
+                    maze3D.arenaColor = null;
 
                     // 重新載入練習賽迷宮
                     loadMazeConfig();
@@ -2715,7 +2716,8 @@
                             btnTimerCountUp.classList.remove('active');
                             if (countdownBtnLabel) countdownBtnLabel.textContent = `${countdownDesc}倒數`;
 
-                            // 載入地圖至 3D
+                            // 載入地圖至 3D（排位賽場景帶段位色：牆頂發光、終點光柱）
+                            maze3D.arenaColor = getComputedStyle(document.body).getPropertyValue('--tier').trim();
                             maze3D.buildMaze3D(res.mapData);
                             maze3D.placePlayerAtStart();
                             if (maze3D.currentMode === 'orbit') {
