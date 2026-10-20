@@ -229,7 +229,7 @@
                             <div class="blind-badge">★ 排位賽公平天梯盲測機制 ★</div>
                             <p class="blind-desc">
                                 為維護排位賽公正性與競技挑戰，選手無法於 2D 平面查看迷宮路徑！<br>
-                                請完全依賴 <strong>3D 自由俯瞰</strong> 或 <strong>第一人稱車輛視角</strong> 探索迷宮並抵達終點！
+                                比賽開始前可自由切換 <strong>3D 俯瞰視角</strong> 觀察地形；按下【開始遙控】啟動比賽後，將鎖定為 <strong>車子視角</strong> 全力衝刺！
                             </p>
                             <div class="blind-match-info">
                                 <div>級別：<span id="blindTierLabel" class="tier-tag">10×10 菁英級</span></div>
@@ -253,7 +253,7 @@
                             ⏱️ 00:00.0 (完賽計時)
                         </div>
                     </div>
-                    <div><strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong></div>
+                    <div id="simWalkControlTitle"><strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong></div>
                     <div style="margin-top: 4px;">
                         <kbd>W</kbd> 前進 &nbsp; <kbd>S</kbd> 後退 &nbsp; <kbd>A</kbd> 左轉 &nbsp; <kbd>D</kbd> 右轉
                     </div>
@@ -771,6 +771,9 @@
             const btnStartDrive = document.getElementById('btnStartDrive');
             const btnStopDrive = document.getElementById('btnStopDrive');
             const btnResetCar = document.getElementById('btnResetCar');
+            const btnModeOrbit = document.getElementById('btnModeOrbit');
+            const btnModeDriver = document.getElementById('btnModeDriver');
+            const btnResetCam = document.getElementById('btnResetCam');
             const driveStatusBadge = document.getElementById('driveStatusBadge');
             const driveStatusText = document.getElementById('driveStatusText');
             const driveStatusDot = document.getElementById('driveStatusDot');
@@ -1044,7 +1047,38 @@
                     driveStatusBadge.className = 'drive-status-tag active';
                     driveStatusDot.textContent = '🟢';
                     driveStatusText.textContent = '鍵盤操控功能：運行中';
-                    driveTipText.innerHTML = '* 鍵盤已接管自走車！不論處於<strong>俯瞰</strong>或<strong>車子視角</strong>均可使用 WASD 或方向鍵操控小車';
+
+                    if (currentGameMode === 'ranked') {
+                        // 排位賽模式：按下開始後強制切換並鎖定車子視角
+                        if (maze3D && maze3D.currentMode !== 'driver') {
+                            maze3D.setMode('driver');
+                        }
+                        if (btnModeDriver) btnModeDriver.classList.add('active');
+                        if (btnModeOrbit) {
+                            btnModeOrbit.classList.remove('active');
+                            btnModeOrbit.disabled = true;
+                            btnModeOrbit.title = '排位賽進行中只能使用車子視角';
+                        }
+                        if (btnResetCam) {
+                            btnResetCam.disabled = true;
+                            btnResetCam.title = '排位賽進行中已鎖定車子視角';
+                        }
+                        if (driveTipText) {
+                            driveTipText.innerHTML = '* 🏁 排位賽競技中已鎖定<strong>車子視角</strong>！請使用 WASD 或方向鍵操控小車全力衝向終點';
+                        }
+                    } else {
+                        if (btnModeOrbit) {
+                            btnModeOrbit.disabled = false;
+                            btnModeOrbit.title = '3D 自由俯瞰視角';
+                        }
+                        if (btnResetCam) {
+                            btnResetCam.disabled = false;
+                            btnResetCam.title = '重設視角至標準角度';
+                        }
+                        if (driveTipText) {
+                            driveTipText.innerHTML = '* 鍵盤已接管自走車！不論處於<strong>俯瞰</strong>或<strong>車子視角</strong>均可使用 WASD 或方向鍵操控小車';
+                        }
+                    }
                 } else {
                     btnStartDrive.disabled = false;
                     btnStartDrive.classList.remove('driving-active');
@@ -1053,7 +1087,24 @@
                     driveStatusBadge.className = 'drive-status-tag inactive';
                     driveStatusDot.textContent = '⚪';
                     driveStatusText.textContent = '鍵盤操控功能：已停止';
-                    driveTipText.innerHTML = '* 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能';
+
+                    // 比賽開始前或停止遙控後：解除視角鎖定，允許自由切換俯瞰/車載視角
+                    if (btnModeOrbit) {
+                        btnModeOrbit.disabled = false;
+                        btnModeOrbit.title = '3D 自由俯瞰視角';
+                    }
+                    if (btnResetCam) {
+                        btnResetCam.disabled = false;
+                        btnResetCam.title = '重設視角至標準角度';
+                    }
+
+                    if (driveTipText) {
+                        if (currentGameMode === 'ranked') {
+                            driveTipText.innerHTML = '* 💡 排位賽開始前可切換<strong>俯瞰/車載視角</strong>觀察地圖；按下【▶ 開始遙控】後將鎖定為車子視角';
+                        } else {
+                            driveTipText.innerHTML = '* 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能';
+                        }
+                    }
 
                     if (timerRunning) {
                         pauseTimer();
@@ -1444,18 +1495,19 @@
             });
 
             // 5. 3D 視角切換 (俯瞰 / 車子視角)
-            const btnOrbit = document.getElementById('btnModeOrbit');
-            const btnDriver = document.getElementById('btnModeDriver');
-
-            btnOrbit.addEventListener('click', () => {
-                btnOrbit.classList.add('active');
-                btnDriver.classList.remove('active');
+            btnModeOrbit.addEventListener('click', () => {
+                if (currentGameMode === 'ranked' && maze3D.isDriving) {
+                    showToast('🔒 排位賽進行中只能使用車子視角！', true);
+                    return;
+                }
+                btnModeOrbit.classList.add('active');
+                btnModeDriver.classList.remove('active');
                 maze3D.setMode('orbit');
             });
 
-            btnDriver.addEventListener('click', () => {
-                btnDriver.classList.add('active');
-                btnOrbit.classList.remove('active');
+            btnModeDriver.addEventListener('click', () => {
+                btnModeDriver.classList.add('active');
+                btnModeOrbit.classList.remove('active');
                 maze3D.setMode('driver');
             });
 
@@ -1501,7 +1553,11 @@
                 showToast('自走車已回到起點，請點擊【▶ 開始遙控】開始計時！');
             });
 
-            document.getElementById('btnResetCam').addEventListener('click', () => {
+            btnResetCam.addEventListener('click', () => {
+                if (currentGameMode === 'ranked' && maze3D.isDriving) {
+                    showToast('🔒 排位賽進行中視角已鎖定於自走車！', true);
+                    return;
+                }
                 if (maze3D.currentMode === 'orbit') {
                     maze3D.resetOrbitCamera();
                 } else {
@@ -2395,6 +2451,18 @@
 
                     document.getElementById('headerTitleText').textContent = '3D 迷宮全服天梯排位賽 (盲測競技模式)';
 
+                    // 排位賽：比賽開始前可以自由調整視角，確保視角切換功能啟用
+                    if (btnModeOrbit) {
+                        btnModeOrbit.disabled = false;
+                        btnModeOrbit.title = '3D 自由俯瞰視角';
+                    }
+                    if (btnResetCam) {
+                        btnResetCam.disabled = false;
+                        btnResetCam.title = '重設視角至標準角度';
+                    }
+                    const walkTitleRanked = document.getElementById('simWalkControlTitle');
+                    if (walkTitleRanked) walkTitleRanked.innerHTML = '<strong>🎮 行走控制 (排位賽啟動後強制車子視角)：</strong>';
+
                     // 關閉一般賽事彈窗
                     document.getElementById('victoryModal').style.display = 'none';
                     document.getElementById('timeoutModal').style.display = 'none';
@@ -2422,6 +2490,17 @@
                     if (btnMapLibraryEl) btnMapLibraryEl.style.display = 'inline-flex';
                     if (rankedNoSavePill) rankedNoSavePill.style.display = 'none';
                     updateAuthUI(currentUser);
+
+                    if (btnModeOrbit) {
+                        btnModeOrbit.disabled = false;
+                        btnModeOrbit.title = '3D 自由俯瞰視角';
+                    }
+                    if (btnResetCam) {
+                        btnResetCam.disabled = false;
+                        btnResetCam.title = '重設視角至標準角度';
+                    }
+                    const walkTitlePractice = document.getElementById('simWalkControlTitle');
+                    if (walkTitlePractice) walkTitlePractice.innerHTML = '<strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong>';
 
                     if (btnToggleMapSize) btnToggleMapSize.style.display = 'inline-flex';
                     document.getElementById('headerTitleText').textContent = '3D 迷宮模擬與自訂規格牆壁規劃系統';
@@ -2474,7 +2553,20 @@
                             // 載入地圖至 3D
                             maze3D.buildMaze3D(res.mapData);
                             maze3D.placePlayerAtStart();
+                            if (maze3D.currentMode === 'orbit') {
+                                maze3D.resetOrbitCamera();
+                            }
                             resetTimer();
+
+                            // 排位賽開始前：允許自由切換調整視角
+                            if (btnModeOrbit) {
+                                btnModeOrbit.disabled = false;
+                                btnModeOrbit.title = '3D 自由俯瞰視角';
+                            }
+                            if (btnResetCam) {
+                                btnResetCam.disabled = false;
+                                btnResetCam.title = '重設視角至標準角度';
+                            }
 
                             // 更新排位賽提示資訊
                             const tierNames = {

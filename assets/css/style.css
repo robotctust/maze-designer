@@ -708,6 +708,13 @@ header {
     box-shadow: 0 1px 6px rgba(2, 132, 199, 0.4);
 }
 
+.hud-pill-btn:disabled,
+.hud-pill-btn[disabled] {
+    opacity: 0.38;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+}
+
 .hud-pill-btn.icon-only {
     padding: 4px 8px;
     font-size: 0.95rem;
