@@ -199,7 +199,7 @@ if ($action === 'redeem') {
     // 檢查是否超過 1 分鐘有效時間
     if (!empty($share['is_expired'])) {
         http_response_code(410);
-        echo json_encode(['success' => false, 'message' => '此分享碼已逾期失效（限時 1 分鐘）！請請對方重新產生。']);
+        echo json_encode(['success' => false, 'message' => '此分享碼已逾期失效（限時 1 分鐘）！請對方重新產生。']);
         exit;
     }
 

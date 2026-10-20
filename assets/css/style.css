@@ -1794,6 +1794,7 @@ kbd {
 .auth-modal-card.dlg-sm { max-width: 440px; }
 .auth-modal-card.dlg-md { max-width: 520px; }
 .auth-modal-card.dlg-lg { max-width: min(780px, 94vw); }
+.auth-modal-card.dlg-xl { max-width: min(1060px, 96vw); }
 
 .dlg-head {
     display: flex;
@@ -2374,6 +2375,9 @@ kbd {
     overflow: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+}
+.dlg-xl .admin-table-wrap {
+    max-height: min(580px, 62vh);
 }
 .admin-table {
     width: 100%;

@@ -669,7 +669,7 @@
 
     <!-- 高級使用者專屬：排位賽地圖審核與管理 -->
     <div class="auth-modal-backdrop" id="adminReviewModalBackdrop">
-        <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="adminReviewTitle">
+        <div class="auth-modal-card dlg-xl" role="dialog" aria-modal="true" aria-labelledby="adminReviewTitle">
             <div class="dlg-head">
                 <div class="dlg-titles">
                     <h2 class="dlg-title" id="adminReviewTitle">排位賽地圖審核與管理</h2>
