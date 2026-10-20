@@ -294,12 +294,15 @@
                 <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>試跑</button>
                 <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="停止"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-stop"></use></svg>停止</button>
                 <button type="button" class="sim-btn" id="btnResetCar" title="車子回到起點"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>回起點</button>
-                <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
-                <span class="drive-bar-spacer"></span>
+                
+                <!-- 計時器居中顯示，避免被右側懸浮功能擋住 -->
                 <div class="timer-display" id="timerDisplay">
                     <span class="timer-label" id="timerIcon">完賽計時</span>
                     <span class="timer-digits" id="timerDigits">00:00.0</span>
                 </div>
+
+                <span class="drive-bar-spacer"></span>
+                <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
             </div>
 
             <!-- 結算對話框：練習完賽／練習超時／排位完賽／排位超時 -->
@@ -380,7 +383,7 @@
                 <form id="formLogin" class="auth-form" onsubmit="return false;">
                     <div class="field">
                         <label for="loginUsername">帳號</label>
-                        <input class="dlg-input" type="text" id="loginUsername" placeholder="johnlin" required autocomplete="username">
+                        <input class="dlg-input" type="text" id="loginUsername" placeholder="" required autocomplete="username">
                     </div>
                     <div class="field">
                         <label for="loginPassword">密碼</label>

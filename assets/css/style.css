@@ -1195,8 +1195,9 @@ kbd {
     flex: none;
     display: flex;
     align-items: center;
+    position: relative;
     gap: 8px;
-    padding: 0 12px;
+    padding: 0 16px;
     border-top: 1px solid var(--border);
     background: var(--surface);
 }
@@ -1230,10 +1231,21 @@ kbd {
     background: var(--go-fill);
 }
 
-.timer-display {
+.drive-bar .timer-display {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: baseline;
     gap: 8px;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .drive-status-tag {
+        display: none;
+    }
 }
 
 .timer-label {
@@ -1781,7 +1793,7 @@ kbd {
 
 .auth-modal-card.dlg-sm { max-width: 440px; }
 .auth-modal-card.dlg-md { max-width: 520px; }
-.auth-modal-card.dlg-lg { max-width: 720px; }
+.auth-modal-card.dlg-lg { max-width: min(780px, 94vw); }
 
 .dlg-head {
     display: flex;
@@ -2274,12 +2286,13 @@ kbd {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 2px 8px;
+    padding: 2px 10px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
     vertical-align: middle;
+    white-space: nowrap;
 }
 .role-badge.senior {
     background: rgba(251, 191, 36, 0.15);
@@ -2357,13 +2370,14 @@ kbd {
 
 /* 帳號管理與地圖審核清單樣式 */
 .admin-table-wrap {
-    max-height: 420px;
-    overflow-y: auto;
+    max-height: 440px;
+    overflow: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
 }
 .admin-table {
     width: 100%;
+    min-width: 660px;
     border-collapse: collapse;
     font-size: 13px;
     text-align: left;
@@ -2371,17 +2385,19 @@ kbd {
 .admin-table th {
     background: var(--surface-raised);
     color: var(--text-muted);
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-weight: 500;
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 2;
+    white-space: nowrap;
 }
 .admin-table td {
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-bottom: 1px solid var(--border);
     color: var(--text);
+    white-space: nowrap;
 }
 .admin-table tr:hover td {
     background: rgba(255, 255, 255, 0.02);
@@ -2390,6 +2406,7 @@ kbd {
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 }
 .admin-role-select {
     padding: 4px 8px;
@@ -2398,6 +2415,7 @@ kbd {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     font-size: 12px;
+    white-space: nowrap;
     cursor: pointer;
 }
 .admin-role-select:focus {
