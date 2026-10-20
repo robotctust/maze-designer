@@ -74,7 +74,7 @@
                         <span id="mapSizeIcon">🌓</span> <span id="mapSizeText">一半版面設計</span>
                     </button>
                 </div>
-                <div id="toolTip" style="font-size: 0.8rem; color: #38bdf8;">目前工具：點擊格線增刪牆壁</div>
+                <div id="toolTip" style="font-size: 13px; color: var(--accent);">目前工具：點擊格線增刪牆壁</div>
             </div>
 
             <!-- 練習賽：迷宮規格調整列 (自訂格數) -->
@@ -160,7 +160,7 @@
                     ✋ 拖曳平移
                 </button>
                 
-                <span style="border-right: 1px solid #475569; margin: 0 4px;"></span>
+                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
 
                 <button class="tool-btn btn-action" id="btnOuterWalls" title="一鍵切換四周圍牆 (全開 / 全關)">
                     🔲 四周圍牆開關
@@ -175,7 +175,7 @@
                     🎲 隨機迷宮
                 </button>
 
-                <span style="border-right: 1px solid #475569; margin: 0 4px;"></span>
+                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
 
                 <button class="tool-btn btn-export" id="btnExportPNG" title="匯出高解析度 2D 迷宮圖片 (PNG)">
                     🖼️ 匯出 2D 地圖 (PNG)
@@ -188,7 +188,7 @@
                 </button>
                 <input type="file" id="fileInputJSON" accept=".json" style="display: none;">
 
-                <span style="border-right: 1px solid #475569; margin: 0 4px;"></span>
+                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
 
                 <button class="tool-btn btn-publish-ranked" id="btnPublishToRanked" title="將目前練習賽設計好的迷宮，一鍵發布至官方排位賽圖庫">
                     <span>📤</span> 發布至排位賽圖庫
@@ -196,7 +196,7 @@
             </div>
 
             <!-- 排位賽鎖定提示列 -->
-            <div class="ranked-tools-banner" id="rankedToolsBanner" style="display: none; padding: 8px 16px; background: rgba(217, 119, 6, 0.15); border-bottom: 1px solid #d97706; font-size: 0.8rem; color: #fbbf24; align-items: center; justify-content: space-between;">
+            <div class="ranked-tools-banner" id="rankedToolsBanner" style="display: none; padding: 8px 16px; background: rgba(217, 119, 6, 0.15); border-bottom: 1px solid var(--ranked-fill); font-size: 13px; color: var(--ranked); align-items: center; justify-content: space-between;">
                 <span>🔒 排位賽地圖為官方統一版本，已鎖定編輯功能以維護公平性。</span>
                 <span>★ 盲測競技模式 ★</span>
             </div>
@@ -252,7 +252,7 @@
                         <div id="driveStatusBadge" class="drive-status-tag inactive">
                             <span id="driveStatusDot">⚪</span> <span id="driveStatusText">鍵盤操控功能：已停止</span>
                         </div>
-                        <div id="subTimerBadge" style="font-size: 0.82rem; font-weight: 700; color: #38bdf8; font-family: 'Courier New', monospace;">
+                        <div id="subTimerBadge" style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: var(--font-mono);">
                             ⏱️ 00:00.0 (完賽計時)
                         </div>
                     </div>
@@ -260,7 +260,7 @@
                     <div style="margin-top: 4px;">
                         <kbd>W</kbd> 前進 &nbsp; <kbd>S</kbd> 後退 &nbsp; <kbd>A</kbd> 左轉 &nbsp; <kbd>D</kbd> 右轉
                     </div>
-                    <div id="driveTipText" style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">
+                    <div id="driveTipText" style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
                         * 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能
                     </div>
                 </div>
@@ -382,51 +382,51 @@
 
             <!-- 時間到超時視窗 (倒數挑戰模式) -->
             <div class="victory-modal timeout-modal" id="timeoutModal">
-                <h2 style="color: #ef4444;">⏰ 時間到！挑戰超時</h2>
-                <div class="victory-time-box" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.12);">
-                    <div class="victory-time-label" style="color: #f87171;">挑戰結果</div>
-                    <div class="victory-time-value" id="timeoutTimeValue" style="color: #f87171;">60.0 秒 時間用盡</div>
-                    <div class="victory-time-sub" id="timeoutTimeSub" style="color: #cbd5e1;">未能於 1 分鐘內抵達終點</div>
+                <h2 style="color: var(--danger-fill);">⏰ 時間到！挑戰超時</h2>
+                <div class="victory-time-box" style="border-color: var(--danger-fill); background: rgba(239, 68, 68, 0.12);">
+                    <div class="victory-time-label" style="color: var(--danger);">挑戰結果</div>
+                    <div class="victory-time-value" id="timeoutTimeValue" style="color: var(--danger);">60.0 秒 時間用盡</div>
+                    <div class="victory-time-sub" id="timeoutTimeSub" style="color: var(--text-2);">未能於 1 分鐘內抵達終點</div>
                 </div>
                 <p>別氣餒！調整行駛路線再試一次！</p>
                 <button class="victory-btn timeout-btn" id="btnTimeoutRestart">🔄 重新挑戰 (回到起點)</button>
             </div>
 
             <!-- 排位賽過關結算彈窗 -->
-            <div class="victory-modal ranked-victory-modal" id="rankedVictoryModal" style="display: none; border-color: #f59e0b; box-shadow: 0 0 35px rgba(245, 158, 11, 0.5);">
+            <div class="victory-modal ranked-victory-modal" id="rankedVictoryModal" style="display: none; border-color: var(--ranked-fill); box-shadow: none;">
                 <div style="font-size: 2.2rem; margin-bottom: 4px;">🏆</div>
-                <h2 style="color: #fbbf24; margin-bottom: 8px;">排位賽挑戰成功！</h2>
-                <div class="victory-time-box" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.12);">
-                    <div class="victory-time-label" style="color: #fde68a;">成績已登錄排位賽天梯榜</div>
-                    <div class="victory-time-value" id="rankedVictoryTimeValue" style="color: #fbbf24;">00:00.0</div>
-                    <div class="victory-time-sub" id="rankedVictoryTimeSub" style="color: #4ade80;">耗時：0.0 秒 | 剩餘：0.0 秒</div>
+                <h2 style="color: var(--ranked); margin-bottom: 8px;">排位賽挑戰成功！</h2>
+                <div class="victory-time-box" style="border-color: var(--ranked-fill); background: rgba(245, 158, 11, 0.12);">
+                    <div class="victory-time-label" style="color: var(--ranked-soft);">成績已登錄排位賽天梯榜</div>
+                    <div class="victory-time-value" id="rankedVictoryTimeValue" style="color: var(--ranked);">00:00.0</div>
+                    <div class="victory-time-sub" id="rankedVictoryTimeSub" style="color: var(--go);">耗時：0.0 秒 | 剩餘：0.0 秒</div>
                 </div>
                 <div class="ranked-rank-badge" id="rankedVictoryRankBadge">
                     🏆 當前全服排名：第 <strong id="rankedVictoryRankNum">1</strong> 名
                 </div>
-                <p id="rankedVictoryMsg" style="margin: 12px 0 16px 0; color: #cbd5e1;">太強了！在 2D 地圖全面屏蔽下順利突圍走出迷宮！</p>
+                <p id="rankedVictoryMsg" style="margin: 12px 0 16px 0; color: var(--text-2);">太強了！在 2D 地圖全面屏蔽下順利突圍走出迷宮！</p>
                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <button type="button" class="victory-btn" id="btnRankedNextMatch" style="background: #d97706;">🎲 隨機換圖再戰</button>
-                    <button type="button" class="victory-btn" id="btnRankedViewLeaderboard" style="background: #0284c7;">🏆 查看排行榜</button>
-                    <button type="button" class="victory-btn" id="btnRankedBackToPractice" style="background: #334155;">🛠️ 回到練習賽</button>
+                    <button type="button" class="victory-btn" id="btnRankedNextMatch" style="background: var(--ranked-fill); color: var(--on-ranked);">🎲 隨機換圖再戰</button>
+                    <button type="button" class="victory-btn" id="btnRankedViewLeaderboard" style="background: var(--accent-fill); color: var(--on-accent);">🏆 查看排行榜</button>
+                    <button type="button" class="victory-btn" id="btnRankedBackToPractice" style="background: var(--border);">🛠️ 回到練習賽</button>
                 </div>
             </div>
 
             <!-- 排位賽超時彈窗 -->
             <div class="victory-modal timeout-modal ranked-timeout-modal" id="rankedTimeoutModal" style="display: none;">
                 <div style="font-size: 2.2rem; margin-bottom: 4px;">⏰</div>
-                <h2 style="color: #ef4444; margin-bottom: 8px;">排位賽挑戰超時！</h2>
-                <div class="victory-time-box" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.12);">
-                    <div class="victory-time-label" style="color: #fca5a5;">挑戰結果</div>
-                    <div class="victory-time-value" id="rankedTimeoutValue" style="color: #f87171;">時間用盡</div>
-                    <div class="victory-time-sub" id="rankedTimeoutSub" style="color: #cbd5e1;">未能於限時內抵達終點</div>
+                <h2 style="color: var(--danger-fill); margin-bottom: 8px;">排位賽挑戰超時！</h2>
+                <div class="victory-time-box" style="border-color: var(--danger-fill); background: rgba(239, 68, 68, 0.12);">
+                    <div class="victory-time-label" style="color: var(--danger-soft);">挑戰結果</div>
+                    <div class="victory-time-value" id="rankedTimeoutValue" style="color: var(--danger);">時間用盡</div>
+                    <div class="victory-time-sub" id="rankedTimeoutSub" style="color: var(--text-2);">未能於限時內抵達終點</div>
                 </div>
-                <p style="margin: 12px 0 16px 0; color: #cbd5e1;">別灰心！排位賽盲測極具挑戰性，調整駕駛視角與路線策略再次出戰！</p>
+                <p style="margin: 12px 0 16px 0; color: var(--text-2);">別灰心！排位賽盲測極具挑戰性，調整駕駛視角與路線策略再次出戰！</p>
                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                     <button type="button" class="victory-btn timeout-btn" id="btnRankedTimeoutRetry">🔄 重新挑戰 (回到起點)</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutNewMap" style="background: #d97706;">🎲 換新地圖再戰</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutLeaderboard" style="background: #0284c7;">🏆 查看排行榜</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutBackPractice" style="background: #334155;">🛠️ 回到練習賽</button>
+                    <button type="button" class="victory-btn" id="btnRankedTimeoutNewMap" style="background: var(--ranked-fill); color: var(--on-ranked);">🎲 換新地圖再戰</button>
+                    <button type="button" class="victory-btn" id="btnRankedTimeoutLeaderboard" style="background: var(--accent-fill); color: var(--on-accent);">🏆 查看排行榜</button>
+                    <button type="button" class="victory-btn" id="btnRankedTimeoutBackPractice" style="background: var(--border);">🛠️ 回到練習賽</button>
                 </div>
             </div>
         </section>
@@ -576,7 +576,7 @@
                         </tr>
                     </thead>
                     <tbody id="leaderboardTableBody">
-                        <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">載入中...</td></tr>
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">載入中...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -625,11 +625,11 @@
                 </div>
                 <div class="publish-check-item">
                     <span>🧱 牆壁段數 / 尺寸：</span>
-                    <span id="publishModalStats" style="color: #38bdf8; font-weight: 600;">0 段 (300×300 cm)</span>
+                    <span id="publishModalStats" style="color: var(--accent); font-weight: 600;">0 段 (300×300 cm)</span>
                 </div>
                 <div class="publish-check-item">
                     <span>👤 發布選手：</span>
-                    <span id="publishModalAuthor" style="color: #fbbf24; font-weight: 700;">-</span>
+                    <span id="publishModalAuthor" style="color: var(--ranked); font-weight: 700;">-</span>
                 </div>
             </div>
 
@@ -643,7 +643,7 @@
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <button type="button" class="tool-btn btn-action" id="btnCancelPublish" style="padding: 10px 18px;">取消</button>
-                <button type="button" class="auth-submit-btn" id="btnConfirmPublish" style="padding: 10px 20px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-color: #f59e0b;">
+                <button type="button" class="auth-submit-btn" id="btnConfirmPublish" style="padding: 10px 20px; background: var(--ranked-fill); border-color: var(--ranked-fill); color: var(--on-ranked);">
                     <span>🚀</span> 確認發布至官方排位圖庫
                 </button>
             </div>
@@ -676,11 +676,11 @@
             <div class="save-map-info-box">
                 <div class="save-info-row">
                     <span>📐 目前迷宮規格：</span>
-                    <strong id="saveCurrentSpec" style="color: #38bdf8;">10×10 格 (300×300 cm)</strong>
+                    <strong id="saveCurrentSpec" style="color: var(--accent);">10×10 格 (300×300 cm)</strong>
                 </div>
                 <div class="save-info-row">
                     <span>🧱 牆壁總段數：</span>
-                    <strong id="saveCurrentWalls" style="color: #4ade80;">0 段</strong>
+                    <strong id="saveCurrentWalls" style="color: var(--go);">0 段</strong>
                 </div>
             </div>
 
@@ -755,7 +755,7 @@
 
             <!-- 地圖卡片清單列表 -->
             <div class="map-library-list" id="mapLibraryList">
-                <div style="text-align: center; color: #64748b; padding: 32px;">⏳ 讀取個人地圖庫中...</div>
+                <div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取個人地圖庫中...</div>
             </div>
 
             <div class="map-library-footer">
@@ -781,7 +781,7 @@
                 const toast = document.getElementById('toastMsg');
                 if (!toast) return;
                 toast.textContent = msg;
-                toast.style.background = isError ? '#ef4444' : '#10b981';
+                toast.classList.toggle('error', isError);
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2800);
             }
@@ -863,7 +863,7 @@
                 if (subTimerBadge) {
                     const modeText = currentTimerMode === 'up' ? '完賽計時' : countdownLabel;
                     subTimerBadge.textContent = `${currentTimerMode === 'up' ? '⏱️' : '⏳'} ${timeStr} (${modeText})`;
-                    subTimerBadge.style.color = isDanger ? '#ef4444' : (currentTimerMode === 'up' ? '#38bdf8' : '#fbbf24');
+                    subTimerBadge.style.color = isDanger ? 'var(--danger-fill)' : (currentTimerMode === 'up' ? 'var(--accent)' : 'var(--ranked)');
                 }
             }
 
@@ -2278,13 +2278,13 @@
 
             function loadMapLibraryList() {
                 if (!mapLibraryList) return;
-                mapLibraryList.innerHTML = '<div style="text-align: center; color: #64748b; padding: 32px;">⏳ 讀取個人地圖庫中...</div>';
+                mapLibraryList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取個人地圖庫中...</div>';
 
                 fetch('api.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
-                            mapLibraryList.innerHTML = `<div style="text-align: center; color: #ef4444; padding: 24px;">無法載入地圖庫：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                            mapLibraryList.innerHTML = `<div style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入地圖庫：${escapeHtml(res.message || '未知錯誤')}</div>`;
                             return;
                         }
 
@@ -2360,7 +2360,7 @@
                         });
                     })
                     .catch(err => {
-                        mapLibraryList.innerHTML = '<div style="text-align: center; color: #ef4444; padding: 24px;">伺服器連線失敗</div>';
+                        mapLibraryList.innerHTML = '<div style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</div>';
                     });
             }
 
@@ -2721,7 +2721,7 @@
 
             function loadLeaderboardData(size) {
                 if (!leaderboardTableBody) return;
-                leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">⏳ 天梯榜更新中...</td></tr>';
+                leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">⏳ 天梯榜更新中...</td></tr>';
 
                 fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
                     .then(res => res.json())
@@ -2729,11 +2729,11 @@
                         if (res.success) {
                             renderLeaderboard(res);
                         } else {
-                            leaderboardTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 24px;">無法載入排行榜：${escapeHtml(res.message || '未知錯誤')}</td></tr>`;
+                            leaderboardTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入排行榜：${escapeHtml(res.message || '未知錯誤')}</td></tr>`;
                         }
                     })
                     .catch(err => {
-                        leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 24px;">伺服器連線失敗</td></tr>';
+                        leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</td></tr>';
                     });
             }
 
@@ -2761,7 +2761,7 @@
                 }
 
                 if (list.length === 0) {
-                    leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 32px;">目前尚無選手登錄此級別紀錄，快來搶下全服首位！</td></tr>';
+                    leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">目前尚無選手登錄此級別紀錄，快來搶下全服首位！</td></tr>';
                     return;
                 }
 
@@ -2775,17 +2775,17 @@
 
                     const usedSec = (row.timeUsedMs / 1000).toFixed(2) + ' 秒';
                     const remainSec = (row.timeRemainMs / 1000).toFixed(2) + ' 秒';
-                    const mapBadge = `<span style="font-family: monospace; color: #94a3b8;">${escapeHtml(row.mapId)}</span>`;
+                    const mapBadge = `<span style="font-family: monospace; color: var(--text-muted);">${escapeHtml(row.mapId)}</span>`;
                     const dateStr = row.createdAt ? row.createdAt.substring(0, 16) : '-';
 
                     html += `
                         <tr class="${isMe ? 'is-me' : ''}">
                             <td style="text-align: center;">${rankBadge}</td>
-                            <td>${escapeHtml(row.username)}${isMe ? ' <span style="font-size:0.75rem; color:#f59e0b;">(我)</span>' : ''}</td>
-                            <td style="color: #38bdf8; font-weight: 700; font-family: monospace;">${usedSec}</td>
-                            <td style="color: #4ade80; font-family: monospace;">${remainSec}</td>
+                            <td>${escapeHtml(row.username)}${isMe ? ' <span style="font-size: 12px; color:var(--ranked-fill);">(我)</span>' : ''}</td>
+                            <td style="color: var(--accent); font-weight: 700; font-family: monospace;">${usedSec}</td>
+                            <td style="color: var(--go); font-family: monospace;">${remainSec}</td>
                             <td>${mapBadge}</td>
-                            <td style="color: #64748b; font-size: 0.78rem;">${dateStr}</td>
+                            <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
                         </tr>
                     `;
                 });
@@ -2839,13 +2839,13 @@
                     return;
                 }
                 rankedGalleryBackdrop.classList.add('show');
-                rankedGalleryList.innerHTML = '<div style="text-align: center; color: #64748b; padding: 32px;">⏳ 讀取排位圖庫中...</div>';
+                rankedGalleryList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取排位圖庫中...</div>';
 
                 fetch('ranked_api.php?action=list_maps')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
-                            rankedGalleryList.innerHTML = `<div style="text-align: center; color: #ef4444; padding: 24px;">無法載入地圖總覽：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                            rankedGalleryList.innerHTML = `<div style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入地圖總覽：${escapeHtml(res.message || '未知錯誤')}</div>`;
                             return;
                         }
                         let html = '';
@@ -2866,7 +2866,7 @@
                         rankedGalleryList.innerHTML = html;
                     })
                     .catch(() => {
-                        rankedGalleryList.innerHTML = '<div style="text-align: center; color: #ef4444; padding: 24px;">伺服器連線失敗</div>';
+                        rankedGalleryList.innerHTML = '<div style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</div>';
                     });
             }
 
