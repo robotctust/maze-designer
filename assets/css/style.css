@@ -297,106 +297,17 @@ body {
 /* Right: 3D Simulator */
 
 /* 3D 視圖懸浮主控儀表板 (整齊雙層結構 HUD Deck) */
-.sim-hud-deck {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    right: 14px;
-    background: rgba(11, 18, 33, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(51, 65, 85, 0.8);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 10;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    pointer-events: auto;
-    transition: all 0.25s ease;
-}
 
-.sim-hud-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
 
-.sim-hud-row.aux-row {
-    border-bottom: 1px solid rgba(51, 65, 85, 0.55);
-    padding-bottom: 8px;
-    flex-wrap: wrap;
-}
 
-.sim-hud-row.main-row {
-    align-items: center;
-    justify-content: space-between;
-}
 
-.hud-subgroup {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
 
-.hud-subgroup-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-}
 
-.hud-btn-group {
-    display: inline-flex;
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 2px;
-    gap: 2px;
-}
 
-.hud-pill-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-    user-select: none;
-}
 
-.hud-pill-btn:hover {
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.08);
-}
 
-.hud-pill-btn.active {
-    background: var(--selected);
-    color: var(--text);
-    box-shadow: none;
-}
 
-.hud-pill-btn:disabled,
-.hud-pill-btn[disabled] {
-    opacity: 0.38;
-    cursor: not-allowed;
-    filter: grayscale(0.8);
-}
 
-.hud-pill-btn.icon-only {
-    padding: 4px 8px;
-    font-size: 16px;
-}
 
 .drive-actions-group {
     display: flex;
@@ -487,34 +398,9 @@ body {
     color: var(--danger-soft);
 }
 
-.drive-status-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-bottom: 6px;
-}
 
-.drive-status-tag.active {
-    background: rgba(34, 197, 94, 0.2);
-    border: 1px solid var(--go-fill);
-    color: var(--go);
-}
 
-.drive-status-tag.inactive {
-    background: rgba(148, 163, 184, 0.15);
-    border: 1px solid var(--text-muted);
-    color: var(--text-muted);
-}
 
-.threejs-canvas-wrapper {
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
 
 #threeCanvas {
     width: 100%;
@@ -524,31 +410,7 @@ body {
 
 /* Keyboard Instructions Box under 2D Map */
 
-.sim-instructions kbd {
-    background: var(--border);
-    color: var(--text);
-    border: 1px solid var(--border-strong);
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 13px;
-    font-family: inherit;
-    font-weight: 600;
-}
 
-.sim-pos-hud {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    font-size: 14px;
-    color: var(--text-2);
-    z-index: 5;
-    pointer-events: none;
-}
 
 /* Victory Toast */
 .victory-modal {
@@ -588,128 +450,19 @@ body {
 }
 
 /* Timer Display & Mode in 3D Toolbar */
-.sim-timer-select {
-    background: var(--bg);
-    color: var(--ranked);
-    border: 1px solid var(--ranked-fill);
-    padding: 4px 8px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s ease;
-}
 
-.sim-timer-select:hover {
-    background: var(--surface);
-    border-color: var(--ranked-fill);
-    box-shadow: none !important;
-}
 
-.sim-timer-select:focus {
-    border-color: var(--ranked);
-    box-shadow: none !important;
-}
 
-.sim-timer-select option {
-    background: var(--bg);
-    color: var(--text);
-    font-weight: 500;
-}
 
 /* Custom Timer Duration Input Group */
-.custom-timer-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--surface-sunken);
-    border: 1px solid var(--ranked-fill);
-    border-radius: var(--radius-sm);
-    padding: 3px 6px;
-    box-shadow: none !important;
-}
 
-.custom-timer-input {
-    width: 44px;
-    padding: 2px 4px;
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: 4px;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
-    outline: none;
-    transition: all 0.2s ease;
-}
 
-.custom-timer-input:focus {
-    border-color: var(--ranked);
-    box-shadow: none !important;
-}
 
-.custom-timer-unit {
-    color: var(--ranked);
-    font-size: 12px;
-    font-weight: 600;
-    user-select: none;
-}
 
-.custom-timer-btn {
-    background: var(--ranked-fill);
-    border: 1px solid var(--ranked-fill);
-    color: var(--on-ranked);
-    font-size: 12px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-    transform: none !important;
-    box-shadow: none !important;
-}
 
-.custom-timer-btn:hover {
-    background: var(--ranked-fill-hover);
-    border-color: var(--ranked);
-    box-shadow: none !important;
-    transform: none !important;
-    color: var(--on-ranked);
-}
 
-.timer-display {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface-sunken);
-    border: 1px solid var(--accent-fill);
-    border-radius: var(--radius-sm);
-    padding: 4px 10px;
-    font-family: var(--font-mono);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 1px;
-    box-shadow: none !important;
-    user-select: none;
-    transition: all 0.25s ease;
-}
 
-.timer-display.countdown {
-    border-color: var(--ranked-fill);
-    color: var(--ranked);
-    box-shadow: none !important;
-}
 
-.timer-display.danger {
-    border-color: var(--danger-fill);
-    color: var(--danger);
-    animation: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-}
 
 @keyframes timer-pulse-danger {
     0%, 100% {
@@ -1124,12 +877,6 @@ body {
 
 /* Prompt pulse animation for start drive button after restart / reset to start */
 /* Prompt pulse animation for start drive button - disabled per user request (no pulsing, no size change, no glow) */
-.sim-btn.btn-start-drive.pulse-prompt {
-    animation: none !important;
-    transform: none !important;
-    box-shadow: none !important;
-    border-color: var(--go) !important;
-}
 
 @keyframes pulse-start-prompt {
     0%, 100% {
@@ -2614,31 +2361,8 @@ kbd {
     font-family: var(--font-mono);
 }
 
-.map-size-toggle-btn {
-    height: 30px;
-    padding: 0 10px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-2);
-    font: inherit;
-    font-size: 12px;
-    cursor: pointer;
-}
 
-.map-size-toggle-btn:hover {
-    background: var(--surface-2);
-}
 
-/* 鍵盤說明（Beta 4 改為 3D 底部操控列） */
-.sim-instructions {
-    flex: none;
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--text-2);
-    background: var(--surface);
-}
 
 /* 平板直向：2D 在上、3D 在下 */
 @media (max-width: 1023px) {
@@ -2664,6 +2388,294 @@ kbd {
         width: 36px;
         padding: 0;
         justify-content: center;
+    }
+}
+
+/* ========================================================
+   3D 預覽面板 (v2)：浮動控制、底部操控列、觸控方向鍵
+   ======================================================== */
+.sim-stage {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.threejs-canvas-wrapper {
+    position: absolute;
+    inset: 0;
+}
+
+.sim-overlay {
+    position: absolute;
+    top: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+
+.sim-overlay.top-left {
+    left: 12px;
+}
+
+.sim-overlay.top-right {
+    right: 12px;
+}
+
+.seg .hud-pill-btn {
+    height: 30px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.seg .hud-pill-btn:hover {
+    color: var(--text);
+}
+
+.seg .hud-pill-btn.active {
+    background: var(--selected);
+    color: var(--text);
+}
+
+.seg .hud-pill-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.seg .hud-pill-btn .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.sim-overlay .seg {
+    background: rgba(18, 24, 41, 0.92);
+}
+
+.seg.seg-full {
+    display: flex;
+}
+
+.seg.seg-full .hud-pill-btn {
+    flex: 1;
+}
+
+.float-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(18, 24, 41, 0.92);
+    color: var(--text-2);
+    cursor: pointer;
+}
+
+.float-btn:hover,
+.float-btn[aria-expanded="true"] {
+    color: var(--text);
+    border-color: var(--border-strong);
+}
+
+.float-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 3D 設定選單 */
+.sim-settings {
+    width: 300px;
+    padding: 14px;
+    gap: 6px;
+}
+
+.sim-settings .menu-heading {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.sim-settings .menu-heading:first-child {
+    margin-top: 0;
+}
+
+.sim-timer-select {
+    height: 34px;
+    width: 100%;
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+}
+
+.custom-timer-group {
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.custom-timer-group .tool-btn {
+    margin-left: auto;
+}
+
+/* 即時座標 */
+.sim-pos-hud {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 10px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-2);
+    z-index: 5;
+}
+
+/* 底部操控列 */
+.drive-bar {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.drive-bar-spacer {
+    flex: 1;
+}
+
+.drive-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4B5670;
+}
+
+.drive-status-tag.active {
+    color: var(--go);
+}
+
+.drive-status-tag.active .status-dot {
+    background: var(--go-fill);
+}
+
+.timer-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.timer-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.timer-digits {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.timer-display.countdown .timer-digits {
+    color: var(--ranked);
+}
+
+.timer-display.danger .timer-digits {
+    color: var(--danger);
+}
+
+/* 觸控方向鍵：只在觸控裝置試跑時出現 */
+
+.touch-pad {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(2, 60px);
+    gap: 6px;
+    z-index: 6;
+}
+
+.pad-btn {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: rgba(18, 24, 41, 0.85);
+    color: var(--text);
+    font: inherit;
+    font-weight: 700;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+}
+
+.pad-btn:active {
+    background: var(--selected);
+}
+
+.pad-btn .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.touch-jump {
+    position: absolute;
+    right: 16px;
+    bottom: 56px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    z-index: 6;
+}
+
+.touch-pad,
+.pad-btn.touch-jump {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    .is-driving .touch-pad {
+        display: grid;
+    }
+
+    .is-driving .touch-jump {
+        display: flex;
     }
 }
 

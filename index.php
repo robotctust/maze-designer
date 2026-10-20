@@ -221,125 +221,90 @@
                 <span>牆 <strong id="statWallCount">0</strong> 段</span>
                 <span id="headerTagGrid" hidden></span>
                 <span id="headerTagTotal">總長寬：300×300 cm</span>
-                <button class="map-size-toggle-btn" id="btnToggleMapSize" title="切換版面大小">
-                    <span id="mapSizeIcon">🌓</span> <span id="mapSizeText">一半版面設計</span>
-                </button>
             </div>
         </section>
 
         <!-- 右側：3D 即時模擬視窗 -->
-        <section class="simulator-panel">
-            
-            <!-- 3D 視圖懸浮主控儀表板 (整齊雙層結構 HUD Deck) -->
-            <div class="sim-hud-deck" id="simHudDeck">
-                <!-- 第一層：視角切換 / 牆面外觀風格 / 計時模式與時限 -->
-                <div class="sim-hud-row aux-row">
-                    <!-- 視角切換 -->
-                    <div class="hud-subgroup">
-                        <span class="hud-subgroup-label">視角</span>
-                        <div class="hud-btn-group">
-                            <button class="hud-pill-btn active" id="btnModeOrbit" title="3D 自由俯瞰視角">
-                                🌐 俯瞰
-                            </button>
-                            <button class="hud-pill-btn" id="btnModeDriver" title="車子第一人稱探險視角">
-                                🚗 車載
-                            </button>
-                            <button class="hud-pill-btn icon-only" id="btnResetCam" title="重設視角至標準角度">
-                                🎯
-                            </button>
-                        </div>
-                    </div>
+        <section class="simulator-panel" id="simulatorPanel">
+            <div class="sim-stage">
+                <!-- Three.js 渲染畫布容器 -->
+                <div class="threejs-canvas-wrapper" id="canvasContainer"></div>
 
-                    <!-- 牆面外觀風格 -->
-                    <div class="hud-subgroup">
-                        <span class="hud-subgroup-label">外觀</span>
-                        <div class="hud-btn-group">
-                            <button class="hud-pill-btn active" id="btnThemeWood" data-theme="wood">木板</button>
-                            <button class="hud-pill-btn" id="btnThemeWhite" data-theme="white">白板</button>
-                            <button class="hud-pill-btn" id="btnThemeCyber" data-theme="cyber">科幻</button>
-                        </div>
+                <!-- 左上：視角 -->
+                <div class="sim-overlay top-left">
+                    <div class="seg" role="group" aria-label="視角">
+                        <button type="button" class="hud-pill-btn active" id="btnModeOrbit" title="3D 自由俯瞰視角"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#cube"></use></svg>俯瞰</button>
+                        <button type="button" class="hud-pill-btn" id="btnModeDriver" title="車子第一人稱視角"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#car"></use></svg>車載</button>
                     </div>
-
-                    <!-- 計時模式與時限選單 -->
-                    <div class="hud-subgroup timer-mode-subgroup">
-                        <span class="hud-subgroup-label">計時模式</span>
-                        <div class="hud-btn-group">
-                            <button class="hud-pill-btn active" id="btnTimerCountUp" title="完賽計時：記錄跑完全程花費時間">
-                                ⏱️ 完賽
-                            </button>
-                            <button class="hud-pill-btn" id="btnTimerCountDown" title="限時倒數計時挑戰">
-                                ⏳ <span id="countdownBtnLabel">1分挑戰</span>
-                            </button>
-                        </div>
-                        <select class="sim-timer-select" id="selectCountdownDuration" title="選擇挑戰時間">
-                            <option value="1" selected>1 分鐘</option>
-                            <option value="3">3 分鐘</option>
-                            <option value="5">5 分鐘</option>
-                            <option value="8">8 分鐘</option>
-                            <option value="10">10 分鐘</option>
-                            <option value="15">15 分鐘</option>
-                            <option value="custom">✏️ 自訂...</option>
-                        </select>
-                        <!-- 自訂時間輸入區 (選取自訂時間時展開) -->
-                        <div class="custom-timer-group" id="customTimerGroup" style="display: none;">
-                            <input type="number" id="customMinInput" class="custom-timer-input" min="0" max="180" value="2" title="設定分鐘數 (0 ~ 180)">
-                            <span class="custom-timer-unit">分</span>
-                            <input type="number" id="customSecInput" class="custom-timer-input" min="0" max="59" value="0" title="設定秒數 (0 ~ 59)">
-                            <span class="custom-timer-unit">秒</span>
-                            <button type="button" class="custom-timer-btn" id="btnApplyCustomTimer" title="套用自訂挑戰時間">套用</button>
-                        </div>
-                    </div>
+                    <button type="button" class="float-btn" id="btnResetCam" title="重設視角" aria-label="重設視角"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#focus-centered"></use></svg></button>
                 </div>
 
-                <!-- 第二層：核心遙控行駛操作與碼表 HUD (整齊對稱排列) -->
-                <div class="sim-hud-row main-row">
-                    <!-- 遙控核心操作三按鈕 -->
-                    <div class="hud-subgroup drive-actions-group">
-                        <button class="sim-btn btn-start-drive" id="btnStartDrive">
-                            <span>▶</span> 開始遙控 (啟用鍵盤)
-                        </button>
-                        <button class="sim-btn btn-stop-drive" id="btnStopDrive" disabled>
-                            <span>⏹</span> 停止
-                        </button>
-                        <button class="sim-btn btn-reset-drive" id="btnResetCar" title="自走車重回起點">
-                            <span>🔄</span> 回到起點
-                        </button>
+                <!-- 右上：外觀與計時設定、版面切換 -->
+                <div class="sim-overlay top-right">
+                    <div class="menu-wrap">
+                        <button type="button" class="float-btn" id="btnSimSettings" aria-haspopup="true" aria-expanded="false" title="外觀與計時" aria-label="外觀與計時"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#adjustments"></use></svg></button>
+                        <div class="menu menu-end-align sim-settings keep-open" id="simSettingsMenu" hidden>
+                            <p class="menu-heading">牆面外觀</p>
+                            <div class="seg seg-full" role="group" aria-label="牆面外觀">
+                                <button type="button" class="hud-pill-btn active" id="btnThemeWood" data-theme="wood">木板</button>
+                                <button type="button" class="hud-pill-btn" id="btnThemeWhite" data-theme="white">白板</button>
+                                <button type="button" class="hud-pill-btn" id="btnThemeCyber" data-theme="cyber">科幻</button>
+                            </div>
+                            <p class="menu-heading" id="timerModeHeading">計時方式</p>
+                            <div class="seg seg-full" role="group" aria-label="計時方式" id="timerModeGroup">
+                                <button type="button" class="hud-pill-btn active" id="btnTimerCountUp" title="記錄跑完全程花費的時間">完賽計時</button>
+                                <button type="button" class="hud-pill-btn" id="btnTimerCountDown" title="限時內抵達終點"><span id="countdownBtnLabel">1分挑戰</span></button>
+                            </div>
+                            <label class="menu-heading" for="selectCountdownDuration" id="timerDurationLabel">倒數時間</label>
+                            <select class="sim-timer-select" id="selectCountdownDuration">
+                                <option value="1" selected>1 分鐘</option>
+                                <option value="3">3 分鐘</option>
+                                <option value="5">5 分鐘</option>
+                                <option value="8">8 分鐘</option>
+                                <option value="10">10 分鐘</option>
+                                <option value="15">15 分鐘</option>
+                                <option value="custom">自訂…</option>
+                            </select>
+                            <div class="custom-timer-group" id="customTimerGroup" style="display: none;">
+                                <input type="number" id="customMinInput" class="spec-input" min="0" max="180" value="2" aria-label="分鐘（0～180）">
+                                <span>分</span>
+                                <input type="number" id="customSecInput" class="spec-input" min="0" max="59" value="0" aria-label="秒（0～59）">
+                                <span>秒</span>
+                                <button type="button" class="tool-btn btn-sm" id="btnApplyCustomTimer">套用</button>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- 醒目碼表計時鐘 -->
-                    <div class="timer-display" id="timerDisplay">
-                        <span id="timerIcon">⏱️</span>
-                        <span id="timerDigits">00:00.0</span>
-                    </div>
+                    <button type="button" class="float-btn" id="btnToggleMapSize" title="放大 3D" aria-label="放大 3D"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-maximize"></use></svg></button>
                 </div>
+
+                <!-- 右下：即時座標 -->
+                <div class="sim-pos-hud" id="posHud">
+                    <span id="posCm">X: 15 cm, Y: 285 cm</span> · <span id="posCell">格 (0, 9)</span>
+                </div>
+
+                <!-- 觸控方向鍵（觸控裝置試跑時出現） -->
+                <div class="touch-pad" aria-label="觸控方向鍵">
+                    <span></span>
+                    <button type="button" class="pad-btn" data-key="w" aria-label="前進"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chevron-up"></use></svg></button>
+                    <span></span>
+                    <button type="button" class="pad-btn" data-key="a" aria-label="左轉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chevron-left"></use></svg></button>
+                    <button type="button" class="pad-btn" data-key="s" aria-label="後退"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
+                    <button type="button" class="pad-btn" data-key="d" aria-label="右轉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chevron-right"></use></svg></button>
+                </div>
+                <button type="button" class="pad-btn touch-jump" data-key=" " aria-label="跳躍">跳</button>
             </div>
 
-            <!-- Three.js 渲染畫布容器 -->
-            <div class="threejs-canvas-wrapper" id="canvasContainer"></div>
-
-            <!-- 鍵盤操控與操作指引（Beta 4 改為 3D 底部操控列） -->
-            <div class="sim-instructions" id="simInstructions">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <div id="driveStatusBadge" class="drive-status-tag inactive">
-                        <span id="driveStatusDot">⚪</span> <span id="driveStatusText">鍵盤操控功能：已停止</span>
-                    </div>
-                    <div id="subTimerBadge" style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: var(--font-mono);">
-                        ⏱️ 00:00.0 (完賽計時)
-                    </div>
+            <!-- 底部操控列 -->
+            <div class="drive-bar">
+                <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>試跑</button>
+                <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="停止"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-stop"></use></svg>停止</button>
+                <button type="button" class="sim-btn" id="btnResetCar" title="車子回到起點"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>回起點</button>
+                <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
+                <span class="drive-bar-spacer"></span>
+                <div class="timer-display" id="timerDisplay">
+                    <span class="timer-label" id="timerIcon">完賽計時</span>
+                    <span class="timer-digits" id="timerDigits">00:00.0</span>
                 </div>
-                <div id="simWalkControlTitle"><strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong></div>
-                <div style="margin-top: 4px;">
-                    <kbd>W</kbd> 前進 &nbsp; <kbd>S</kbd> 後退 &nbsp; <kbd>A</kbd> 左轉 &nbsp; <kbd>D</kbd> 右轉
-                </div>
-                <div id="driveTipText" style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
-                    * 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能
-                </div>
-            </div>
-
-
-            <!-- 即時座標 HUD -->
-            <div class="sim-pos-hud" id="posHud">
-                座標：<span id="posCm">X: 15 cm, Y: 285 cm</span> (<span id="posCell">格 0, 9</span>)
             </div>
 
             <!-- 到達終點獲勝視窗 -->
@@ -817,12 +782,12 @@
 
                 if (currentTimerMode === 'up') {
                     displayMs = timerElapsedMs;
-                    if (timerIcon) timerIcon.textContent = '⏱️';
+                    if (timerIcon) timerIcon.textContent = '完賽計時';
                     if (timerDisplay) timerDisplay.className = 'timer-display';
                 } else {
                     const remainMs = Math.max(0, countdownLimitMs - timerElapsedMs);
                     displayMs = remainMs;
-                    if (timerIcon) timerIcon.textContent = '⏳';
+                    if (timerIcon) timerIcon.textContent = '倒數';
                     if (remainMs <= 10000 && timerRunning) {
                         if (timerDisplay) timerDisplay.className = 'timer-display countdown danger';
                         isDanger = true;
@@ -1037,8 +1002,8 @@
                     btnStopDrive.disabled = false;
 
                     driveStatusBadge.className = 'drive-status-tag active';
-                    driveStatusDot.textContent = '🟢';
-                    driveStatusText.textContent = '鍵盤操控功能：運行中';
+                    driveStatusText.textContent = '操控中';
+                    document.getElementById('simulatorPanel').classList.add('is-driving');
 
                     if (currentGameMode === 'ranked') {
                         // 排位賽模式：按下開始後強制切換並鎖定車子視角
@@ -1076,9 +1041,9 @@
                     btnStartDrive.classList.remove('driving-active');
                     btnStopDrive.disabled = true;
 
-                    driveStatusBadge.className = 'drive-status-tag inactive';
-                    driveStatusDot.textContent = '⚪';
-                    driveStatusText.textContent = '鍵盤操控功能：已停止';
+                    driveStatusBadge.className = 'drive-status-tag';
+                    driveStatusText.textContent = '按試跑後可用鍵盤操控';
+                    document.getElementById('simulatorPanel').classList.remove('is-driving');
 
                     // 比賽開始前或停止遙控後：解除視角鎖定，允許自由切換俯瞰/車載視角
                     if (btnModeOrbit) {
@@ -1288,8 +1253,6 @@
             // 2-0-1. 2D 地圖與版面切換控制 (設計時用一半版面 50%，遙控時恢復正常大小 480px)
             const editorPanel = document.querySelector('.editor-panel');
             const btnToggleMapSize = document.getElementById('btnToggleMapSize');
-            const mapSizeIcon = document.getElementById('mapSizeIcon');
-            const mapSizeText = document.getElementById('mapSizeText');
             let currentMapMode = 'large'; // 'large' (設計時 50% 一半版面) 或 'compact' (遙控時恢復正常大小)
 
             function getOptimalDesignCanvasSize() {
@@ -1307,25 +1270,21 @@
                     // 遙控時：恢復正常大小 (420px)，左側收納至 480px，右側 3D 享有寬敞視野
                     editorPanel.classList.add('mode-compact');
                     editor.setCanvasBaseSize(400);
-                    if (mapSizeIcon) mapSizeIcon.textContent = '🚗';
-                    if (mapSizeText) mapSizeText.textContent = '遙控模式';
                     if (btnToggleMapSize) {
-                        btnToggleMapSize.classList.add('compact');
-                        btnToggleMapSize.title = '點擊切換為一半版面設計模式 (50% 寬度)';
+                        btnToggleMapSize.querySelector('use').setAttribute('href', 'assets/icons.svg#arrows-minimize');
+                        btnToggleMapSize.title = '恢復並排';
+                        btnToggleMapSize.setAttribute('aria-label', '恢復並排');
                     }
-                    if (showNotification) showToast('🚗 已切換為遙控模式！');
                 } else {
                     // 設計時：使用一半版面 (50%)，畫布自適應大圖，方便精準規劃與點選牆壁
                     editorPanel.classList.remove('mode-compact');
                     const designSize = getOptimalDesignCanvasSize();
                     editor.setCanvasBaseSize(designSize);
-                    if (mapSizeIcon) mapSizeIcon.textContent = '🌓';
-                    if (mapSizeText) mapSizeText.textContent = '一半版面設計';
                     if (btnToggleMapSize) {
-                        btnToggleMapSize.classList.remove('compact');
-                        btnToggleMapSize.title = '點擊切換為遙控模式 (480px 寬度)';
+                        btnToggleMapSize.querySelector('use').setAttribute('href', 'assets/icons.svg#arrows-maximize');
+                        btnToggleMapSize.title = '放大 3D';
+                        btnToggleMapSize.setAttribute('aria-label', '放大 3D');
                     }
-                    if (showNotification) showToast('🌓 已切換為一半版面設計模式！');
                 }
                 editor.resetZoom(true);
 
@@ -1343,6 +1302,20 @@
                     set2DMapMode(currentMapMode === 'large' ? 'compact' : 'large', true);
                 });
             }
+
+            // 3D 設定選單
+            setupMenu(document.getElementById('btnSimSettings'), document.getElementById('simSettingsMenu'));
+
+            // 觸控方向鍵：按住等同按下對應的鍵盤按鍵
+            document.querySelectorAll('.pad-btn[data-key]').forEach(btn => {
+                const key = btn.dataset.key;
+                const press = (down) => (e) => {
+                    e.preventDefault();
+                    if (maze3D) maze3D.keys[key] = down;
+                };
+                btn.addEventListener('pointerdown', press(true));
+                ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => btn.addEventListener(t, press(false)));
+            });
 
             // 監聽 3D 畫布容器大小改變，確保平滑過渡
             if (window.ResizeObserver && canvasContainer) {
@@ -1622,7 +1595,7 @@
                     }
                 });
                 menu.addEventListener('click', (e) => {
-                    if (e.target.closest('button')) closeMenu(menu);
+                    if (!menu.classList.contains('keep-open') && e.target.closest('button')) closeMenu(menu);
                 });
             }
             document.addEventListener('click', (e) => {
