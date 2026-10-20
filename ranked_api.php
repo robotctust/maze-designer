@@ -158,12 +158,12 @@ if ($action === 'submit_score') {
     }
 
     // 計算當前該使用者的個人最佳成績在全服中的即時天梯排名 (每位選手只佔一位，無重複帳號)
-    $rankStmt = $db->prepare("SELECT COUNT(*) + 1 AS rank FROM `rankings` WHERE grid_size = ? AND time_used_ms < ?");
+    $rankStmt = $db->prepare("SELECT COUNT(*) + 1 AS user_rank FROM `rankings` WHERE grid_size = ? AND time_used_ms < ?");
     $rankStmt->bind_param('si', $size, $bestTimeMs);
     $rankStmt->execute();
     $rankRes = $rankStmt->get_result();
     $rankRow = $rankRes->fetch_assoc();
-    $currentRank = intval($rankRow['rank'] ?? 1);
+    $currentRank = intval($rankRow['user_rank'] ?? 1);
     $rankStmt->close();
 
     // 取得該級別天梯總選手人數 (不重複人數)
