@@ -3,6 +3,9 @@
  * 資料庫連線與自動初始化設定 (XAMPP MySQL)
  */
 
+// 統一設定台灣時區，確保 PHP 與 MySQL NOW() 完全一致
+date_default_timezone_set('Asia/Taipei');
+
 $dbHost = '127.0.0.1';
 $dbUser = 'root';
 $dbPass = '';
