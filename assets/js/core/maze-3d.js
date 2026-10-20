@@ -151,7 +151,7 @@ class Maze3D {
     createFloor() {
         // 載入底圖作為地面貼圖
         const textureLoader = new THREE.TextureLoader();
-        this.mapTexture10x10 = textureLoader.load('map_10x10.jpg?v=' + Date.now(), (tex) => {
+        this.mapTexture10x10 = textureLoader.load('assets/img/map_10x10.jpg?v=' + Date.now(), (tex) => {
             tex.generateMipmaps = true;
             tex.minFilter = THREE.LinearMipmapLinearFilter;
             this.renderer.render(this.scene, this.camera);

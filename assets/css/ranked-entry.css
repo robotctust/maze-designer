@@ -1,0 +1,50 @@
+/* ========================================================
+   排位賽入口（頂部列）：獨立的段位風格按鈕
+   ======================================================== */
+.ranked-entry {
+    --tier: #FBBF24;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 14px 0 10px;
+    border: 0;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    background:
+        repeating-linear-gradient(-45deg, color-mix(in srgb, var(--tier) 10%, transparent) 0 8px, transparent 8px 16px),
+        color-mix(in srgb, var(--tier) 14%, var(--surface-2));
+    color: var(--tier);
+    font: inherit;
+    cursor: pointer;
+}
+
+.ranked-entry:hover {
+    background:
+        repeating-linear-gradient(-45deg, color-mix(in srgb, var(--tier) 16%, transparent) 0 8px, transparent 8px 16px),
+        color-mix(in srgb, var(--tier) 24%, var(--surface-2));
+}
+
+.ranked-entry-crest {
+    width: 30px;
+    height: 30px;
+    flex: none;
+}
+
+.ranked-entry-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    text-align: left;
+}
+
+.ranked-entry-en {
+    font: 600 10px var(--font-mono);
+    letter-spacing: 0.28em;
+}
+
+.ranked-entry-name {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: var(--text);
+}

@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>10×10 3D 迷宮模擬與自訂牆壁規劃器</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=<?= time() ?>">
+<?php foreach (['base', 'topbar', 'editor', 'simulator', 'ranked', 'dialogs', 'admin', 'ranked-entry', 'leaderboard'] as $css): ?>
+    <link rel="stylesheet" href="assets/css/<?= $css ?>.css?v=<?= time() ?>">
+<?php endforeach; ?>
 </head>
 <body>
 
@@ -144,7 +146,7 @@
                 <!-- 2D 畫布底圖容器 -->
                 <div class="map-canvas-container">
                 <div class="map-viewport" id="mapViewport">
-                    <div class="grid-wrapper" id="gridWrapper" style="background-image: url('map_10x10.jpg?v=<?= time() ?>');">
+                    <div class="grid-wrapper" id="gridWrapper" style="background-image: url('assets/img/map_10x10.jpg?v=<?= time() ?>');">
                         <!-- SVG 覆蓋層：負責處理格線熱區、牆壁繪製與起終點顯示 -->
                         <svg id="mazeSvg" class="grid-svg" viewBox="0 0 560 560"></svg>
                     </div>
@@ -824,11 +826,11 @@
     </div>
 
     <!-- 腳本引入 -->
-    <script src="assets/js/three.min.js"></script>
-    <script src="assets/js/OrbitControls.js"></script>
-    <script src="assets/js/maze-editor.js?v=<?= time() ?>"></script>
-    <script src="assets/js/maze-3d.js?v=<?= time() ?>"></script>
-    <script src="assets/js/ranked-fx.js?v=<?= time() ?>"></script>
+    <script src="assets/js/lib/three.min.js"></script>
+    <script src="assets/js/lib/OrbitControls.js"></script>
+    <script src="assets/js/core/maze-editor.js?v=<?= time() ?>"></script>
+    <script src="assets/js/core/maze-3d.js?v=<?= time() ?>"></script>
+    <script src="assets/js/core/ranked-fx.js?v=<?= time() ?>"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -417,7 +417,7 @@ class MazeEditor {
             wrapper.style.width = widthPx + 'px';
             wrapper.style.height = heightPx + 'px';
             if (this.cols === 10 && this.rows === 10) {
-                wrapper.style.backgroundImage = 'url("map_10x10.jpg?v=' + Date.now() + '")';
+                wrapper.style.backgroundImage = 'url("assets/img/map_10x10.jpg?v=' + Date.now() + '")';
             } else {
                 wrapper.style.backgroundImage = 'none';
             }
@@ -982,7 +982,7 @@ class MazeEditor {
                 drawGridCanvas();
                 drawMazeContent();
             };
-            baseImg.src = 'map_10x10.jpg?v=' + Date.now();
+            baseImg.src = 'assets/img/map_10x10.jpg?v=' + Date.now();
         } else {
             drawGridCanvas();
             drawMazeContent();

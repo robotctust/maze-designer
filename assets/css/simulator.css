@@ -1,0 +1,297 @@
+/* ========================================================
+   3D 預覽面板 (v2)：浮動控制、底部操控列、觸控方向鍵
+   ======================================================== */
+.sim-stage {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.threejs-canvas-wrapper {
+    position: absolute;
+    inset: 0;
+}
+
+.sim-overlay {
+    position: absolute;
+    top: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+
+.sim-overlay.top-left {
+    left: 12px;
+}
+
+.sim-overlay.top-right {
+    right: 12px;
+}
+
+.seg .hud-pill-btn {
+    height: 30px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.seg .hud-pill-btn:hover {
+    color: var(--text);
+}
+
+.seg .hud-pill-btn.active {
+    background: var(--selected);
+    color: var(--text);
+}
+
+.seg .hud-pill-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.seg .hud-pill-btn .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.sim-overlay .seg {
+    background: rgba(18, 24, 41, 0.92);
+}
+
+.seg.seg-full {
+    display: flex;
+}
+
+.seg.seg-full .hud-pill-btn {
+    flex: 1;
+}
+
+.float-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(18, 24, 41, 0.92);
+    color: var(--text-2);
+    cursor: pointer;
+}
+
+.float-btn:hover,
+.float-btn[aria-expanded="true"] {
+    color: var(--text);
+    border-color: var(--border-strong);
+}
+
+.float-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 3D 設定選單 */
+.sim-settings {
+    width: 300px;
+    padding: 14px;
+    gap: 6px;
+}
+
+.sim-settings .menu-heading {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.sim-settings .menu-heading:first-child {
+    margin-top: 0;
+}
+
+.sim-timer-select {
+    height: 34px;
+    width: 100%;
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+}
+
+.custom-timer-group {
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.custom-timer-group .tool-btn {
+    margin-left: auto;
+}
+
+/* 即時座標 */
+.sim-pos-hud {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 10px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-2);
+    z-index: 5;
+}
+
+/* 底部操控列 */
+.drive-bar {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 8px;
+    padding: 0 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.drive-bar-spacer {
+    flex: 1;
+}
+
+.drive-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4B5670;
+}
+
+.drive-status-tag.active {
+    color: var(--go);
+}
+
+.drive-status-tag.active .status-dot {
+    background: var(--go-fill);
+}
+
+.drive-bar .timer-display {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .drive-status-tag {
+        display: none;
+    }
+}
+
+.timer-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.timer-digits {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.timer-display.countdown .timer-digits {
+    color: var(--ranked);
+}
+
+.timer-display.danger .timer-digits {
+    color: var(--danger);
+}
+
+.touch-pad {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(2, 60px);
+    gap: 6px;
+    z-index: 6;
+}
+
+.pad-btn {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: rgba(18, 24, 41, 0.85);
+    color: var(--text);
+    font: inherit;
+    font-weight: 700;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+}
+
+.pad-btn:active {
+    background: var(--selected);
+}
+
+.pad-btn .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.touch-jump {
+    position: absolute;
+    right: 16px;
+    bottom: 56px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    z-index: 6;
+}
+
+.touch-pad,
+.pad-btn.touch-jump {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    .is-driving .touch-pad {
+        display: grid;
+    }
+
+    .is-driving .touch-jump {
+        display: flex;
+    }
+}

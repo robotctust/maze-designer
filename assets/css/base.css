@@ -1,0 +1,475 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ========================================================
+   設計系統 (v2)：所有顏色、字型、圓角都從這裡取用
+   ======================================================== */
+:root {
+    --bg: #0B1020;
+    --surface-sunken: #0E1424;
+    --surface: #121829;
+    --surface-2: #161E31;
+    --surface-raised: #1A2236;
+    --border: #2A3550;
+    --border-strong: #36425F;
+    --selected: #24304B;
+
+    --text: #E6EAF2;
+    --text-2: #C9D1E0;
+    --text-muted: #8B96AD;
+
+    --accent: #38BDF8;
+    --accent-soft: #7DD3FC;
+    --accent-tint: #10324A;
+    --accent-fill: #38BDF8;
+    --accent-fill-hover: #7DD3FC;
+    --on-accent: #062233;
+
+    --go: #4ADE80;
+    --go-fill: #22C55E;
+    --go-fill-hover: #4ADE80;
+    --on-go: #052E14;
+
+    --ranked: #FBBF24;
+    --ranked-soft: #FDE68A;
+    --ranked-tint: #2A1F0B;
+    --ranked-fill: #F59E0B;
+    --ranked-fill-hover: #FBBF24;
+    --on-ranked: #2A1700;
+
+    --danger: #F87171;
+    --danger-soft: #FCA5A5;
+    --danger-tint: #2A1418;
+    --danger-fill: #EF4444;
+    --danger-fill-hover: #F87171;
+    --on-danger: #2A0A0A;
+
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 12px;
+
+    --font: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* 統一圖示：<svg class="icon"><use href="assets/icons.svg#名稱"></use></svg> */
+.icon {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    vertical-align: -3px;
+}
+
+body {
+    font-family: var(--font);
+    background-color: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tool-btn {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tool-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+.tool-btn.active {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-soft);
+}
+
+.tool-btn.btn-save {
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    color: var(--on-accent);
+}
+
+.tool-btn.btn-save:hover {
+    background: var(--accent-fill-hover);
+    border-color: var(--accent-fill-hover);
+    color: var(--on-accent);
+}
+
+.tool-btn.guest-locked {
+    background: var(--surface) !important;
+    border-color: var(--border-strong) !important;
+    color: var(--text-muted) !important;
+    opacity: 0.9;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+.tool-btn.guest-locked:hover {
+    background: var(--border) !important;
+    color: var(--text) !important;
+    border-color: var(--text-2) !important;
+}
+
+.map-viewport.panning {
+    cursor: grabbing !important;
+}
+
+.map-viewport.panning * {
+    pointer-events: none !important;
+}
+
+.map-viewport.tool-pan {
+    cursor: grab;
+}
+
+.map-viewport.tool-pan:active {
+    cursor: grabbing;
+}
+
+.grid-wrapper {
+    position: relative;
+    width: 560px;
+    height: 560px;
+    background-color: var(--text);
+    border: 2px solid var(--accent-fill);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    background-image: url('../img/map_10x10.jpg');
+    background-size: 100% 100%;
+    background-position: center;
+    user-select: none;
+    transform-origin: center center;
+    will-change: transform;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grid-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    overflow: visible;
+}
+
+/* SVG Elements */
+.cell-overlay {
+    fill: transparent;
+    cursor: pointer;
+    transition: fill 0.15s ease;
+}
+
+.cell-overlay:hover {
+    fill: rgba(56, 189, 248, 0.2);
+}
+
+.cell-start {
+    fill: rgba(34, 197, 94, 0.45);
+}
+
+.cell-goal {
+    fill: rgba(239, 68, 68, 0.45);
+}
+
+.wall-hit-line {
+    stroke: transparent;
+    cursor: pointer;
+    transition: stroke 0.15s ease;
+}
+
+.wall-hit-line:hover {
+    stroke: rgba(245, 158, 11, 0.65);
+    stroke-dasharray: 6, 4;
+}
+
+.wall-hit-line.outer-hit:hover {
+    stroke: rgba(245, 158, 11, 0.85);
+    stroke-dasharray: 6, 4;
+}
+
+.wall-visual {
+    stroke: var(--ranked-fill);
+    stroke-width: 6px;
+    stroke-linecap: round;
+    pointer-events: none;
+    filter: none;
+}
+
+.wall-visual.outer {
+    stroke: var(--ranked-fill);
+    stroke-width: 6px;
+    filter: none;
+}
+
+/* Badges for Start/Goal in 2D */
+.marker-text {
+    font-size: 16px;
+    font-weight: 900;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    user-select: none;
+}
+
+.marker-start-text {
+    fill: var(--go-fill-hover);
+}
+
+.marker-goal-text {
+    fill: var(--danger-fill-hover);
+}
+
+.drive-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drive-actions-group .sim-btn {
+    padding: 7px 15px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+}
+
+.sim-btn {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sim-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+.sim-btn.active {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-soft);
+}
+
+.sim-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.sim-btn.btn-start-drive {
+    background: var(--go-fill);
+    border-color: var(--go-fill);
+    color: var(--on-go);
+    font-weight: 700;
+}
+
+.sim-btn.btn-start-drive:hover {
+    background: var(--go-fill-hover);
+    box-shadow: none !important;
+    transform: none !important;
+    color: var(--on-go);
+}
+
+.sim-btn.btn-start-drive.driving-active {
+    background: var(--go-fill-hover);
+    border-color: var(--go);
+    box-shadow: none !important;
+    animation: none !important;
+    transform: none !important;
+    color: var(--on-go);
+}
+
+.sim-btn.btn-stop-drive {
+    background: transparent;
+    border-color: #7F1D1D;
+    color: var(--danger-soft);
+}
+
+.sim-btn.btn-stop-drive:hover {
+    background: var(--danger-tint);
+    border-color: var(--danger-fill);
+    color: var(--danger-soft);
+}
+
+#threeCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    background: var(--surface-raised);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    opacity: 0;
+    transform: translate(-50%, 10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.toast.error {
+    background: var(--danger-tint);
+    border-color: var(--danger-fill);
+    color: var(--danger-soft);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 2D Map Live Car Marker & Trail */
+.car-2d-marker {
+    pointer-events: none;
+    user-select: none;
+}
+
+.car-2d-trail {
+    pointer-events: none;
+    filter: none;
+}
+
+/* Prompt pulse animation for start drive button after restart / reset to start */
+
+/* 一鍵發布至排位賽圖庫按鈕 */
+
+#btnRefreshMapLibrary,
+#btnRefreshLeaderboard {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    padding: 7px 14px !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    line-height: 1.2 !important;
+}
+
+/* ========================================================
+   全局按鈕與圖示穩定純淨樣式 (去除所有特效、無動態縮放、無光暈散光陰影)
+   ======================================================== */
+button,
+.tool-btn,
+.sim-btn,
+.mode-tab-btn,
+.ranked-tier-btn,
+.btn-repick-map,
+.zoom-btn,
+.spec-preset-btn,
+.leaderboard-tab-btn,
+.auth-submit-btn,
+.auth-tab-btn,
+.custom-timer-btn,
+
+button:hover,
+.tool-btn:hover,
+.sim-btn:hover,
+.mode-tab-btn:hover,
+.ranked-tier-btn:hover,
+.btn-repick-map:hover,
+.zoom-btn:hover,
+.spec-preset-btn:hover,
+.leaderboard-tab-btn:hover,
+.auth-submit-btn:hover,
+.auth-tab-btn:hover,
+.custom-timer-btn:hover,
+
+/* 圖示穩定化，無散光 (drop-shadow / text-shadow / scale pulse) */
+.blind-icon,
+.tier-icon {
+    filter: none !important;
+    transform: none !important;
+    animation: none !important;
+    text-shadow: none;
+}
+
+/* 排位賽地圖總覽 */
+.ranked-gallery {
+    max-height: 460px;
+    overflow-y: auto;
+}
+
+.ranked-gallery-tier {
+    margin: 12px 0 8px;
+    color: var(--ranked);
+    font-size: 14px;
+}
+
+.ranked-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.ranked-gallery-item {
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.ranked-gallery-item.is-current {
+    border-color: var(--ranked-fill);
+}
+
+.ranked-gallery-item svg {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 6px;
+}
+
+.ranked-gallery-name {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+}
