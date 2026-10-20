@@ -346,334 +346,206 @@
 
     </div>
 
-    <!-- 儲存成功提示 Toast -->
-    <div class="toast" id="toastMsg">迷宮配置已儲存！</div>
+    <!-- 提示訊息 -->
+    <div class="toast" id="toastMsg" role="status" aria-live="polite"></div>
 
-    <!-- 帳號登入 / 註冊彈跳視窗 -->
+    <!-- 登入／註冊 -->
     <div class="auth-modal-backdrop" id="authModalBackdrop">
-        <div class="auth-modal-card">
-            <button class="auth-modal-close" id="btnCloseAuthModal" title="關閉視窗">&times;</button>
-            
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">🔐</div>
-                <h3 class="auth-modal-title">帳號管理中心</h3>
-                <p class="auth-modal-subtitle">未登入訪客僅限使用 10×10 (含) 以下地圖<br>登入或註冊後立即解鎖 11×11 至 30×30 大型地圖與雲端存檔！</p>
+        <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="authTitle">登入</h2>
+                    <p class="dlg-sub">登入後可用到 30 × 30、存地圖、參加排位賽</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseAuthModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
+            <div class="dlg-body">
+                <div class="seg seg-full dlg-tabs" role="tablist">
+                    <button type="button" class="auth-tab-btn active" id="tabBtnLogin" data-target="formLogin" role="tab">登入</button>
+                    <button type="button" class="auth-tab-btn" id="tabBtnRegister" data-target="formRegister" role="tab">註冊</button>
+                </div>
 
-            <!-- 頁籤切換：[登入] / [註冊] -->
-            <div class="auth-tabs">
-                <button class="auth-tab-btn active" id="tabBtnLogin" data-target="formLogin">
-                    <span>🔑</span> 帳號登入
-                </button>
-                <button class="auth-tab-btn" id="tabBtnRegister" data-target="formRegister">
-                    <span>📝</span> 註冊新帳號
-                </button>
-            </div>
+                <div class="auth-alert" id="authAlert" role="alert" style="display: none;"></div>
 
-            <!-- 提示與錯誤訊息列 -->
-            <div class="auth-alert" id="authAlert" style="display: none;"></div>
+                <form id="formLogin" class="auth-form" onsubmit="return false;">
+                    <div class="field">
+                        <label for="loginUsername">帳號</label>
+                        <input class="dlg-input" type="text" id="loginUsername" placeholder="johnlin" required autocomplete="username">
+                    </div>
+                    <div class="field">
+                        <label for="loginPassword">密碼</label>
+                        <input class="dlg-input" type="password" id="loginPassword" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="tool-btn btn-save auth-submit-btn" id="btnSubmitLogin">登入</button>
+                    <p class="auth-form-footer">還沒有帳號？<a href="javascript:void(0)" id="linkToRegister">註冊</a></p>
+                </form>
 
-            <!-- 1. 登入表單 -->
-            <form id="formLogin" class="auth-form" onsubmit="return false;">
-                <div class="auth-field">
-                    <label for="loginUsername">帳號名稱：</label>
-                    <div class="auth-input-wrap">
-                        <span class="auth-input-icon">👤</span>
-                        <input type="text" id="loginUsername" placeholder="請輸入帳號名稱" required autocomplete="username">
+                <form id="formRegister" class="auth-form" style="display: none;" onsubmit="return false;">
+                    <div class="field">
+                        <label for="regUsername">帳號</label>
+                        <input class="dlg-input" type="text" id="regUsername" placeholder="3～30 字，中英數字或底線" required autocomplete="username">
                     </div>
-                </div>
-                <div class="auth-field">
-                    <label for="loginPassword">登入密碼：</label>
-                    <div class="auth-input-wrap">
-                        <span class="auth-input-icon">🔒</span>
-                        <input type="password" id="loginPassword" placeholder="請輸入密碼" required autocomplete="current-password">
+                    <div class="field">
+                        <label for="regPassword">密碼</label>
+                        <input class="dlg-input" type="password" id="regPassword" placeholder="至少 4 個字" required autocomplete="new-password">
                     </div>
-                </div>
-                <button type="submit" class="auth-submit-btn" id="btnSubmitLogin">
-                    <span>🚀</span> 立即登入 (解鎖全規格)
-                </button>
-                <div class="auth-form-footer">
-                    還沒有帳號？ <a href="javascript:void(0)" id="linkToRegister">點此免費註冊 ➔</a>
-                </div>
-            </form>
+                    <div class="field">
+                        <label for="regConfirmPassword">確認密碼</label>
+                        <input class="dlg-input" type="password" id="regConfirmPassword" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="tool-btn btn-save auth-submit-btn" id="btnSubmitRegister">註冊並登入</button>
+                    <p class="auth-form-footer">已經有帳號？<a href="javascript:void(0)" id="linkToLogin">登入</a></p>
+                </form>
 
-            <!-- 2. 註冊表單 -->
-            <form id="formRegister" class="auth-form" style="display: none;" onsubmit="return false;">
-                <div class="auth-field">
-                    <label for="regUsername">設定帳號：</label>
-                    <div class="auth-input-wrap">
-                        <span class="auth-input-icon">👤</span>
-                        <input type="text" id="regUsername" placeholder="3~30 字元 (中英數底線)" required autocomplete="username">
-                    </div>
-                </div>
-                <div class="auth-field">
-                    <label for="regPassword">設定密碼：</label>
-                    <div class="auth-input-wrap">
-                        <span class="auth-input-icon">🔒</span>
-                        <input type="password" id="regPassword" placeholder="至少 4 個字元" required autocomplete="new-password">
-                    </div>
-                </div>
-                <div class="auth-field">
-                    <label for="regConfirmPassword">確認密碼：</label>
-                    <div class="auth-input-wrap">
-                        <span class="auth-input-icon">🛡️</span>
-                        <input type="password" id="regConfirmPassword" placeholder="再次輸入相同的密碼" required autocomplete="new-password">
-                    </div>
-                </div>
-                <button type="submit" class="auth-submit-btn register" id="btnSubmitRegister">
-                    <span>✨</span> 註冊並自動登入
-                </button>
-                <div class="auth-form-footer">
-                    已有帳號？ <a href="javascript:void(0)" id="linkToLogin">返回登入 ➔</a>
-                </div>
-            </form>
-
-            <!-- 權限規則說明 -->
-            <div class="auth-rule-box">
-                <div class="rule-item">
-                    <span class="rule-badge guest">👤 訪客模式</span>
-                    <span>僅限使用 <strong>10×10 (含) 以下</strong> 地圖規格</span>
-                </div>
-                <div class="rule-item">
-                    <span class="rule-badge member">👑 會員登入</span>
-                    <span><strong>永久解鎖 11×11 ~ 30×30</strong> 所有自訂迷宮與 MySQL 雲端儲存</span>
-                </div>
+                <dl class="auth-rule-box">
+                    <dt>訪客</dt><dd>最多 10 × 10，不能存檔</dd>
+                    <dt class="member">會員</dt><dd>2～30 格、雲端存 5 張、參加排位賽</dd>
+                </dl>
             </div>
         </div>
     </div>
 
-    <!-- 天梯排行榜彈跳視窗 -->
-    <div class="auth-modal-backdrop leaderboard-backdrop" id="leaderboardModalBackdrop">
-        <div class="auth-modal-card leaderboard-card">
-            <button class="auth-modal-close" id="btnCloseLeaderboardModal" title="關閉視窗">&times;</button>
-            
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">🏆</div>
-                <h3 class="auth-modal-title">排位賽全服天梯排行榜</h3>
-                <p class="auth-modal-subtitle">官方統一地圖盲測挑戰 • 僅保留個人最佳成績 (不重複帳號)</p>
+    <!-- 排行榜 -->
+    <div class="auth-modal-backdrop" id="leaderboardModalBackdrop">
+        <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="leaderboardTitle">排行榜</h2>
+                    <p class="dlg-sub">每位選手在每個級別只保留最佳成績</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseLeaderboardModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
-
-            <!-- 級別切換頁籤 -->
-            <div class="leaderboard-tabs" id="leaderboardTabs">
-                <button type="button" class="leaderboard-tab-btn active" data-size="10x10">
-                    <span>🥉</span> 10×10 (1分鐘)
-                </button>
-                <button type="button" class="leaderboard-tab-btn" data-size="15x15">
-                    <span>🥈</span> 15×15 (3分鐘)
-                </button>
-                <button type="button" class="leaderboard-tab-btn" data-size="20x20">
-                    <span>🥇</span> 20×20 (20分鐘)
-                </button>
-                <button type="button" class="leaderboard-tab-btn" data-size="25x25">
-                    <span>👑</span> 25×25 (30分鐘)
-                </button>
+            <div class="dlg-body">
+                <div class="seg seg-full dlg-tabs" id="leaderboardTabs" role="tablist">
+                    <button type="button" class="leaderboard-tab-btn active" data-size="10x10" role="tab">10 × 10・1 分</button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="15x15" role="tab">15 × 15・3 分</button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="20x20" role="tab">20 × 20・20 分</button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="25x25" role="tab">25 × 25・30 分</button>
+                </div>
+                <div class="user-best-banner" id="userBestBanner"></div>
+                <div class="leaderboard-table-wrap">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr><th style="width: 64px;">名次</th><th>選手</th><th>耗時</th><th>剩餘</th><th>地圖</th><th>完賽時間</th></tr>
+                        </thead>
+                        <tbody id="leaderboardTableBody">
+                            <tr><td colspan="6" class="table-note">載入中…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            <!-- 個人最佳成績橫條 -->
-            <div class="user-best-banner" id="userBestBanner">
-                <span>👤 我的最佳成績：<strong>尚未有紀錄</strong></span>
-                <span id="userBestRankText">登入並完成排位賽以登錄天梯</span>
-            </div>
-
-            <!-- 排行榜表格容器 -->
-            <div class="leaderboard-table-wrap">
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 68px;">名次</th>
-                            <th>選手帳號</th>
-                            <th>完賽耗時</th>
-                            <th>剩餘時間</th>
-                            <th>挑戰地圖</th>
-                            <th>完賽時間</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardTableBody">
-                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">載入中...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="leaderboard-footer">
-                <span class="leaderboard-tip">💡 排名依【完賽耗時】最短者優先排序；盲測排位挑戰公平客觀。</span>
-                <button type="button" class="tool-btn btn-action" id="btnRefreshLeaderboard"><span>🔄</span> 重新整理</button>
+            <div class="dlg-foot">
+                <span class="dlg-note">依完賽耗時排序，顯示前 50 名</span>
+                <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
             </div>
         </div>
     </div>
 
-    <!-- 排位賽地圖總覽彈窗 -->
+    <!-- 排位賽地圖總覽 -->
     <div class="auth-modal-backdrop" id="rankedGalleryBackdrop">
-        <div class="auth-modal-card leaderboard-card">
-            <button class="auth-modal-close" id="btnCloseRankedGallery" title="關閉視窗">&times;</button>
-
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">📚</div>
-                <h3 class="auth-modal-title">排位賽地圖總覽</h3>
-                <p class="auth-modal-subtitle">官方排位圖庫所有地圖 • 橘框為本場地圖</p>
+        <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="galleryTitle">地圖總覽</h2>
+                    <p class="dlg-sub">官方排位圖庫的所有地圖，橘框為本場地圖</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseRankedGallery" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
-
-            <div class="ranked-gallery" id="rankedGalleryList"></div>
+            <div class="dlg-body">
+                <div class="ranked-gallery" id="rankedGalleryList"></div>
+            </div>
         </div>
     </div>
 
-    <!-- 發布至官方排位賽圖庫確認彈窗 -->
+    <!-- 發布到排位賽 -->
     <div class="auth-modal-backdrop" id="publishModalBackdrop">
-        <div class="auth-modal-card publish-modal-card">
-            <button class="auth-modal-close" id="btnClosePublishModal" title="關閉視窗">&times;</button>
-            
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">📤</div>
-                <h3 class="auth-modal-title">發布迷宮至官方排位賽圖庫</h3>
-                <p class="auth-modal-subtitle">發布後此地圖將納入全服官方排位賽盲測抽籤圖庫，所有選手於排位賽皆可能隨機抽中！</p>
+        <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="publishTitle">發布到排位賽</h2>
+                    <p class="dlg-sub">發布後會加入官方圖庫，所有選手都可能抽到這張</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnClosePublishModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
-                <div class="publish-check-item">
-                    <span>📐 迷宮規格：</span>
-                    <span id="publishModalSpec" class="publish-spec-badge">10×10 菁英級</span>
+            <div class="dlg-body">
+                <div class="check-list">
+                    <div class="check-row"><span class="check-key">級別</span><span id="publishModalSpec">10 × 10 菁英級</span></div>
+                    <div class="check-row"><span class="check-key">起點到終點</span><span id="publishModalPathCheck">走得通</span></div>
+                    <div class="check-row"><span class="check-key">牆壁</span><span id="publishModalStats">0 段・300 × 300 cm</span></div>
+                    <div class="check-row"><span class="check-key">發布者</span><span class="text-ranked" id="publishModalAuthor">-</span></div>
                 </div>
-                <div class="publish-check-item">
-                    <span>🧭 起終點路徑檢驗：</span>
-                    <span id="publishModalPathCheck" class="status-pass">✅ 通路正常 (保證可解)</span>
-                </div>
-                <div class="publish-check-item">
-                    <span>🧱 牆壁段數 / 尺寸：</span>
-                    <span id="publishModalStats" style="color: var(--accent); font-weight: 600;">0 段 (300×300 cm)</span>
-                </div>
-                <div class="publish-check-item">
-                    <span>👤 發布選手：</span>
-                    <span id="publishModalAuthor" style="color: var(--ranked); font-weight: 700;">-</span>
+                <p class="dlg-note">只接受 10、15、20、25 格的正方形地圖</p>
+                <div class="field">
+                    <label for="publishCustomName">地圖別名（選填）</label>
+                    <input class="dlg-input" type="text" id="publishCustomName" placeholder="雙龍出海" maxlength="30">
                 </div>
             </div>
-
-            <div class="auth-field" style="margin-bottom: 16px;">
-                <label for="publishCustomName">設定地圖別名 (選填)：</label>
-                <div class="auth-input-wrap">
-                    <span class="auth-input-icon">🏷️</span>
-                    <input type="text" id="publishCustomName" placeholder="例如：死亡迴轉之谷、九曲迷蹤" maxlength="30">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="tool-btn btn-action" id="btnCancelPublish" style="padding: 10px 18px;">取消</button>
-                <button type="button" class="auth-submit-btn" id="btnConfirmPublish" style="padding: 10px 20px; background: var(--ranked-fill); border-color: var(--ranked-fill); color: var(--on-ranked);">
-                    <span>🚀</span> 確認發布至官方排位圖庫
-                </button>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost" id="btnCancelPublish">取消</button>
+                <button type="button" class="tool-btn btn-ranked" id="btnConfirmPublish"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>確認發布</button>
             </div>
         </div>
     </div>
 
-    <!-- 儲存迷宮彈窗 (支援最多 5 張地圖：新增或覆蓋現有) -->
+    <!-- 儲存迷宮（新地圖或覆蓋舊地圖，最多 5 張） -->
     <div class="auth-modal-backdrop" id="saveMapModalBackdrop">
-        <div class="auth-modal-card save-map-modal-card">
-            <button class="auth-modal-close" id="btnCloseSaveMapModal" title="關閉視窗">&times;</button>
-            
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">💾</div>
-                <h3 class="auth-modal-title">儲存迷宮至個人雲端資料庫</h3>
-                <p class="auth-modal-subtitle">每位會員帳號最多可獨立儲存 5 張自訂迷宮地圖</p>
+        <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="saveTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="saveTitle">儲存迷宮</h2>
+                    <p class="dlg-sub"><span id="saveCurrentSpec">10×10 格</span>・牆 <span id="saveCurrentWalls">0 段</span></p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseSaveMapModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
-
-            <!-- 儲存配額狀態橫條 -->
-            <div class="map-quota-banner" id="saveQuotaBanner">
-                <div class="quota-info">
-                    <span class="quota-title">📦 個人雲端配額：</span>
-                    <span class="quota-count" id="saveQuotaCount">已存 0 / 5 張</span>
+            <div class="dlg-body">
+                <div class="quota">
+                    <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="saveQuotaCount">0 / 5</span></div>
+                    <div class="quota-progress-bar"><div class="quota-progress-fill" id="saveQuotaProgressFill" style="width: 0%;"></div></div>
                 </div>
-                <div class="quota-progress-bar">
-                    <div class="quota-progress-fill" id="saveQuotaProgressFill" style="width: 0%;"></div>
+                <div class="field">
+                    <label for="saveMapNameInput">名稱</label>
+                    <input class="dlg-input" type="text" id="saveMapNameInput" placeholder="迴旋迷宮A" maxlength="30">
                 </div>
-            </div>
-
-            <!-- 目前地圖資訊 -->
-            <div class="save-map-info-box">
-                <div class="save-info-row">
-                    <span>📐 目前迷宮規格：</span>
-                    <strong id="saveCurrentSpec" style="color: var(--accent);">10×10 格 (300×300 cm)</strong>
-                </div>
-                <div class="save-info-row">
-                    <span>🧱 牆壁總段數：</span>
-                    <strong id="saveCurrentWalls" style="color: var(--go);">0 段</strong>
-                </div>
-            </div>
-
-            <!-- 地圖名稱自訂 -->
-            <div class="auth-field" style="margin-bottom: 14px;">
-                <label for="saveMapNameInput">自訂地圖名稱：</label>
-                <div class="auth-input-wrap">
-                    <span class="auth-input-icon">🏷️</span>
-                    <input type="text" id="saveMapNameInput" placeholder="例如：雙龍出海、迴旋迷宮A" maxlength="30">
-                </div>
-            </div>
-
-            <!-- 儲存槽選項 (存為全新 或 覆蓋現有) -->
-            <div class="save-slot-selection">
-                <div class="save-slot-title">選擇儲存方式：</div>
-                
-                <!-- 新增槽位選項 (滿 5 張時自動停用) -->
-                <label class="save-slot-option" id="slotOptionNewWrapper">
-                    <input type="radio" name="saveTargetMode" id="radioSaveNew" value="new" checked>
-                    <div class="slot-option-content">
-                        <span class="slot-option-label">➕ 存為全新地圖</span>
-                        <span class="slot-option-desc" id="slotNewDesc">使用新的儲存槽</span>
-                    </div>
-                </label>
-
-                <!-- 滿 5 張時的滿額提示 -->
-                <div class="map-full-warning" id="mapFullWarning" style="display: none;">
-                    ⚠️ 您已儲存滿 5 張地圖！請選擇下方其中一張進行【覆蓋更新】，或前往【我的地圖庫】刪除不需要的地圖。
-                </div>
-
-                <!-- 覆蓋現有地圖列表 -->
-                <div class="save-overwrite-group" id="saveOverwriteGroup">
-                    <div class="overwrite-header">
-                        <span>🔄 或選擇覆蓋現有地圖：</span>
-                    </div>
-                    <div class="save-existing-list" id="saveExistingMapsList">
-                        <!-- 動態生成現有地圖選項 -->
+                <div class="field">
+                    <span class="field-label">存到</span>
+                    <label class="save-slot-option" id="slotOptionNewWrapper">
+                        <input type="radio" name="saveTargetMode" id="radioSaveNew" value="new" checked>
+                        <span class="slot-option-label">存成新地圖</span>
+                        <span class="slot-option-desc" id="slotNewDesc">使用新的儲存格</span>
+                    </label>
+                    <div class="map-full-warning" id="mapFullWarning" style="display: none;">已經存滿 5 張。請選一張覆蓋，或到「我的地圖庫」刪掉不要的。</div>
+                    <div class="save-overwrite-group" id="saveOverwriteGroup">
+                        <div class="save-existing-list" id="saveExistingMapsList"></div>
                     </div>
                 </div>
             </div>
-
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                <button type="button" class="tool-btn btn-action" id="btnCancelSaveMap" style="padding: 10px 18px;">取消</button>
-                <button type="button" class="auth-submit-btn" id="btnConfirmSaveMap" style="padding: 10px 22px;">
-                    <span>💾</span> 確認儲存至雲端
-                </button>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost" id="btnCancelSaveMap">取消</button>
+                <button type="button" class="tool-btn btn-save" id="btnConfirmSaveMap"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
             </div>
         </div>
     </div>
 
-    <!-- 我的個人地圖庫彈窗 (查看已存的最多 5 張地圖、載入、刪除) -->
+    <!-- 我的地圖庫 -->
     <div class="auth-modal-backdrop" id="mapLibraryModalBackdrop">
-        <div class="auth-modal-card map-library-modal-card">
-            <button class="auth-modal-close" id="btnCloseMapLibraryModal" title="關閉視窗">&times;</button>
-            
-            <div class="auth-modal-header">
-                <div class="auth-modal-icon">📁</div>
-                <h3 class="auth-modal-title">我的個人迷宮圖庫</h3>
-                <p class="auth-modal-subtitle">管理您的雲端儲存迷宮 (每隻帳號上限 5 張，可隨時載入編輯或釋出儲存槽)</p>
-            </div>
-
-            <!-- 容量進度橫條 -->
-            <div class="map-quota-banner" id="libraryQuotaBanner">
-                <div class="quota-info">
-                    <span class="quota-title">📦 雲端容量使用率：</span>
-                    <span class="quota-count" id="libraryQuotaCount">已存 0 / 5 張 (尚餘 5 個儲存槽)</span>
+        <div class="auth-modal-card dlg-md" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="libraryTitle">我的地圖庫</h2>
+                    <p class="dlg-sub">載入後可以繼續編輯</p>
                 </div>
-                <div class="quota-progress-bar">
-                    <div class="quota-progress-fill" id="libraryQuotaProgressFill" style="width: 0%;"></div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseMapLibraryModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body">
+                <div class="quota">
+                    <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="libraryQuotaCount">0 / 5</span></div>
+                    <div class="quota-progress-bar"><div class="quota-progress-fill" id="libraryQuotaProgressFill" style="width: 0%;"></div></div>
                 </div>
+                <div class="map-library-list" id="mapLibraryList"></div>
+                <p class="dlg-note">在練習模式按「儲存」，地圖就會出現在這裡。</p>
             </div>
-
-            <!-- 地圖卡片清單列表 -->
-            <div class="map-library-list" id="mapLibraryList">
-                <div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取個人地圖庫中...</div>
-            </div>
-
-            <div class="map-library-footer">
-                <span class="library-tip">💡 提示：在【練習賽】完成規劃後，點擊「💾 儲存迷宮設定」即可將新地圖存入此圖庫。</span>
-                <button type="button" class="tool-btn btn-action" id="btnRefreshMapLibrary"><span>🔄</span> 重新整理</button>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
             </div>
         </div>
     </div>
@@ -708,7 +580,6 @@
             const driveStatusBadge = document.getElementById('driveStatusBadge');
             const driveStatusText = document.getElementById('driveStatusText');
             const driveStatusDot = document.getElementById('driveStatusDot');
-            const driveTipText = document.getElementById('driveTipText');
 
             // 賽事模式：'practice' (練習賽) | 'ranked' (排位賽)
             let currentGameMode = 'practice';
@@ -732,7 +603,6 @@
             const timerDigits = document.getElementById('timerDigits');
             const timerIcon = document.getElementById('timerIcon');
             const timerDisplay = document.getElementById('timerDisplay');
-            const subTimerBadge = document.getElementById('subTimerBadge');
             const btnTimerCountUp = document.getElementById('btnTimerCountUp');
             const btnTimerCountDown = document.getElementById('btnTimerCountDown');
             const countdownBtnLabel = document.getElementById('countdownBtnLabel');
@@ -773,12 +643,6 @@
 
                 const timeStr = formatTimeDisplay(displayMs);
                 if (timerDigits) timerDigits.textContent = timeStr;
-
-                if (subTimerBadge) {
-                    const modeText = currentTimerMode === 'up' ? '完賽計時' : countdownLabel;
-                    subTimerBadge.textContent = `${currentTimerMode === 'up' ? '⏱️' : '⏳'} ${timeStr} (${modeText})`;
-                    subTimerBadge.style.color = isDanger ? 'var(--danger-fill)' : (currentTimerMode === 'up' ? 'var(--accent)' : 'var(--ranked)');
-                }
             }
 
             function startTimer(reset = true) {
@@ -818,7 +682,7 @@
 
                             if (timeoutTimeValue) timeoutTimeValue.textContent = formatTimeDisplay(countdownLimitMs);
                             if (timeoutTimeSub) timeoutTimeSub.textContent = `沒在 ${countdownDesc} 內抵達終點`;
-                            if (btnTimeoutRestart) btnTimeoutRestart.textContent = `🔄 重新挑戰 (${countdownDesc})`;
+                            if (btnTimeoutRestart) btnTimeoutRestart.textContent = '再跑一次';
 
                             if (timeoutModal) timeoutModal.style.display = 'block';
                         }
@@ -851,7 +715,7 @@
             // 切換計時模式按鈕
             btnTimerCountUp.addEventListener('click', () => {
                 if (currentGameMode === 'ranked') {
-                    showToast('⚠️ 官方排位賽強制使用限時倒數規則！', true);
+                    showToast('官方排位賽強制使用限時倒數規則！', true);
                     return;
                 }
                 if (currentTimerMode === 'up') return;
@@ -877,7 +741,7 @@
             if (selectCountdownDuration) {
                 selectCountdownDuration.addEventListener('change', () => {
                     if (currentGameMode === 'ranked') {
-                        showToast('⚠️ 排位賽挑戰限時由官方級別統一規定！', true);
+                        showToast('排位賽挑戰限時由官方級別統一規定！', true);
                         return;
                     }
                     const val = selectCountdownDuration.value;
@@ -940,7 +804,7 @@
                 // 更新下拉選單中的自訂選項文字
                 const customOpt = selectCountdownDuration ? selectCountdownDuration.querySelector('option[value="custom"]') : null;
                 if (customOpt) {
-                    customOpt.textContent = `✏️ 自訂 (${countdownDesc})`;
+                    customOpt.textContent = `自訂（${countdownDesc}）`;
                 }
 
                 if (currentTimerMode !== 'down') {
@@ -996,9 +860,6 @@
                             btnResetCam.disabled = true;
                             btnResetCam.title = '排位賽進行中已鎖定車子視角';
                         }
-                        if (driveTipText) {
-                            driveTipText.innerHTML = '* 🏁 排位賽競技中已鎖定<strong>車子視角</strong>！請使用 WASD 或方向鍵操控小車全力衝向終點';
-                        }
                     } else {
                         if (btnModeOrbit) {
                             btnModeOrbit.disabled = false;
@@ -1007,9 +868,6 @@
                         if (btnResetCam) {
                             btnResetCam.disabled = false;
                             btnResetCam.title = '重設視角至標準角度';
-                        }
-                        if (driveTipText) {
-                            driveTipText.innerHTML = '* 鍵盤已接管自走車！不論處於<strong>俯瞰</strong>或<strong>車子視角</strong>均可使用 WASD 或方向鍵操控小車';
                         }
                     }
                 } else {
@@ -1030,14 +888,6 @@
                     if (btnResetCam) {
                         btnResetCam.disabled = false;
                         btnResetCam.title = '重設視角至標準角度';
-                    }
-
-                    if (driveTipText) {
-                        if (currentGameMode === 'ranked') {
-                            driveTipText.innerHTML = '* 💡 排位賽開始前可切換<strong>俯瞰/車載視角</strong>觀察地圖；按下【▶ 開始遙控】後將鎖定為車子視角';
-                        } else {
-                            driveTipText.innerHTML = '* 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能';
-                        }
                     }
 
                     if (timerRunning) {
@@ -1320,7 +1170,7 @@
                 }
                 editor.setGridSize(c, r);
                 maze3D.resetOrbitCamera();
-                showToast(`📐 已成功切換規格為 ${c}×${r} 格！`);
+                showToast(`已成功切換規格為 ${c}×${r} 格！`);
             }
 
             function requestApplyGridSize(c, r) {
@@ -1332,9 +1182,9 @@
                 // 檢查未登入限制：沒有登入只能使用 10*10 含以下地圖
                 if (!currentUser && (c > 10 || r > 10)) {
                     pendingTargetGrid = { cols: c, rows: r };
-                    showToast(`🔒 訪客限制：未登入僅限使用 10×10 (含) 以下地圖！您欲使用 ${c}×${r} 格，請先登入！`, true);
+                    showToast(`訪客限制：未登入僅限使用 10×10 (含) 以下地圖！您欲使用 ${c}×${r} 格，請先登入！`, true);
                     openAuthModal(
-                        `🔒 規格權限提示：\n您選擇了 ${c}×${r} 格大型地圖。\n未登入訪客僅限使用 10×10 (含) 以下規格！\n\n請先登入或註冊帳號，完成後將自動為您解鎖套用！`,
+                        `規格權限提示：\n您選擇了 ${c}×${r} 格大型地圖。\n未登入訪客僅限使用 10×10 (含) 以下規格！\n\n請先登入或註冊帳號，完成後將自動為您解鎖套用！`,
                         'login'
                     );
                     return false;
@@ -1388,35 +1238,35 @@
             document.getElementById('btnOuterWalls').addEventListener('click', () => {
                 if (currentMapMode === 'compact') set2DMapMode('large', false);
                 const state = editor.toggleOuterWalls();
-                showToast(state ? '🔲 已開啟四周圍牆' : '🔲 已關閉四周圍牆');
+                showToast(state ? '已開啟四周圍牆' : '已關閉四周圍牆');
             });
             document.getElementById('btnClearInner').addEventListener('click', () => {
                 if (currentMapMode === 'compact') set2DMapMode('large', false);
                 editor.clearInnerWalls();
-                showToast('🧹 已清空內部牆壁 (保留四周圍牆)');
+                showToast('已清空內部牆壁 (保留四周圍牆)');
             });
             document.getElementById('btnClearAll').addEventListener('click', () => {
                 if (currentMapMode === 'compact') set2DMapMode('large', false);
                 editor.clearAllWalls();
-                showToast('🗑️ 已清空所有牆壁 (包含四周圍牆)');
+                showToast('已清空所有牆壁 (包含四周圍牆)');
             });
             document.getElementById('btnRandom').addEventListener('click', () => {
                 if (currentMapMode === 'compact') set2DMapMode('large', false);
                 editor.generateRandomMaze();
-                showToast('🎲 已隨機生成迷宮！');
+                showToast('已隨機生成迷宮！');
             });
 
             // 匯出 2D 地圖 (高解析 PNG 圖片)
             document.getElementById('btnExportPNG').addEventListener('click', () => {
                 editor.exportPNG(
-                    () => showToast('🖼️ 2D 迷宮圖片已成功匯出下載！'),
+                    () => showToast('2D 迷宮圖片已成功匯出下載！'),
                     (errMsg) => showToast(errMsg, true)
                 );
             });
 
             // 匯出 JSON 資料
             document.getElementById('btnExportJSON').addEventListener('click', () => {
-                editor.exportJSON(() => showToast('📄 迷宮設定 JSON 已成功匯出！'));
+                editor.exportJSON(() => showToast('迷宮設定 JSON 已成功匯出！'));
             });
 
             // 匯入 JSON 資料
@@ -1431,7 +1281,7 @@
                 if (file) {
                     editor.importJSON(
                         file,
-                        () => showToast('📥 已成功載入迷宮設定！'),
+                        () => showToast('已成功載入迷宮設定！'),
                         (errMsg) => showToast(errMsg, true)
                     );
                 }
@@ -1440,7 +1290,7 @@
             // 5. 3D 視角切換 (俯瞰 / 車子視角)
             btnModeOrbit.addEventListener('click', () => {
                 if (currentGameMode === 'ranked' && maze3D.isDriving) {
-                    showToast('🔒 排位賽進行中只能使用車子視角！', true);
+                    showToast('排位賽進行中只能使用車子視角！', true);
                     return;
                 }
                 btnModeOrbit.classList.add('active');
@@ -1498,7 +1348,7 @@
 
             btnResetCam.addEventListener('click', () => {
                 if (currentGameMode === 'ranked' && maze3D.isDriving) {
-                    showToast('🔒 排位賽進行中視角已鎖定於自走車！', true);
+                    showToast('排位賽進行中視角已鎖定於自走車！', true);
                     return;
                 }
                 if (maze3D.currentMode === 'orbit') {
@@ -1758,7 +1608,7 @@
                         if (cols > 10 || rows > 10) {
                             btn.classList.add('locked');
                             btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>${cols}×${rows}`;
-                            btn.title = `🔒 未登入已鎖定：登入帳號即可解鎖 ${cols}×${rows} 規格！`;
+                            btn.title = `登入後可使用 ${cols}×${rows}`;
                         } else {
                             btn.classList.remove('locked');
                             btn.textContent = `${cols}×${rows}`;
@@ -1775,11 +1625,11 @@
                     if (btnSave) {
                         btnSave.classList.add('guest-locked');
                         btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>儲存（需登入）';
-                        btnSave.title = '🔒 訪客限制：儲存個人迷宮至雲端資料庫需登入會員帳號！';
+                        btnSave.title = '登入後才能存到雲端';
                     }
                     if (btnMapLibrary) {
                         btnMapLibrary.classList.add('guest-locked');
-                        btnMapLibrary.title = '🔒 訪客限制：個人地圖庫功能需登入會員帳號！';
+                        btnMapLibrary.title = '登入後才能使用地圖庫';
                     }
                     if (headerMapCountBadge) {
                         headerMapCountBadge.textContent = '需登入';
@@ -1787,7 +1637,7 @@
                     if (btnPublishToRanked) {
                         btnPublishToRanked.classList.add('guest-locked');
                         btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>發布到排位賽（需登入）';
-                        btnPublishToRanked.title = '🔒 訪客限制：發布自訂迷宮至官方排位賽圖庫需登入會員帳號！';
+                        btnPublishToRanked.title = '登入後才能發布到排位賽';
                     }
                 }
             }
@@ -1842,7 +1692,7 @@
                             pendingTargetGrid = null;
                             setTimeout(() => {
                                 applyGridSizeDirect(cols, rows);
-                                showToast(`🎉 歡迎登入！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
+                                showToast(`歡迎登入！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
                             }, 300);
                         }
                     } else {
@@ -1903,7 +1753,7 @@
                             pendingTargetGrid = null;
                             setTimeout(() => {
                                 applyGridSizeDirect(cols, rows);
-                                showToast(`🎉 恭喜註冊！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
+                                showToast(`恭喜註冊！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
                             }, 300);
                         }
                     } else {
@@ -1927,7 +1777,7 @@
                             switchGameMode('practice');
                         } else if (editor.cols > 10 || editor.rows > 10) {
                             applyGridSizeDirect(10, 10);
-                            showToast('🚪 已切換回訪客模式，迷宮規格已自動重設為 10×10！');
+                            showToast('已切換回訪客模式，迷宮規格已自動重設為 10×10！');
                         }
                     })
                     .catch(err => {
@@ -1953,7 +1803,7 @@
                                 (res.data.gridSize?.rows > 10) ||
                                 (res.data.gridSize?.cols > 10)
                             )) {
-                                showToast('🔒 訪客模式：已自動限縮為 10×10 迷宮地圖', true);
+                                showToast('訪客模式：已自動限縮為 10×10 迷宮地圖', true);
                                 editor.setGridSize(10, 10);
                                 return;
                             }
@@ -1994,18 +1844,18 @@
 
             function openSaveMapModal() {
                 if (!currentUser) {
-                    openAuthModal('🔒 訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+                    openAuthModal('訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
                     return;
                 }
                 if (currentGameMode === 'ranked') {
-                    showToast('🔒 排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
+                    showToast('排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
                     return;
                 }
 
                 // 填入目前地圖資訊
                 const cols = editor.cols;
                 const rows = editor.rows;
-                if (saveCurrentSpec) saveCurrentSpec.textContent = `${cols}×${rows} 格 (${cols * 30}×${rows * 30} cm)`;
+                if (saveCurrentSpec) saveCurrentSpec.textContent = `${cols} × ${rows}・${cols * 30} × ${rows * 30} cm`;
 
                 let wallCount = 0;
                 const currentData = editor.getData();
@@ -2039,7 +1889,7 @@
 
                         // 更新配額進度條
                         if (saveQuotaCount) {
-                            saveQuotaCount.textContent = `已存 ${count} / ${max} 張 (剩餘 ${remaining} 格可用)`;
+                            saveQuotaCount.textContent = `${count} / ${max}`;
                         }
                         if (saveQuotaProgressFill) {
                             const pct = Math.min(100, (count / max) * 100);
@@ -2067,7 +1917,7 @@
                                 slotOptionNewWrapper.classList.add('active');
                             }
                             if (radioSaveNew) radioSaveNew.checked = true;
-                            if (slotNewDesc) slotNewDesc.textContent = `使用第 ${count + 1} / ${max} 個儲存槽 (尚餘 ${remaining} 個名額)`;
+                            if (slotNewDesc) slotNewDesc.textContent = `還有 ${remaining} 格`;
                             if (mapFullWarning) mapFullWarning.style.display = 'none';
                         }
 
@@ -2083,13 +1933,8 @@
                                 html += `
                                     <label class="existing-map-slot-label ${isChecked ? 'selected' : ''}">
                                         <input type="radio" name="saveTargetMode" value="${m.id}" ${isChecked}>
-                                        <div class="existing-slot-info">
-                                            <span class="existing-slot-name">🗺️ ${escapeHtml(m.name)}</span>
-                                            <div class="existing-slot-meta">
-                                                <span class="library-spec-badge">${m.spec}</span>
-                                                <span>🕒 ${m.updatedAt ? m.updatedAt.substring(0, 16) : ''}</span>
-                                            </div>
-                                        </div>
+                                        <span class="slot-option-label">覆蓋「${escapeHtml(m.name)}」</span>
+                                        <span class="slot-option-desc">${m.spec}</span>
                                     </label>
                                 `;
                             });
@@ -2148,7 +1993,7 @@
             btnConfirmSaveMap?.addEventListener('click', () => {
                 if (!currentUser) {
                     closeSaveMapModal();
-                    openAuthModal('🔒 請先登入會員帳號！', 'login');
+                    openAuthModal('請先登入會員帳號！', 'login');
                     return;
                 }
 
@@ -2170,7 +2015,7 @@
                 currentData.targetMapId = targetMapId;
 
                 btnConfirmSaveMap.disabled = true;
-                btnConfirmSaveMap.innerHTML = '<span>⏳</span> 雲端儲存中...';
+                btnConfirmSaveMap.textContent = '儲存中…';
 
                 fetch('api.php', {
                     method: 'POST',
@@ -2180,11 +2025,11 @@
                 .then(res => res.json())
                 .then(res => {
                     btnConfirmSaveMap.disabled = false;
-                    btnConfirmSaveMap.innerHTML = '<span>💾</span> 確認儲存至雲端';
+                    btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
 
                     if (res.success) {
                         closeSaveMapModal();
-                        showToast(res.message || '💾 迷宮已成功儲存至個人雲端資料庫！');
+                        showToast(res.message || '已儲存');
                         refreshMapLibraryBadge();
                     } else {
                         showToast(res.message || '儲存失敗', true);
@@ -2196,7 +2041,7 @@
                 })
                 .catch(err => {
                     btnConfirmSaveMap.disabled = false;
-                    btnConfirmSaveMap.innerHTML = '<span>💾</span> 確認儲存至雲端';
+                    btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
                     showToast('無法連接伺服器進行儲存', true);
                 });
             });
@@ -2204,11 +2049,11 @@
             // 儲存按鈕點擊
             document.getElementById('btnSave').addEventListener('click', () => {
                 if (currentGameMode === 'ranked') {
-                    showToast('🔒 排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
+                    showToast('排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
                     return;
                 }
                 if (!currentUser) {
-                    openAuthModal('🔒 訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+                    openAuthModal('訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
                     return;
                 }
                 openSaveMapModal();
@@ -2224,11 +2069,11 @@
 
             function openMapLibraryModal() {
                 if (!currentUser) {
-                    openAuthModal('🔒 訪客限制：【我的個人地圖庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+                    openAuthModal('訪客限制：【我的個人地圖庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
                     return;
                 }
                 if (currentGameMode === 'ranked') {
-                    showToast('排位賽中無法開啟個人圖庫，請切換至【練習賽】', true);
+                    showToast('排位賽中不能開啟地圖庫，請先切回練習', true);
                     return;
                 }
 
@@ -2248,13 +2093,13 @@
 
             function loadMapLibraryList() {
                 if (!mapLibraryList) return;
-                mapLibraryList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取個人地圖庫中...</div>';
+                mapLibraryList.innerHTML = '<div class="list-note">載入中…</div>';
 
                 fetch('api.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
-                            mapLibraryList.innerHTML = `<div style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入地圖庫：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                            mapLibraryList.innerHTML = `<div class="list-note error">無法載入地圖庫：${escapeHtml(res.message || '未知錯誤')}</div>`;
                             return;
                         }
 
@@ -2265,7 +2110,7 @@
 
                         // 更新容量進度條
                         if (libraryQuotaCount) {
-                            libraryQuotaCount.textContent = `已存 ${count} / ${max} 張 (尚餘 ${remaining} 個儲存槽)`;
+                            libraryQuotaCount.textContent = `${count} / ${max}`;
                         }
                         if (libraryQuotaProgressFill) {
                             const pct = Math.min(100, (count / max) * 100);
@@ -2278,11 +2123,7 @@
 
                         if (list.length === 0) {
                             mapLibraryList.innerHTML = `
-                                <div class="library-empty-box">
-                                    <div class="library-empty-icon">📂</div>
-                                    <div class="library-empty-text">您的個人地圖庫目前空空如也</div>
-                                    <div class="library-empty-sub">每隻帳號可儲存最多 5 張迷宮！請在 2D 編輯器設計後點擊「💾 儲存迷宮設定」存入。</div>
-                                </div>
+                                <div class="list-note">還沒有存任何地圖。每個帳號最多可以存 5 張。</div>
                             `;
                             return;
                         }
@@ -2292,20 +2133,11 @@
                             html += `
                                 <div class="map-library-item">
                                     <div class="library-item-main">
-                                        <div class="library-item-title">#${idx + 1} 🗺️ ${escapeHtml(m.name)}</div>
-                                        <div class="library-item-meta">
-                                            <span class="library-spec-badge">${m.spec} 格</span>
-                                            <span class="library-date">🕒 更新於 ${m.updatedAt || m.createdAt || '-'}</span>
-                                        </div>
+                                        <div class="library-item-title">${escapeHtml(m.name)}</div>
+                                        <div class="library-item-meta">${m.spec}・更新於 ${(m.updatedAt || m.createdAt || '-').substring(5, 16)}</div>
                                     </div>
-                                    <div class="library-item-actions">
-                                        <button type="button" class="tool-btn btn-map-load" data-id="${m.id}" data-name="${escapeHtml(m.name)}">
-                                            📥 載入地圖
-                                        </button>
-                                        <button type="button" class="tool-btn btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}">
-                                            🗑️ 刪除
-                                        </button>
-                                    </div>
+                                    <button type="button" class="tool-btn btn-sm btn-map-load" data-id="${m.id}" data-name="${escapeHtml(m.name)}">載入</button>
+                                    <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trash"></use></svg></button>
                                 </div>
                             `;
                         });
@@ -2330,7 +2162,7 @@
                         });
                     })
                     .catch(err => {
-                        mapLibraryList.innerHTML = '<div style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</div>';
+                        mapLibraryList.innerHTML = '<div class="list-note error">無法連線到伺服器，請稍後再試</div>';
                     });
             }
 
@@ -2342,7 +2174,7 @@
                             editor.loadData(res.data);
                             maze3D.resetOrbitCamera();
                             closeMapLibraryModal();
-                            showToast(`🎉 已成功載入個人迷宮【${name || res.name}】！`);
+                            showToast(`已成功載入個人迷宮【${name || res.name}】！`);
                         } else {
                             showToast(res.message || '載入迷宮失敗', true);
                         }
@@ -2382,11 +2214,11 @@
 
             document.getElementById('btnMapLibrary')?.addEventListener('click', () => {
                 if (currentGameMode === 'ranked') {
-                    showToast('🔒 排位賽官方盲測模式禁止存取個人圖庫！請切換至【練習賽】進行管理。', true);
+                    showToast('排位賽官方盲測模式禁止存取個人圖庫！請切換至【練習賽】進行管理。', true);
                     return;
                 }
                 if (!currentUser) {
-                    openAuthModal('🔒 訪客限制：【我的個人地圖庫】功能僅限會員使用！請先登入或免費註冊帳號。', 'login');
+                    openAuthModal('訪客限制：【我的個人地圖庫】功能僅限會員使用！請先登入或免費註冊帳號。', 'login');
                     return;
                 }
                 openMapLibraryModal();
@@ -2413,7 +2245,7 @@
             function switchGameMode(mode) {
                 if (mode === 'ranked') {
                     if (!currentUser) {
-                        openAuthModal('🔒 排位賽天梯功能需登入帳號以記錄全服排行榜積分！請先登入或註冊帳號。', 'login');
+                        openAuthModal('排位賽天梯功能需登入帳號以記錄全服排行榜積分！請先登入或註冊帳號。', 'login');
                         return;
                     }
                     currentGameMode = 'ranked';
@@ -2446,8 +2278,6 @@
                         btnResetCam.disabled = false;
                         btnResetCam.title = '重設視角至標準角度';
                     }
-                    const walkTitleRanked = document.getElementById('simWalkControlTitle');
-                    if (walkTitleRanked) walkTitleRanked.innerHTML = '<strong>🎮 行走控制 (排位賽啟動後強制車子視角)：</strong>';
 
                     // 關閉一般賽事彈窗
                     document.getElementById('victoryModal').style.display = 'none';
@@ -2481,8 +2311,6 @@
                         btnResetCam.disabled = false;
                         btnResetCam.title = '重設視角至標準角度';
                     }
-                    const walkTitlePractice = document.getElementById('simWalkControlTitle');
-                    if (walkTitlePractice) walkTitlePractice.innerHTML = '<strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong>';
 
                     if (btnToggleMapSize) btnToggleMapSize.style.display = 'inline-flex';
 
@@ -2495,7 +2323,7 @@
 
                     // 重新載入練習賽迷宮
                     loadMazeConfig();
-                    showToast('🛠️ 已切換為【練習賽】模式！');
+                    showToast('已切換為【練習賽】模式！');
                 }
             }
 
@@ -2696,7 +2524,7 @@
 
             function loadLeaderboardData(size) {
                 if (!leaderboardTableBody) return;
-                leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">⏳ 天梯榜更新中...</td></tr>';
+                leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入中…</td></tr>';
 
                 fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
                     .then(res => res.json())
@@ -2704,11 +2532,11 @@
                         if (res.success) {
                             renderLeaderboard(res);
                         } else {
-                            leaderboardTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入排行榜：${escapeHtml(res.message || '未知錯誤')}</td></tr>`;
+                            leaderboardTableBody.innerHTML = `<tr><td colspan="6" class="table-note error">無法載入排行榜：${escapeHtml(res.message || '未知錯誤')}</td></tr>`;
                         }
                     })
                     .catch(err => {
-                        leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</td></tr>';
+                        leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note error">無法連線到伺服器，請稍後再試</td></tr>';
                     });
             }
 
@@ -2721,46 +2549,43 @@
                     if (userBest) {
                         const bestSec = (userBest.bestMs / 1000).toFixed(2);
                         userBestBanner.innerHTML = `
-                            <span>👤 我的最佳成績：<strong>${bestSec} 秒</strong></span>
-                            <span id="userBestRankText">全服天梯排名：第 <strong>${userBest.rank}</strong> 名</span>
+                            <div class="stat"><span class="stat-label">我的最佳</span><span class="stat-value best">${bestSec} 秒</span></div>
+                            <div class="stat"><span class="stat-label">全服排名</span><span class="stat-value">第 ${userBest.rank} 名</span></div>
                         `;
                     } else {
                         userBestBanner.innerHTML = `
-                            <span>👤 我的最佳成績：<strong>尚未有紀錄</strong></span>
-                            <span id="userBestRankText">${currentUser ? '完成此級別排位賽即登錄天梯！' : '請先登入帳號以登錄天梯'}</span>
+                            <div class="stat"><span class="stat-label">我的最佳</span><span class="stat-value">—</span></div>
+                            <div class="stat"><span class="stat-label">${currentUser ? '完成這個級別一場就會上榜' : '登入後才能上榜'}</span></div>
                         `;
                     }
                     if (data.myMapCount) {
-                        userBestBanner.innerHTML += `<span>🗺️ 我建立的排位地圖：本級別 <strong>${data.myMapCount.size}</strong> 張 / 共 <strong>${data.myMapCount.total}</strong> 張</span>`;
+                        userBestBanner.innerHTML += `<div class="stat end"><span class="stat-label">我建立的排位地圖</span><span>本級別 ${data.myMapCount.size} 張・共 ${data.myMapCount.total} 張</span></div>`;
                     }
                 }
 
                 if (list.length === 0) {
-                    leaderboardTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">目前尚無選手登錄此級別紀錄，快來搶下全服首位！</td></tr>';
+                    leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note">這個級別還沒有人完賽，你可以拿下第一名</td></tr>';
                     return;
                 }
 
                 let html = '';
                 list.forEach(row => {
                     const isMe = currentUser && (currentUser.id === row.userId || currentUser.username === row.username);
-                    let rankBadge = `#${row.rank}`;
-                    if (row.rank === 1) rankBadge = '<span class="rank-badge-icon">🥇</span> <strong>1</strong>';
-                    else if (row.rank === 2) rankBadge = '<span class="rank-badge-icon">🥈</span> <strong>2</strong>';
-                    else if (row.rank === 3) rankBadge = '<span class="rank-badge-icon">🥉</span> <strong>3</strong>';
+                    const rankBadge = row.rank <= 3 ? `<span class="medal medal-${row.rank}">${row.rank}</span>` : `<span class="rank-num">${row.rank}</span>`;
 
                     const usedSec = (row.timeUsedMs / 1000).toFixed(2) + ' 秒';
                     const remainSec = (row.timeRemainMs / 1000).toFixed(2) + ' 秒';
-                    const mapBadge = `<span style="font-family: monospace; color: var(--text-muted);">${escapeHtml(row.mapId)}</span>`;
+                    const mapBadge = escapeHtml(row.mapId);
                     const dateStr = row.createdAt ? row.createdAt.substring(0, 16) : '-';
 
                     html += `
                         <tr class="${isMe ? 'is-me' : ''}">
-                            <td style="text-align: center;">${rankBadge}</td>
-                            <td>${escapeHtml(row.username)}${isMe ? ' <span style="font-size: 12px; color:var(--ranked-fill);">(我)</span>' : ''}</td>
-                            <td style="color: var(--accent); font-weight: 700; font-family: monospace;">${usedSec}</td>
-                            <td style="color: var(--go); font-family: monospace;">${remainSec}</td>
-                            <td>${mapBadge}</td>
-                            <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
+                            <td>${rankBadge}</td>
+                            <td>${escapeHtml(row.username)}${isMe ? ' <span class="me-tag">（你）</span>' : ''}</td>
+                            <td class="num strong">${usedSec}</td>
+                            <td class="num muted">${remainSec}</td>
+                            <td class="num muted">${mapBadge}</td>
+                            <td class="muted">${dateStr}</td>
                         </tr>
                     `;
                 });
@@ -2814,13 +2639,13 @@
                     return;
                 }
                 rankedGalleryBackdrop.classList.add('show');
-                rankedGalleryList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;">⏳ 讀取排位圖庫中...</div>';
+                rankedGalleryList.innerHTML = '<div class="list-note">載入中…</div>';
 
                 fetch('ranked_api.php?action=list_maps')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
-                            rankedGalleryList.innerHTML = `<div style="text-align: center; color: var(--danger-fill); padding: 24px;">無法載入地圖總覽：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                            rankedGalleryList.innerHTML = `<div class="list-note error">無法載入地圖總覽：${escapeHtml(res.message || '未知錯誤')}</div>`;
                             return;
                         }
                         let html = '';
@@ -2832,7 +2657,7 @@
                                     <div class="ranked-gallery-item${isCurrent ? ' is-current' : ''}" title="${escapeHtml(String(m.name || m.mapId))}">
                                         ${mazePreviewSvg(m)}
                                         <div class="ranked-gallery-name">${escapeHtml(String(m.mapId))}${isCurrent ? '（本場）' : ''}</div>
-                                        <div>👤 ${escapeHtml(String(m.author || '官方'))}</div>
+                                        <div class="ranked-gallery-author">${escapeHtml(String(m.author || '官方'))}</div>
                                     </div>
                                 `;
                             });
@@ -2841,7 +2666,7 @@
                         rankedGalleryList.innerHTML = html;
                     })
                     .catch(() => {
-                        rankedGalleryList.innerHTML = '<div style="text-align: center; color: var(--danger-fill); padding: 24px;">伺服器連線失敗</div>';
+                        rankedGalleryList.innerHTML = '<div class="list-note error">無法連線到伺服器，請稍後再試</div>';
                     });
             }
 
@@ -2918,7 +2743,7 @@
 
             function openPublishModal() {
                 if (!currentUser) {
-                    openAuthModal('🔒 訪客限制：【發布至官方排位賽圖庫】需要登入會員帳號！請先登入或免費註冊。', 'login');
+                    openAuthModal('訪客限制：【發布至官方排位賽圖庫】需要登入會員帳號！請先登入或免費註冊。', 'login');
                     return;
                 }
 
@@ -2929,14 +2754,14 @@
                 const allowed = ['10x10', '15x15', '20x20', '25x25'];
 
                 if (!allowed.includes(size)) {
-                    showToast(`⚠️ 規格不符：排位賽僅支援 10×10、15×15、20×20、25×25！目前為 ${cols}×${rows}。`, true);
+                    showToast(`規格不符：排位賽僅支援 10×10、15×15、20×20、25×25！目前為 ${cols}×${rows}。`, true);
                     return;
                 }
 
                 // 檢查連通性
                 const solvable = isMazeSolvable(currentData);
                 if (!solvable) {
-                    showToast('❌ 發布失敗：經路徑運算驗證，此迷宮無法從起點到達終點！請修改內部牆壁確保有通行路徑。', true);
+                    showToast('發布失敗：經路徑運算驗證，此迷宮無法從起點到達終點！請修改內部牆壁確保有通行路徑。', true);
                     return;
                 }
 
@@ -2950,7 +2775,7 @@
                 };
 
                 if (publishModalSpec) publishModalSpec.textContent = tierLabels[size] || size;
-                if (publishModalPathCheck) publishModalPathCheck.innerHTML = '<span class="status-pass">✅ 通路已驗證 (保證起點可通達終點)</span>';
+                if (publishModalPathCheck) publishModalPathCheck.innerHTML = '走得通<svg class="icon" style="color:var(--go)" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>';
 
                 // 計算牆壁數量
                 let hCount = 0;
@@ -2959,7 +2784,7 @@
                 currentData.vWalls.forEach(r => r.forEach(v => { if (v) vCount++; }));
                 const wallTotal = hCount + vCount;
 
-                if (publishModalStats) publishModalStats.textContent = `${wallTotal} 段牆壁 (${cols * 30}×${rows * 30} cm)`;
+                if (publishModalStats) publishModalStats.textContent = `${wallTotal} 段・${cols * 30} × ${rows * 30} cm`;
                 if (publishModalAuthor) publishModalAuthor.textContent = currentUser ? currentUser.username : '訪客';
                 if (publishCustomName) publishCustomName.value = '';
 
@@ -2983,7 +2808,7 @@
                 const customName = publishCustomName ? publishCustomName.value.trim() : '';
 
                 btnConfirmPublish.disabled = true;
-                btnConfirmPublish.innerHTML = '<span>⏳</span> 發布上傳中...';
+                btnConfirmPublish.textContent = '發布中…';
 
                 fetch('ranked_api.php?action=publish_map', {
                     method: 'POST',
@@ -2996,7 +2821,7 @@
                 .then(res => res.json())
                 .then(res => {
                     btnConfirmPublish.disabled = false;
-                    btnConfirmPublish.innerHTML = '<span>🚀</span> 確認發布至官方排位圖庫';
+                    btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>確認發布';
 
                     if (res.success) {
                         closePublishModal();
@@ -3007,7 +2832,7 @@
                 })
                 .catch(err => {
                     btnConfirmPublish.disabled = false;
-                    btnConfirmPublish.innerHTML = '<span>🚀</span> 確認發布至官方排位圖庫';
+                    btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>確認發布';
                     showToast('無法連接排位賽伺服器進行發布', true);
                 });
             });

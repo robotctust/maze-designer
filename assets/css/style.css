@@ -73,14 +73,6 @@ body {
     overflow: hidden;
 }
 
-/* Header */
-
-/* Main Layout */
-
-/* Left: 2D Editor (設計時用一半版面 50%，遙控時恢復正常大小 480px) */
-
-/* Grid Specification Bar */
-
 .tool-btn {
     background: var(--surface-2);
     color: var(--text);
@@ -138,10 +130,6 @@ body {
     color: var(--text) !important;
     border-color: var(--text-2) !important;
 }
-
-/* 2D Map Zoom Bar */
-
-/* 2D Map Canvas Wrapper & Viewport */
 
 .map-viewport.panning {
     cursor: grabbing !important;
@@ -253,12 +241,6 @@ body {
     fill: var(--danger-fill-hover);
 }
 
-/* Tip / Status */
-
-/* Right: 3D Simulator */
-
-/* 3D 視圖懸浮主控儀表板 (整齊雙層結構 HUD Deck) */
-
 .drive-actions-group {
     display: flex;
     align-items: center;
@@ -350,16 +332,6 @@ body {
     display: block;
 }
 
-/* Keyboard Instructions Box under 2D Map */
-
-/* Victory Toast */
-
-/* Timer Display & Mode in 3D Toolbar */
-
-/* Custom Timer Duration Input Group */
-
-/* Victory & Timeout Modal Time Results */
-
 /* Toast Notification */
 .toast {
     position: fixed;
@@ -402,862 +374,9 @@ body {
     filter: none;
 }
 
-/* ========================================================
-   User Authentication & Account Management UI
-   ======================================================== */
-
-/* Preset buttons locked styling */
-
-/* Auth Modal Backdrop & Card */
-.auth-modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.82);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: auth-fadein 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.auth-modal-backdrop.show {
-    display: flex;
-}
-
-@keyframes auth-fadein {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.auth-modal-card {
-    position: relative;
-    background: var(--surface);
-    border: 2px solid var(--accent);
-    border-radius: var(--radius-lg);
-    box-shadow: none;
-    max-width: 440px;
-    width: 100%;
-    padding: 28px 24px 22px 24px;
-    box-sizing: border-box;
-    animation: auth-slideup 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes auth-slideup {
-    from { opacity: 0; transform: scale(0.92) translateY(15px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.auth-modal-close {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 28px;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 4px;
-}
-
-.auth-modal-close:hover {
-    color: var(--danger);
-    transform: none !important;
-}
-
-.auth-modal-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.auth-modal-icon {
-    font-size: 2.2rem;
-    margin-bottom: 6px;
-    filter: none !important;
-}
-
-.auth-modal-title {
-    font-size: 22px;
-    color: var(--text);
-    font-weight: 700;
-    margin-bottom: 6px;
-}
-
-.auth-modal-subtitle {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.4;
-}
-
-/* Tabs */
-.auth-tabs {
-    display: flex;
-    background: var(--bg);
-    border-radius: var(--radius);
-    padding: 4px;
-    gap: 4px;
-    margin-bottom: 18px;
-    border: 1px solid var(--border);
-}
-
-.auth-tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.auth-tab-btn:hover {
-    color: var(--text-2);
-}
-
-.auth-tab-btn.active {
-    background: var(--accent-fill);
-    color: var(--on-accent);
-    box-shadow: none !important;
-}
-
-/* Alert Box */
-.auth-alert {
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    line-height: 1.4;
-    white-space: pre-line;
-    animation: auth-fadein 0.2s;
-}
-
-.auth-alert.error {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid var(--danger-fill);
-    color: var(--danger-soft);
-}
-
-.auth-alert.success {
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid var(--go-fill);
-    color: var(--go);
-}
-
-.auth-alert.warning {
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid var(--ranked-fill);
-    color: var(--ranked-soft);
-}
-
-/* Form */
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.auth-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.auth-field label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-2);
-}
-
-.auth-input-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.auth-input-icon {
-    position: absolute;
-    left: 10px;
-    font-size: 16px;
-    color: var(--text-muted);
-    pointer-events: none;
-}
-
-.auth-input-wrap input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    padding: 9px 12px 9px 34px;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.2s ease;
-}
-
-.auth-input-wrap input:focus {
-    border-color: var(--accent);
-    box-shadow: none;
-    background: var(--surface-raised);
-}
-
-.auth-submit-btn {
-    background: var(--accent-fill);
-    border: 1px solid var(--accent);
-    color: var(--on-accent);
-    padding: 10px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.auth-submit-btn:hover {
-    background: var(--accent-fill-hover);
-    box-shadow: none !important;
-    transform: none !important;
-    color: var(--on-accent);
-}
-
-.auth-submit-btn.register {
-    background: var(--go-fill);
-    border-color: var(--go-fill);
-    color: var(--on-go);
-}
-
-.auth-submit-btn.register:hover {
-    background: var(--go-fill-hover);
-    box-shadow: none !important;
-    transform: none !important;
-    color: var(--on-go);
-}
-
-.auth-form-footer {
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-}
-
-.auth-form-footer a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-
-.auth-form-footer a:hover {
-    color: var(--accent-soft);
-    text-decoration: underline;
-}
-
-/* Rule Box */
-.auth-rule-box {
-    margin-top: 18px;
-    padding: 12px 14px;
-    background: var(--surface-sunken);
-    border-radius: var(--radius);
-    border: 1px dashed var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.rule-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.rule-badge {
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 12px;
-    white-space: nowrap;
-}
-
-.rule-badge.guest {
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--ranked);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-}
-
-.rule-badge.member {
-    background: rgba(56, 189, 248, 0.15);
-    color: var(--accent);
-    border: 1px solid rgba(56, 189, 248, 0.35);
-}
-
 /* Prompt pulse animation for start drive button after restart / reset to start */
-/* Prompt pulse animation for start drive button - disabled per user request (no pulsing, no size change, no glow) */
-
-/* ========================================================
-   Ranked Match (排位賽) & Leaderboard (排行榜) UI
-   ======================================================== */
-
-/* Header Mode Switch */
-
-/* Ranked Spec Bar */
-
-/* Blind 2D Map Overlay */
-
-/* Leaderboard Modal Card */
-.auth-modal-card.leaderboard-card {
-    max-width: 680px;
-    padding: 24px;
-}
-
-.leaderboard-tabs {
-    display: flex;
-    background: var(--bg);
-    border-radius: var(--radius);
-    padding: 4px;
-    gap: 4px;
-    margin-bottom: 14px;
-    border: 1px solid var(--border);
-}
-
-.leaderboard-tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    padding: 8px 6px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-
-.leaderboard-tab-btn:hover {
-    color: var(--text);
-}
-
-.leaderboard-tab-btn.active {
-    background: var(--ranked-fill);
-    color: var(--on-ranked);
-    box-shadow: none !important;
-}
-
-.user-best-banner {
-    background: rgba(2, 132, 199, 0.12);
-    border: 1px solid var(--accent-fill);
-    border-radius: var(--radius-sm);
-    padding: 8px 14px;
-    font-size: 14px;
-    color: var(--text-2);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px 16px;
-}
-
-.user-best-banner strong {
-    color: var(--accent);
-}
-
-.leaderboard-table-wrap {
-    max-height: 380px;
-    overflow-y: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface-sunken);
-    margin-bottom: 14px;
-}
-
-.leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    text-align: left;
-}
-
-.leaderboard-table th {
-    background: var(--surface);
-    color: var(--text-muted);
-    padding: 10px 12px;
-    font-weight: 700;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    border-bottom: 1px solid var(--border);
-}
-
-.leaderboard-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--surface);
-    color: var(--text-2);
-}
-
-.leaderboard-table tr:hover td {
-    background: rgba(56, 189, 248, 0.05);
-}
-
-.leaderboard-table tr.is-me td {
-    background: rgba(245, 158, 11, 0.12);
-    font-weight: 700;
-    color: var(--ranked-soft);
-}
-
-.rank-badge-icon {
-    font-size: 18px;
-    display: inline-block;
-}
-
-.leaderboard-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.leaderboard-tip {
-    flex: 1;
-    min-width: 0;
-    line-height: 1.4;
-}
 
 /* 一鍵發布至排位賽圖庫按鈕 */
-/* 發布確認彈窗樣式 */
-.auth-modal-card.publish-modal-card {
-    max-width: 520px;
-    padding: 24px;
-}
-
-.publish-spec-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 14px;
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--ranked);
-    border: 1px solid var(--ranked-fill);
-}
-
-.publish-check-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 9px 14px;
-    font-size: 13px;
-    color: var(--text-2);
-}
-
-.publish-check-item .status-pass {
-    color: var(--go);
-    font-weight: 700;
-}
-
-/* ========================================================
-   個人迷宮圖庫與多地圖儲存管理 (每隻帳號上限 5 張)
-   ======================================================== */
-
-/* Header 我的地圖庫計數徽章 */
-
-/* 儲存彈窗與地圖庫彈窗尺寸 */
-.auth-modal-card.save-map-modal-card {
-    max-width: 540px;
-    width: 95%;
-    padding: 24px;
-}
-
-.auth-modal-card.map-library-modal-card {
-    max-width: 640px;
-    width: 95%;
-    padding: 24px;
-}
-
-/* 儲存配額橫條 */
-.map-quota-banner {
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.quota-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-}
-
-.quota-title {
-    color: var(--text-2);
-    font-weight: 600;
-}
-
-.quota-count {
-    color: var(--accent);
-    font-weight: 700;
-}
-
-.quota-progress-bar {
-    width: 100%;
-    height: 8px;
-    background: var(--surface);
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-}
-
-.quota-progress-fill {
-    height: 100%;
-    background: var(--accent-fill);
-    border-radius: 4px;
-    transition: width 0.3s ease, background-color 0.3s ease;
-    color: var(--on-accent);
-}
-
-.quota-progress-fill.warn {
-    background: var(--ranked-fill);
-    color: var(--on-ranked);
-}
-
-.quota-progress-fill.danger {
-    background: var(--danger-fill);
-    color: var(--on-danger);
-}
-
-/* 目前地圖摘要資訊框 */
-.save-map-info-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    font-size: 13px;
-}
-
-.save-info-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--text-2);
-}
-
-/* 儲存槽選項區 */
-.save-slot-selection {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.save-slot-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-2);
-}
-
-.save-slot-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
-    user-select: none;
-}
-
-.save-slot-option:hover {
-    border-color: var(--accent);
-    background: var(--surface-raised);
-}
-
-.save-slot-option.active {
-    border-color: var(--accent);
-    background: rgba(2, 132, 199, 0.12);
-}
-
-.save-slot-option input[type="radio"] {
-    accent-color: var(--accent-fill);
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    margin: 0;
-}
-
-.slot-option-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-}
-
-.slot-option-label {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text);
-}
-
-.slot-option-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-/* 滿額警告提示 */
-.map-full-warning {
-    background: rgba(239, 68, 68, 0.14);
-    border: 1px solid var(--danger-fill);
-    color: var(--danger-soft);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 13px;
-    line-height: 1.45;
-}
-
-/* 覆蓋選項區塊與列表 */
-.save-overwrite-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.overwrite-header {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.save-existing-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 180px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.existing-map-slot-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
-    user-select: none;
-}
-
-.existing-map-slot-label:hover {
-    border-color: var(--ranked-fill);
-    background: var(--surface-raised);
-}
-
-.existing-map-slot-label.selected {
-    border-color: var(--ranked-fill);
-    background: rgba(245, 158, 11, 0.12);
-}
-
-.existing-map-slot-label input[type="radio"] {
-    accent-color: var(--ranked-fill);
-    cursor: pointer;
-    width: 15px;
-    height: 15px;
-    margin: 0;
-}
-
-.existing-slot-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 1;
-    font-size: 13px;
-}
-
-.existing-slot-name {
-    font-weight: 700;
-    color: var(--text);
-}
-
-.existing-slot-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-muted);
-    font-size: 12px;
-}
-
-/* 地圖庫清單列表 */
-.map-library-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 380px;
-    overflow-y: auto;
-    margin-bottom: 16px;
-    padding-right: 4px;
-}
-
-.map-library-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    gap: 14px;
-    transition: border-color 0.15s ease;
-}
-
-.map-library-item:hover {
-    border-color: var(--border-strong);
-}
-
-.library-item-main {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-    flex: 1;
-}
-
-.library-item-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.library-item-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    color: var(--text-muted);
-    flex-wrap: wrap;
-}
-
-.library-spec-badge {
-    background: rgba(56, 189, 248, 0.15);
-    color: var(--accent);
-    border: 1px solid var(--accent-fill);
-    padding: 1px 8px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 12px;
-    font-family: var(--font-mono);
-}
-
-.library-date {
-    color: var(--text-muted);
-}
-
-.library-item-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.btn-map-load {
-    background: var(--accent-fill);
-    border: 1px solid var(--accent);
-    color: var(--on-accent);
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: background-color 0.15s ease;
-}
-
-.btn-map-load:hover {
-    background: var(--accent-fill-hover);
-    color: var(--on-accent);
-}
-
-.btn-map-delete {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid var(--danger-fill);
-    color: var(--danger-soft);
-    font-size: 13px;
-    padding: 6px 10px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.btn-map-delete:hover {
-    background: var(--danger-fill);
-    color: var(--on-danger);
-}
-
-.map-library-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-}
-
-.library-tip {
-    color: var(--text-muted);
-    font-size: 12px;
-    line-height: 1.4;
-    flex: 1;
-    min-width: 0;
-}
 
 #btnRefreshMapLibrary,
 #btnRefreshLeaderboard {
@@ -1271,31 +390,6 @@ body {
     justify-content: center !important;
     gap: 6px !important;
     line-height: 1.2 !important;
-}
-
-.library-empty-box {
-    text-align: center;
-    padding: 36px 16px;
-    color: var(--text-muted);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.library-empty-icon {
-    font-size: 2.5rem;
-}
-
-.library-empty-text {
-    font-size: 14px;
-    color: var(--text-2);
-    font-weight: 600;
-}
-
-.library-empty-sub {
-    font-size: 13px;
-    color: var(--text-muted);
 }
 
 /* ========================================================
@@ -1329,9 +423,7 @@ button:hover,
 
 /* 圖示穩定化，無散光 (drop-shadow / text-shadow / scale pulse) */
 .blind-icon,
-.rank-badge-icon,
-.tier-icon,
-.auth-modal-icon {
+.tier-icon {
     filter: none !important;
     transform: none !important;
     animation: none !important;
@@ -2164,8 +1256,6 @@ kbd {
     color: var(--danger);
 }
 
-/* 觸控方向鍵：只在觸控裝置試跑時出現 */
-
 .touch-pad {
     position: absolute;
     left: 16px;
@@ -2656,5 +1746,522 @@ kbd {
     .lobby-spacer {
         display: none;
     }
+}
+
+/* ========================================================
+   對話框 (v2)：標題、內容、右下角按鈕，同一套外框
+   ======================================================== */
+.auth-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(4, 7, 15, 0.72);
+}
+
+.auth-modal-backdrop.show {
+    display: flex;
+}
+
+.auth-modal-card {
+    position: relative;
+    width: 100%;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+}
+
+.auth-modal-card.dlg-sm { max-width: 440px; }
+.auth-modal-card.dlg-md { max-width: 520px; }
+.auth-modal-card.dlg-lg { max-width: 720px; }
+
+.dlg-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 20px 0;
+}
+
+.dlg-titles {
+    flex: 1;
+    min-width: 0;
+}
+
+.dlg-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.dlg-sub {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.dlg-close {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: -6px -8px 0 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.dlg-close:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.dlg-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 20px 20px;
+    overflow-y: auto;
+}
+
+.dlg-foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+}
+
+.dlg-foot .dlg-note {
+    margin-right: auto;
+}
+
+.dlg-note,
+.list-note,
+.table-note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.list-note,
+.table-note {
+    padding: 24px 12px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.list-note.error,
+.table-note.error {
+    color: var(--danger);
+}
+
+/* 表單 */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field label,
+.field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+}
+
+.dlg-input {
+    height: 40px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+}
+
+.dlg-input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.dlg-tabs .auth-tab-btn,
+.dlg-tabs .leaderboard-tab-btn {
+    flex: 1;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.dlg-tabs .auth-tab-btn.active {
+    background: var(--selected);
+    color: var(--text);
+}
+
+.dlg-tabs .leaderboard-tab-btn.active {
+    background: var(--ranked-fill);
+    color: var(--on-ranked);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.auth-submit-btn {
+    min-height: 42px;
+    justify-content: center;
+}
+
+.auth-form-footer {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.auth-form-footer a {
+    margin-left: 4px;
+    color: var(--accent-soft);
+}
+
+.auth-alert {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid var(--border-strong);
+}
+
+.auth-alert.error {
+    background: var(--danger-tint);
+    border-color: #7F1D1D;
+    color: var(--danger-soft);
+}
+
+.auth-alert.warning {
+    background: var(--ranked-tint);
+    border-color: #7C5410;
+    color: var(--ranked-soft);
+}
+
+.auth-alert.success {
+    background: #0E2A1A;
+    border-color: #166534;
+    color: var(--go);
+}
+
+.auth-rule-box {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    row-gap: 6px;
+    margin: 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--surface-sunken);
+    font-size: 13px;
+}
+
+.auth-rule-box dt {
+    color: var(--text-muted);
+}
+
+.auth-rule-box dt.member {
+    color: var(--accent-soft);
+}
+
+.auth-rule-box dd {
+    margin: 0;
+}
+
+/* 雲端空間 */
+.quota-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.quota-count {
+    font-family: var(--font-mono);
+    color: var(--text);
+}
+
+.quota-progress-bar {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+}
+
+.quota-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.quota-progress-fill.warn {
+    background: var(--ranked-fill);
+}
+
+.quota-progress-fill.danger {
+    background: var(--danger-fill);
+}
+
+/* 儲存：選項列 */
+.save-slot-option,
+.existing-map-slot-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.save-slot-option:has(input:checked),
+.existing-map-slot-label.selected {
+    border-color: var(--accent);
+    background: var(--accent-tint);
+}
+
+.save-slot-option input,
+.existing-map-slot-label input {
+    accent-color: var(--accent);
+    margin: 0;
+}
+
+.slot-option-label {
+    flex: 1;
+}
+
+.slot-option-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.save-overwrite-group,
+.save-existing-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.map-full-warning {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--ranked-tint);
+    color: var(--ranked-soft);
+    font-size: 13px;
+}
+
+/* 發布：檢查清單 */
+.check-list {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.check-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.check-row:last-child {
+    border-bottom: 0;
+}
+
+.check-row > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.check-key {
+    color: var(--text-muted);
+}
+
+.text-ranked {
+    color: var(--ranked);
+}
+
+/* 地圖庫 */
+.map-library-list {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.map-library-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.map-library-item:last-child {
+    border-bottom: 0;
+}
+
+.library-item-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.library-item-title {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.library-item-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.btn-map-delete {
+    color: var(--danger);
+}
+
+/* 排行榜 */
+.user-best-banner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-sunken);
+}
+
+.user-best-banner:empty {
+    display: none;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+}
+
+.stat.end {
+    margin-left: auto;
+    text-align: right;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stat-value.best {
+    font-family: var(--font-mono);
+    color: var(--ranked);
+}
+
+.leaderboard-table-wrap {
+    max-height: 380px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.leaderboard-table th {
+    position: sticky;
+    top: 0;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+    border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-table tr.is-me td {
+    background: var(--ranked-tint);
+}
+
+.leaderboard-table .num {
+    font-family: var(--font-mono);
+}
+
+.leaderboard-table .strong {
+    color: var(--accent-soft);
+    font-weight: 700;
+}
+
+.leaderboard-table .muted {
+    color: var(--text-muted);
+}
+
+.medal {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.medal-1 { background: var(--ranked-fill); color: var(--on-ranked); }
+.medal-2 { background: #94A3B8; color: var(--bg); }
+.medal-3 { background: #B45309; color: #FFF7ED; }
+
+.rank-num {
+    padding-left: 7px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.me-tag {
+    font-size: 12px;
+    color: var(--ranked);
 }
 
