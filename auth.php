@@ -28,7 +28,7 @@ $jsonBody = json_decode($rawInput, true) ?: [];
 if ($action === 'status') {
     if (!empty($_SESSION['user_id'])) {
         $userId = intval($_SESSION['user_id']);
-        $stmt = $db->prepare("SELECT id, username, created_at, last_login FROM `users` WHERE id = ?");
+        $stmt = $db->prepare("SELECT id, username, role, created_at, last_login FROM `users` WHERE id = ?");
         $stmt->bind_param('i', $userId);
         $stmt->execute();
         $res = $stmt->get_result();
@@ -36,12 +36,16 @@ if ($action === 'status') {
         $stmt->close();
 
         if ($user) {
+            $userRole = $user['role'] ?? ROLE_JUNIOR;
+            $_SESSION['role'] = $userRole;
             echo json_encode([
                 'success' => true,
                 'loggedIn' => true,
                 'user' => [
                     'id' => intval($user['id']),
                     'username' => $user['username'],
+                    'role' => $userRole,
+                    'roleTitle' => getRoleTitle($userRole),
                     'created_at' => $user['created_at'],
                     'last_login' => $user['last_login']
                 ]
@@ -111,9 +115,10 @@ if ($action === 'register') {
     // 密碼加密
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
     $now = date('Y-m-d H:i:s');
+    $defaultRole = ROLE_JUNIOR; // 新註冊帳號皆預設為初級使用者
 
-    $insertStmt = $db->prepare("INSERT INTO `users` (username, password_hash, created_at, last_login) VALUES (?, ?, ?, ?)");
-    $insertStmt->bind_param('ssss', $username, $passwordHash, $now, $now);
+    $insertStmt = $db->prepare("INSERT INTO `users` (username, password_hash, role, created_at, last_login) VALUES (?, ?, ?, ?, ?)");
+    $insertStmt->bind_param('sssss', $username, $passwordHash, $defaultRole, $now, $now);
     
     if (!$insertStmt->execute()) {
         http_response_code(500);
@@ -127,13 +132,16 @@ if ($action === 'register') {
     // 註冊後自動登入
     $_SESSION['user_id'] = $newUserId;
     $_SESSION['username'] = $username;
+    $_SESSION['role'] = $defaultRole;
 
     echo json_encode([
         'success' => true,
-        'message' => "🎉 恭喜 {$username} 註冊成功！已自動登入，全尺寸地圖已解鎖！",
+        'message' => "🎉 恭喜 {$username} 註冊成功！身分：【" . getRoleTitle($defaultRole) . "】，已自動登入！",
         'user' => [
             'id' => $newUserId,
-            'username' => $username
+            'username' => $username,
+            'role' => $defaultRole,
+            'roleTitle' => getRoleTitle($defaultRole)
         ]
     ]);
     exit;
@@ -156,7 +164,7 @@ if ($action === 'login') {
         exit;
     }
 
-    $stmt = $db->prepare("SELECT id, username, password_hash FROM `users` WHERE username = ?");
+    $stmt = $db->prepare("SELECT id, username, password_hash, role FROM `users` WHERE username = ?");
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -176,15 +184,19 @@ if ($action === 'login') {
     $upStmt->execute();
     $upStmt->close();
 
+    $userRole = $user['role'] ?? ROLE_JUNIOR;
     $_SESSION['user_id'] = intval($user['id']);
     $_SESSION['username'] = $user['username'];
+    $_SESSION['role'] = $userRole;
 
     echo json_encode([
         'success' => true,
-        'message' => "👋 歡迎回來，{$user['username']}！全尺寸迷宮規格已解鎖！",
+        'message' => "👋 歡迎回來，{$user['username']}！身分：【" . getRoleTitle($userRole) . "】",
         'user' => [
             'id' => intval($user['id']),
-            'username' => $user['username']
+            'username' => $user['username'],
+            'role' => $userRole,
+            'roleTitle' => getRoleTitle($userRole)
         ]
     ]);
     exit;

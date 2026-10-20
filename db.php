@@ -3,6 +3,9 @@
  * 資料庫連線與自動初始化設定 (XAMPP MySQL)
  */
 
+// 統一設定台灣時區，確保 PHP 與 MySQL NOW() 完全一致
+date_default_timezone_set('Asia/Taipei');
+
 $dbHost = '127.0.0.1';
 $dbUser = 'root';
 $dbPass = '';
@@ -53,13 +56,26 @@ function getDbConnection() {
         `id` INT AUTO_INCREMENT PRIMARY KEY,
         `username` VARCHAR(50) NOT NULL UNIQUE,
         `password_hash` VARCHAR(255) NOT NULL,
+        `role` VARCHAR(20) NOT NULL DEFAULT 'junior',
         `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-        `last_login` DATETIME NULL
+        `last_login` DATETIME NULL,
+        INDEX (`role`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
     
     if (!$conn->query($createUsersTable)) {
         throw new Exception("無法建立 users 資料表: " . $conn->error);
     }
+
+    // 4-1. 檢查並自動補充 role 欄位 (支援舊版昇級)
+    $chkRoleCol = @$conn->query("SHOW COLUMNS FROM `users` LIKE 'role'");
+    if ($chkRoleCol && $chkRoleCol->num_rows === 0) {
+        @$conn->query("ALTER TABLE `users` ADD COLUMN `role` VARCHAR(20) NOT NULL DEFAULT 'junior' AFTER `password_hash`");
+        @$conn->query("ALTER TABLE `users` ADD INDEX (`role`)");
+    }
+
+    // 4-2. 初始化權限：chao 設為高級使用者 (senior)，其餘帳號預設為初級使用者 (junior)
+    @$conn->query("UPDATE `users` SET `role` = 'senior' WHERE `username` = 'chao'");
+    @$conn->query("UPDATE `users` SET `role` = 'junior' WHERE `username` != 'chao' AND (`role` IS NULL OR `role` = '' OR `role` NOT IN ('junior', 'intermediate', 'senior'))");
 
     // 5. 自動檢查並建立 user_mazes 資料表 (儲存使用者專屬迷宮)
     $createMazesTable = "CREATE TABLE IF NOT EXISTS `user_mazes` (
@@ -111,6 +127,69 @@ function getDbConnection() {
         @$conn->query("ALTER TABLE `rankings` ADD UNIQUE KEY `uk_user_grid` (`user_id`, `grid_size`)");
     }
 
+    // 7. 自動檢查並建立 share_codes 資料表 (分享碼：限時 1 分鐘，限 3 人使用)
+    $createShareCodesTable = "CREATE TABLE IF NOT EXISTS `share_codes` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `code` VARCHAR(32) NOT NULL UNIQUE,
+        `user_id` INT NOT NULL,
+        `maze_name` VARCHAR(100) DEFAULT '分享迷宮',
+        `grid_rows` INT NOT NULL,
+        `grid_cols` INT NOT NULL,
+        `maze_data` LONGTEXT NOT NULL,
+        `max_uses` INT NOT NULL DEFAULT 3,
+        `used_count` INT NOT NULL DEFAULT 0,
+        `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+        `expires_at` DATETIME NOT NULL,
+        INDEX (`code`),
+        INDEX (`user_id`),
+        INDEX (`expires_at`),
+        CONSTRAINT `fk_share_codes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+    if (!$conn->query($createShareCodesTable)) {
+        error_log("建立 share_codes 資料表警告: " . $conn->error);
+    }
+
+    // 8. 自動檢查並建立 ranked_submissions 資料表 (中級使用者排位賽地圖待審核庫)
+    $createRankedSubTable = "CREATE TABLE IF NOT EXISTS `ranked_submissions` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `size` VARCHAR(10) NOT NULL,
+        `name` VARCHAR(100) NOT NULL,
+        `author_id` INT NOT NULL,
+        `author_name` VARCHAR(50) NOT NULL,
+        `grid_rows` INT NOT NULL,
+        `grid_cols` INT NOT NULL,
+        `maze_data` LONGTEXT NOT NULL,
+        `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+        `reviewer_id` INT NULL,
+        `reviewed_at` DATETIME NULL,
+        `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX (`status`),
+        INDEX (`author_id`, `size`),
+        CONSTRAINT `fk_ranked_sub_user` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+    if (!$conn->query($createRankedSubTable)) {
+        error_log("建立 ranked_submissions 資料表警告: " . $conn->error);
+    }
+
     return $conn;
+}
+
+// 權限角色常數與名稱轉換
+const ROLE_JUNIOR = 'junior';             // 初級使用者
+const ROLE_INTERMEDIATE = 'intermediate'; // 中級使用者
+const ROLE_SENIOR = 'senior';             // 高級使用者
+
+function getRoleTitle($role) {
+    switch ($role) {
+        case ROLE_SENIOR:
+            return '高級使用者';
+        case ROLE_INTERMEDIATE:
+            return '中級使用者';
+        case ROLE_JUNIOR:
+        default:
+            return '初級使用者';
+    }
 }
 

@@ -288,6 +288,26 @@ if ($action === 'publish_map') {
         exit;
     }
 
+    $userId = intval($_SESSION['user_id']);
+    $uStmt = $db->prepare("SELECT role, username FROM `users` WHERE id = ? LIMIT 1");
+    $uStmt->bind_param('i', $userId);
+    $uStmt->execute();
+    $uRow = $uStmt->get_result()->fetch_assoc();
+    $uStmt->close();
+
+    $role = $uRow['role'] ?? ROLE_JUNIOR;
+    $username = $uRow['username'] ?? ($_SESSION['username'] ?? 'Anonymous');
+
+    // 1. 初級使用者禁止上傳排位賽地圖
+    if ($role === ROLE_JUNIOR) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'message' => '🔒 權限限制：初級使用者不能上傳排位賽地圖！需由高級使用者提升為中級或高級使用者。'
+        ]);
+        exit;
+    }
+
     $raw = file_get_contents('php://input');
     $payload = json_decode($raw, true) ?: [];
 
@@ -303,6 +323,32 @@ if ($action === 'publish_map') {
             'message' => "⚠️ 規格不符：官方排位賽僅支援 10×10、15×15、20×20、25×25 四種規格！目前為 {$size}。"
         ]);
         exit;
+    }
+
+    // 2. 中級使用者：每一類只能上傳 3 張，需由高級使用者審核
+    if ($role === ROLE_INTERMEDIATE) {
+        $subStmt = $db->prepare("SELECT COUNT(*) AS c FROM `ranked_submissions` WHERE author_id = ? AND size = ? AND status IN ('pending', 'approved')");
+        $subStmt->bind_param('is', $userId, $size);
+        $subStmt->execute();
+        $subCount = intval($subStmt->get_result()->fetch_assoc()['c'] ?? 0);
+        $subStmt->close();
+
+        // 同步檢查磁碟官方題庫檔案中是否已有由該帳號發布的此規格地圖
+        $diskCount = 0;
+        foreach (glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json") as $f) {
+            $m = json_decode(file_get_contents($f), true);
+            if (intval($m['authorId'] ?? 0) === $userId) $diskCount++;
+        }
+        $totalMySizeMaps = max($subCount, $diskCount);
+
+        if ($totalMySizeMaps >= 3) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => "⚠️ 達到上傳上限：中級使用者在每一類規格（{$size}）最多只能上傳 3 張排位賽地圖！您目前已有 {$totalMySizeMaps} 張（含審核中與已通過）。"
+            ]);
+            exit;
+        }
     }
 
     $hWalls = $mapData['hWalls'] ?? null;
@@ -368,6 +414,54 @@ if ($action === 'publish_map') {
         mkdir($mapDir, 0777, true);
     }
 
+    $customName = trim($payload['name'] ?? '');
+
+    // 中級使用者：進入審核隊列，需由高級使用者審核通過後才正式生效
+    if ($role === ROLE_INTERMEDIATE) {
+        $finalName = !empty($customName) 
+            ? "{$size} 排位賽投稿 ({$customName})" 
+            : "{$size} 排位賽投稿 (由 {$username} 發布)";
+
+        $submissionData = [
+            'name' => $finalName,
+            'author' => $username,
+            'authorId' => $userId,
+            'gridSize' => ['rows' => $rows, 'cols' => $cols],
+            'cellSizeCm' => 30,
+            'wallHeightCm' => 15,
+            'start' => $start,
+            'goal' => $goal,
+            'hWalls' => $hWalls,
+            'vWalls' => $vWalls,
+            'createdAt' => date('Y-m-d H:i:s')
+        ];
+        $subJson = json_encode($submissionData, JSON_UNESCAPED_UNICODE);
+
+        $inSub = $db->prepare("INSERT INTO `ranked_submissions` (size, name, author_id, author_name, grid_rows, grid_cols, maze_data, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+        $inSub->bind_param('ssisiis', $size, $finalName, $userId, $username, $rows, $cols, $subJson);
+        if (!$inSub->execute()) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => '儲存待審核地圖失敗：' . $inSub->error]);
+            exit;
+        }
+        $subId = $inSub->insert_id;
+        $inSub->close();
+
+        $currentTotal = $totalMySizeMaps + 1;
+
+        echo json_encode([
+            'success' => true,
+            'isPending' => true,
+            'submissionId' => $subId,
+            'size' => $size,
+            'message' => "📤 地圖【{$finalName}】已成功送交審核！中級使用者上傳之地圖需由高級使用者審核通過後方能啟用。目前已上傳 {$currentTotal}/3 張（{$size} 級別）。",
+            'mySizeCount' => $currentTotal,
+            'maxPerSize' => 3
+        ]);
+        exit;
+    }
+
+    // 高級使用者 (senior)：直接發布入庫
     // 計算下一個檔案編號
     $existingFiles = glob("{$mapDir}/map_*.json");
     $maxIndex = 0;
@@ -381,16 +475,15 @@ if ($action === 'publish_map') {
     $nextIndex = $maxIndex + 1;
     $newMapId = "map_{$nextIndex}";
 
-    $customName = trim($payload['name'] ?? '');
     $finalName = !empty($customName) 
         ? "{$size} 官方排位賽地圖 #{$nextIndex} ({$customName})" 
-        : "{$size} 官方排位賽地圖 #{$nextIndex} (由 {$_SESSION['username']} 發布)";
+        : "{$size} 官方排位賽地圖 #{$nextIndex} (由 {$username} 發布)";
 
     $fileData = [
         'mapId' => $newMapId,
         'name' => $finalName,
-        'author' => $_SESSION['username'] ?? 'Anonymous',
-        'authorId' => $_SESSION['user_id'] ?? null,
+        'author' => $username,
+        'authorId' => $userId,
         'gridSize' => ['rows' => $rows, 'cols' => $cols],
         'cellSizeCm' => 30,
         'wallHeightCm' => 15,
@@ -410,10 +503,18 @@ if ($action === 'publish_map') {
         exit;
     }
 
+    // 紀錄至 submissions 表標記為 approved
+    $subJson = json_encode($fileData, JSON_UNESCAPED_UNICODE);
+    $inSub = $db->prepare("INSERT INTO `ranked_submissions` (size, name, author_id, author_name, grid_rows, grid_cols, maze_data, status, reviewer_id, reviewed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'approved', ?, NOW(), NOW())");
+    $inSub->bind_param('ssisiisi', $size, $finalName, $userId, $username, $rows, $cols, $subJson, $userId);
+    @$inSub->execute();
+    @$inSub->close();
+
     $totalMaps = count(glob("{$mapDir}/map_*.json"));
 
     echo json_encode([
         'success' => true,
+        'isPending' => false,
         'message' => "🎉 成功發布！迷宮已正式加入 {$size} 官方排位賽地圖庫（地圖 #{$nextIndex}）！",
         'mapId' => $newMapId,
         'size' => $size,

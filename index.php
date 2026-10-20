@@ -36,6 +36,9 @@
                     <div class="menu-sep"></div>
                     <button type="button" class="menu-item" id="btnMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫<span class="menu-end" id="headerMapCountBadge">0 / 5</span></button>
                     <div class="menu-item static" role="menuitem" aria-disabled="true"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>我發布的排位地圖<span class="menu-end" id="myRankedMapCount">—</span></div>
+                    <div class="menu-sep" id="adminMenuSep" style="display: none;"></div>
+                    <button type="button" class="menu-item" id="btnAdminUsers" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#users"></use></svg>帳號管理<span class="menu-end">初／中級</span></button>
+                    <button type="button" class="menu-item" id="btnAdminReview" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#shield-check"></use></svg>牌位地圖審核<span class="menu-end" id="adminPendingCountBadge">0</span></button>
                     <div class="menu-sep"></div>
                     <button type="button" class="menu-item" id="btnLogout" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#logout"></use></svg>登出</button>
                 </div>
@@ -95,6 +98,13 @@
                 <button type="button" class="menu-item" id="btnExportPNG" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#photo"></use></svg>匯出 PNG 圖片</button>
             </div>
             <input type="file" id="fileInputJSON" accept=".json" style="display: none;">
+        </div>
+        <div class="menu-wrap">
+            <button type="button" class="tool-btn btn-ghost" id="btnShareMenu" aria-haspopup="menu" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#share"></use></svg>分享碼<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
+            <div class="menu" id="shareMenu" role="menu" hidden>
+                <button type="button" class="menu-item" id="btnOpenCreateShare" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#share"></use></svg>產生分享碼<span class="menu-end" id="shareCreateRoleTag">中／高級</span></button>
+                <button type="button" class="menu-item" id="btnOpenRedeemShare" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-import"></use></svg>使用分享碼載入</button>
+            </div>
         </div>
         <div class="editbar-spacer"></div>
         <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽</button>
@@ -284,12 +294,15 @@
                 <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>試跑</button>
                 <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="停止"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#player-stop"></use></svg>停止</button>
                 <button type="button" class="sim-btn" id="btnResetCar" title="車子回到起點"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>回起點</button>
-                <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
-                <span class="drive-bar-spacer"></span>
+                
+                <!-- 計時器居中顯示，避免被右側懸浮功能擋住 -->
                 <div class="timer-display" id="timerDisplay">
                     <span class="timer-label" id="timerIcon">完賽計時</span>
                     <span class="timer-digits" id="timerDigits">00:00.0</span>
                 </div>
+
+                <span class="drive-bar-spacer"></span>
+                <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
             </div>
 
             <!-- 結算對話框：練習完賽／練習超時／排位完賽／排位超時 -->
@@ -370,7 +383,7 @@
                 <form id="formLogin" class="auth-form" onsubmit="return false;">
                     <div class="field">
                         <label for="loginUsername">帳號</label>
-                        <input class="dlg-input" type="text" id="loginUsername" placeholder="johnlin" required autocomplete="username">
+                        <input class="dlg-input" type="text" id="loginUsername" placeholder="" required autocomplete="username">
                     </div>
                     <div class="field">
                         <label for="loginPassword">密碼</label>
@@ -546,6 +559,199 @@
             </div>
             <div class="dlg-foot">
                 <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 產生分享碼 (限時 1 分鐘，限 3 人使用) -->
+    <div class="auth-modal-backdrop" id="createShareModalBackdrop">
+        <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="createShareTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="createShareTitle">產生分享碼</h2>
+                    <p class="dlg-sub">限時 1 分鐘・最多供 3 人載入此迷宮</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseCreateShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body">
+                <div class="check-list">
+                    <div class="check-row"><span class="check-key">迷宮規格</span><span id="shareModalSpec">10 × 10</span></div>
+                    <div class="check-row"><span class="check-key">迷宮名稱</span><span id="shareModalName">我的迷宮</span></div>
+                </div>
+
+                <div id="shareInitialArea">
+                    <p class="dlg-note" style="margin-top: 12px;">點擊「產生分享碼」後將產生一組 6 位代碼並存入資料庫。限時 1 分鐘有效，最多可讓 3 個人載入。</p>
+                </div>
+
+                <div id="shareGeneratedArea" style="display: none;">
+                    <div class="share-code-box">
+                        <span class="share-code-val" id="shareCodeDisplay">------</span>
+                        <div class="share-meta-row">
+                            <span id="shareUsageInfo">已使用：<strong id="shareUsedCount">0</strong> / 3 人</span>
+                            <span class="share-timer-badge" id="shareTimerBadge"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg><span id="shareCountdownSeconds">60</span>s</span>
+                        </div>
+                        <div class="share-progress-bar">
+                            <div class="share-progress-fill" id="shareProgressFill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <p class="dlg-note" id="shareStatusNote">分享碼已儲存於資料庫，複製後請盡快傳送給朋友！</p>
+                </div>
+
+                <div class="auth-alert" id="shareAlert" role="alert" style="display: none;"></div>
+            </div>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost" id="btnCancelCreateShare">關閉</button>
+                <button type="button" class="tool-btn btn-save" id="btnDoGenerateShare"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#share"></use></svg>產生分享碼</button>
+                <button type="button" class="tool-btn btn-save" id="btnCopyShareCode" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#copy"></use></svg>複製分享碼</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 輸入分享碼載入地圖 -->
+    <div class="auth-modal-backdrop" id="redeemShareModalBackdrop">
+        <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="redeemShareTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="redeemShareTitle">載入分享地圖</h2>
+                    <p class="dlg-sub">輸入他人分享的 6 碼代碼，即刻載入迷宮</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseRedeemShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body">
+                <div class="auth-alert" id="redeemAlert" role="alert" style="display: none;"></div>
+                <div class="field">
+                    <label for="inputRedeemCode">分享代碼 (6 碼英數字)</label>
+                    <input class="dlg-input" type="text" id="inputRedeemCode" placeholder="例如：8K2P9N" maxlength="10" autocomplete="off" style="font-family: var(--font-mono, monospace); font-size: 20px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;">
+                </div>
+                <p class="dlg-note">分享碼限時 1 分鐘且最多僅供 3 人使用，載入後會直接載入並呈現於 2D 與 3D 視圖中。</p>
+            </div>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost" id="btnCancelRedeemShare">取消</button>
+                <button type="button" class="tool-btn btn-save" id="btnConfirmRedeemShare"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 高級使用者專屬：帳號管理 (初級、中級帳號，高級不顯示) -->
+    <div class="auth-modal-backdrop" id="adminUsersModalBackdrop">
+        <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="adminUsersTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="adminUsersTitle">帳號管理</h2>
+                    <p class="dlg-sub">調整初級與中級使用者身分（高級使用者帳號已隱藏）</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminUsersModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body">
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>帳號名稱</th>
+                                <th>目前身分</th>
+                                <th>註冊時間</th>
+                                <th>最近登入</th>
+                                <th>身分調整</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody">
+                            <tr><td colspan="5" class="table-note">載入帳號清單中…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="dlg-note">註冊新帳號皆預設為「初級使用者」，可在此將其升等為「中級使用者」以解鎖分享碼與排位投稿功能。</p>
+            </div>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminUsers"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 高級使用者專屬：排位賽地圖審核與管理 -->
+    <div class="auth-modal-backdrop" id="adminReviewModalBackdrop">
+        <div class="auth-modal-card dlg-xl" role="dialog" aria-modal="true" aria-labelledby="adminReviewTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="adminReviewTitle">排位賽地圖審核與管理</h2>
+                    <p class="dlg-sub">審核中級使用者投稿之迷宮、檢視 2D 地圖與刪除官方地圖</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminReviewModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body">
+                <div class="seg seg-full dlg-tabs" role="tablist">
+                    <button type="button" class="auth-tab-btn active" id="tabAdminPending" role="tab">待審核投稿 <span class="badge" id="tabPendingCount">0</span></button>
+                    <button type="button" class="auth-tab-btn" id="tabAdminOfficial" role="tab">官方題庫管理（刪除地圖）</button>
+                </div>
+
+                <!-- 分頁 1：待審核投稿列表 -->
+                <div id="panelAdminPending">
+                    <div class="admin-table-wrap" style="margin-top: 12px;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>規格</th>
+                                    <th>地圖名稱</th>
+                                    <th>投稿者</th>
+                                    <th>提交時間</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSubmissionsTableBody">
+                                <tr><td colspan="5" class="table-note">載入中…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 分頁 2：官方題庫管理列表 (含刪除功能) -->
+                <div id="panelAdminOfficial" style="display: none; margin-top: 12px;">
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>級別</th>
+                                    <th>編號</th>
+                                    <th>名稱</th>
+                                    <th>作者</th>
+                                    <th>建立時間</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOfficialMapsTableBody">
+                                <tr><td colspan="6" class="table-note">載入中…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="dlg-note">刪除地圖後將無法復原。每個級別至少會保留 1 張地圖以維持排位賽正常運作。</p>
+                </div>
+            </div>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminReview"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2D 地圖檢視預覽彈窗 -->
+    <div class="auth-modal-backdrop" id="preview2DModalBackdrop">
+        <div class="auth-modal-card dlg-md" role="dialog" aria-modal="true" aria-labelledby="preview2DTitle">
+            <div class="dlg-head">
+                <div class="dlg-titles">
+                    <h2 class="dlg-title" id="preview2DTitle">2D 地圖預覽</h2>
+                    <p class="dlg-sub" id="preview2DSub">規格與路徑驗證</p>
+                </div>
+                <button type="button" class="dlg-close auth-modal-close" id="btnClosePreview2DModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            </div>
+            <div class="dlg-body" style="text-align: center;">
+                <div class="preview-2d-canvas-wrap">
+                    <canvas id="preview2DCanvas" width="400" height="400" class="preview-2d-canvas"></canvas>
+                </div>
+                <div class="check-list" style="margin-top: 10px; text-align: left;">
+                    <div class="check-row"><span class="check-key">起終點</span><span>起點 <strong style="color:var(--go);">(S) 綠標</strong> → 終點 <strong style="color:var(--danger);">(G) 紅標</strong></span></div>
+                    <div class="check-row"><span class="check-key">作者與時間</span><span id="preview2DMeta">-</span></div>
+                </div>
+            </div>
+            <div class="dlg-foot">
+                <button type="button" class="tool-btn btn-ghost" id="btnDismissPreview2D">關閉</button>
             </div>
         </div>
     </div>
@@ -1542,6 +1748,20 @@
                     .catch(() => {});
             }
 
+            // 重新整理管理員待審核地圖數量徽章
+            function refreshAdminPendingCount() {
+                const badge = document.getElementById('adminPendingCountBadge');
+                if (!badge || !currentUser || currentUser.role !== 'senior') return;
+                fetch('admin_api.php?action=pending_count')
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success && typeof res.count === 'number') {
+                            badge.textContent = res.count;
+                        }
+                    })
+                    .catch(() => {});
+            }
+
             // 更新使用者狀態與規格鎖定 UI
             function updateAuthUI(user) {
                 currentUser = user;
@@ -1550,18 +1770,44 @@
                 const btnMapLibrary = document.getElementById('btnMapLibrary');
                 const headerMapCountBadge = document.getElementById('headerMapCountBadge');
                 const btnPublishToRanked = document.getElementById('btnPublishToRanked');
+                const btnAdminUsers = document.getElementById('btnAdminUsers');
+                const btnAdminReview = document.getElementById('btnAdminReview');
+                const adminMenuSep = document.getElementById('adminMenuSep');
+                const btnOpenCreateShare = document.getElementById('btnOpenCreateShare');
+                const btnOpenRedeemShare = document.getElementById('btnOpenRedeemShare');
                 
                 if (user) {
                     // 已登入
-                    authBadge.textContent = '會員・可用 2～30 格';
+                    const role = user.role || 'junior';
+                    const roleTitle = user.roleTitle || (role === 'senior' ? '高級使用者' : (role === 'intermediate' ? '中級使用者' : '初級使用者'));
+                    authBadge.innerHTML = `<span class="role-badge ${role}">${roleTitle}</span>・可用 2～30 格`;
                     btnOpenAuthModal.style.display = 'none';
                     btnLogout.style.display = 'flex';
                     btnAccountMenu.style.display = 'inline-flex';
                     const initial = user.username.charAt(0).toUpperCase();
                     document.getElementById('accountAvatar').textContent = initial;
                     document.getElementById('accountAvatarLg').textContent = initial;
-                    document.getElementById('accountName').textContent = user.username;
+                    document.getElementById('accountName').innerHTML = `${escapeHtml(user.username)} <span class="role-badge ${role}" style="font-size:11px;padding:1px 6px;">${roleTitle}</span>`;
                     document.getElementById('accountNameLg').textContent = user.username;
+
+                    // 高級使用者專屬管理功能
+                    if (btnAdminUsers) btnAdminUsers.style.display = (role === 'senior') ? 'flex' : 'none';
+                    if (btnAdminReview) btnAdminReview.style.display = (role === 'senior') ? 'flex' : 'none';
+                    if (adminMenuSep) adminMenuSep.style.display = (role === 'senior') ? 'block' : 'none';
+
+                    // 分享碼權限控管
+                    if (btnOpenRedeemShare) btnOpenRedeemShare.classList.remove('guest-locked');
+                    if (btnOpenCreateShare) {
+                        if (role === 'junior') {
+                            btnOpenCreateShare.classList.add('guest-locked');
+                            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#lock"></use></svg>產生分享碼<span class="menu-end">中／高級</span>';
+                            btnOpenCreateShare.title = '初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖';
+                        } else {
+                            btnOpenCreateShare.classList.remove('guest-locked');
+                            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
+                            btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
+                        }
+                    }
 
                     // 解除所有預設按鈕鎖定
                     presetButtons.forEach(btn => {
@@ -1577,7 +1823,7 @@
                     if (inputCols) inputCols.title = '會員特權：已解鎖支援 2 ~ 30 格';
                     if (inputRows) inputRows.title = '會員特權：已解鎖支援 2 ~ 30 格';
 
-                    // 會員解鎖儲存、個人地圖庫與發布按鈕
+                    // 會員解鎖儲存與個人地圖庫
                     if (btnSave) {
                         btnSave.classList.remove('guest-locked');
                         btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
@@ -1587,12 +1833,23 @@
                         btnMapLibrary.classList.remove('guest-locked');
                         btnMapLibrary.title = '開啟我的迷宮圖庫 (管理與載入已存地圖，最多 5 張)';
                     }
+
+                    // 排位賽地圖發布權限控管 (初級使用者不能上傳排位賽地圖)
                     if (btnPublishToRanked) {
-                        btnPublishToRanked.classList.remove('guest-locked');
-                        btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽';
-                        btnPublishToRanked.title = '將目前練習賽設計好的迷宮，一鍵發布至官方排位賽圖庫';
+                        if (role === 'junior') {
+                            btnPublishToRanked.classList.add('guest-locked');
+                            btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>發布到排位賽（中級以上）';
+                            btnPublishToRanked.title = '初級使用者不能上傳排位賽地圖，需由高級使用者提升為中級或高級使用者！';
+                        } else {
+                            btnPublishToRanked.classList.remove('guest-locked');
+                            btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽';
+                            btnPublishToRanked.title = (role === 'intermediate')
+                                ? '中級使用者：每一類限 3 張，需由高級使用者審核通過後加入題庫'
+                                : '高級使用者：擁有發布與審核所有排位賽地圖權限';
+                        }
                     }
                     refreshMapLibraryBadge();
+                    if (role === 'senior') refreshAdminPendingCount();
                 } else {
                     // 訪客 (未登入)
                     authBadge.textContent = '訪客・最多 10 × 10';
@@ -1600,6 +1857,12 @@
                     btnLogout.style.display = 'none';
                     btnAccountMenu.style.display = 'none';
                     closeMenu(accountMenu);
+
+                    if (btnAdminUsers) btnAdminUsers.style.display = 'none';
+                    if (btnAdminReview) btnAdminReview.style.display = 'none';
+                    if (adminMenuSep) adminMenuSep.style.display = 'none';
+                    if (btnOpenCreateShare) btnOpenCreateShare.classList.add('guest-locked');
+                    if (btnOpenRedeemShare) btnOpenRedeemShare.classList.add('guest-locked');
 
                     // 鎖定大於 10x10 的預設按鈕
                     presetButtons.forEach(btn => {
@@ -2210,6 +2473,7 @@
             setupMenu(document.getElementById('btnSpecMenu'), document.getElementById('specMenu'));
             setupMenu(document.getElementById('btnMapMenu'), document.getElementById('mapMenu'));
             setupMenu(document.getElementById('btnFileMenu'), document.getElementById('fileMenu'));
+            setupMenu(document.getElementById('btnShareMenu'), document.getElementById('shareMenu'));
             setupMenu(document.getElementById('btnShortcuts'), document.getElementById('shortcutsMenu'));
 
             document.getElementById('btnMapLibrary')?.addEventListener('click', () => {
@@ -2677,6 +2941,278 @@
             });
 
             // ============================================
+            // 10-1. 分享碼系統 (限時 1 分鐘，限 3 人使用)
+            // ============================================
+            const createShareModalBackdrop = document.getElementById('createShareModalBackdrop');
+            const btnCloseCreateShareModal = document.getElementById('btnCloseCreateShareModal');
+            const btnCancelCreateShare = document.getElementById('btnCancelCreateShare');
+            const btnDoGenerateShare = document.getElementById('btnDoGenerateShare');
+            const btnCopyShareCode = document.getElementById('btnCopyShareCode');
+            const shareGeneratedArea = document.getElementById('shareGeneratedArea');
+            const shareInitialArea = document.getElementById('shareInitialArea');
+            const shareCodeDisplay = document.getElementById('shareCodeDisplay');
+            const shareCountdownSeconds = document.getElementById('shareCountdownSeconds');
+            const shareProgressFill = document.getElementById('shareProgressFill');
+            const shareUsedCount = document.getElementById('shareUsedCount');
+            const shareTimerBadge = document.getElementById('shareTimerBadge');
+            const shareStatusNote = document.getElementById('shareStatusNote');
+            const shareAlert = document.getElementById('shareAlert');
+
+            let shareTimerInterval = null;
+            let shareStatusPollInterval = null;
+            let currentShareCode = null;
+            let shareExpiresTimestamp = 0;
+
+            function clearShareTimers() {
+                if (shareTimerInterval) { clearInterval(shareTimerInterval); shareTimerInterval = null; }
+                if (shareStatusPollInterval) { clearInterval(shareStatusPollInterval); shareStatusPollInterval = null; }
+            }
+
+            function openCreateShareModal() {
+                if (!currentUser) {
+                    openAuthModal('請先登入帳號以使用分享碼功能！', 'login');
+                    return;
+                }
+                if (currentUser.role === 'junior') {
+                    showToast('🔒 權限限制：初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖！', true);
+                    return;
+                }
+
+                clearShareTimers();
+                currentShareCode = null;
+                if (shareAlert) { shareAlert.style.display = 'none'; shareAlert.textContent = ''; }
+                if (shareInitialArea) shareInitialArea.style.display = 'block';
+                if (shareGeneratedArea) shareGeneratedArea.style.display = 'none';
+                if (btnDoGenerateShare) {
+                    btnDoGenerateShare.style.display = 'inline-flex';
+                    btnDoGenerateShare.disabled = false;
+                    btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+                }
+                if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';
+
+                const cols = editor.cols;
+                const rows = editor.rows;
+                const modalSpec = document.getElementById('shareModalSpec');
+                const modalName = document.getElementById('shareModalName');
+                if (modalSpec) modalSpec.textContent = `${cols} × ${rows}`;
+                if (modalName) modalName.textContent = `我的迷宮 (${cols}×${rows})`;
+
+                createShareModalBackdrop?.classList.add('show');
+            }
+
+            function closeCreateShareModal() {
+                clearShareTimers();
+                createShareModalBackdrop?.classList.remove('show');
+            }
+
+            function updateShareCountdownUI() {
+                const remainMs = shareExpiresTimestamp - Date.now();
+                const remainSec = Math.max(0, Math.ceil(remainMs / 1000));
+                if (shareCountdownSeconds) shareCountdownSeconds.textContent = remainSec;
+
+                const percent = Math.max(0, (remainSec / 60) * 100);
+                if (shareProgressFill) shareProgressFill.style.width = `${percent}%`;
+
+                if (remainSec <= 10) {
+                    shareTimerBadge?.classList.add('danger');
+                    shareProgressFill?.classList.add('danger');
+                } else {
+                    shareTimerBadge?.classList.remove('danger');
+                    shareProgressFill?.classList.remove('danger');
+                }
+
+                if (remainSec <= 0) {
+                    clearShareTimers();
+                    if (shareStatusNote) {
+                        shareStatusNote.textContent = '⏰ 分享碼已逾期失效（有效期限 1 分鐘）。如需分享請重新產生。';
+                        shareStatusNote.className = 'dlg-note danger';
+                    }
+                    if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';
+                }
+            }
+
+            function pollShareStatus() {
+                if (!currentShareCode) return;
+                fetch(`share_api.php?action=status&code=${encodeURIComponent(currentShareCode)}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            if (shareUsedCount) shareUsedCount.textContent = res.usedCount;
+                            if (res.isFull) {
+                                clearShareTimers();
+                                if (shareStatusNote) {
+                                    shareStatusNote.textContent = '🎉 此分享碼已達 3 人使用上限！';
+                                    shareStatusNote.className = 'dlg-note text-go';
+                                }
+                                if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            btnDoGenerateShare?.addEventListener('click', () => {
+                btnDoGenerateShare.disabled = true;
+                btnDoGenerateShare.textContent = '產生中…';
+
+                const mapData = editor.getData();
+                const mapName = `我的迷宮 (${editor.cols}×${editor.rows})`;
+
+                fetch('share_api.php?action=create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mapData, name: mapName })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (!res.success) {
+                        btnDoGenerateShare.disabled = false;
+                        btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+                        if (shareAlert) {
+                            shareAlert.className = 'auth-alert error';
+                            shareAlert.textContent = res.message || '產生分享碼失敗';
+                            shareAlert.style.display = 'block';
+                        }
+                        return;
+                    }
+
+                    currentShareCode = res.code;
+                    shareExpiresTimestamp = Date.now() + (res.durationSec || 60) * 1000;
+
+                    if (shareInitialArea) shareInitialArea.style.display = 'none';
+                    if (shareGeneratedArea) shareGeneratedArea.style.display = 'block';
+                    if (btnDoGenerateShare) btnDoGenerateShare.style.display = 'none';
+                    if (btnCopyShareCode) {
+                        btnCopyShareCode.style.display = 'inline-flex';
+                        btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#copy"></use></svg>複製分享碼';
+                    }
+
+                    if (shareCodeDisplay) shareCodeDisplay.textContent = res.code;
+                    if (shareUsedCount) shareUsedCount.textContent = '0';
+                    if (shareStatusNote) {
+                        shareStatusNote.textContent = '分享碼已儲存於資料庫，複製後請盡快傳送給朋友！';
+                        shareStatusNote.className = 'dlg-note';
+                    }
+
+                    updateShareCountdownUI();
+                    shareTimerInterval = setInterval(updateShareCountdownUI, 1000);
+                    shareStatusPollInterval = setInterval(pollShareStatus, 2000);
+                })
+                .catch(() => {
+                    btnDoGenerateShare.disabled = false;
+                    btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+                    if (shareAlert) {
+                        shareAlert.className = 'auth-alert error';
+                        shareAlert.textContent = '無法連線到伺服器產生分享碼';
+                        shareAlert.style.display = 'block';
+                    }
+                });
+            });
+
+            btnCopyShareCode?.addEventListener('click', () => {
+                if (!currentShareCode) return;
+                navigator.clipboard.writeText(currentShareCode).then(() => {
+                    btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#check"></use></svg>已複製！';
+                    showToast(`分享碼【${currentShareCode}】已複製到剪貼簿！`);
+                    setTimeout(() => {
+                        if (btnCopyShareCode) btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#copy"></use></svg>複製分享碼';
+                    }, 2000);
+                }).catch(() => {
+                    showToast(`分享碼為：${currentShareCode}`);
+                });
+            });
+
+            btnCloseCreateShareModal?.addEventListener('click', closeCreateShareModal);
+            btnCancelCreateShare?.addEventListener('click', closeCreateShareModal);
+            createShareModalBackdrop?.addEventListener('click', (e) => {
+                if (e.target === createShareModalBackdrop) closeCreateShareModal();
+            });
+
+            // 兌換載入分享碼
+            const redeemShareModalBackdrop = document.getElementById('redeemShareModalBackdrop');
+            const btnCloseRedeemShareModal = document.getElementById('btnCloseRedeemShareModal');
+            const btnCancelRedeemShare = document.getElementById('btnCancelRedeemShare');
+            const btnConfirmRedeemShare = document.getElementById('btnConfirmRedeemShare');
+            const inputRedeemCode = document.getElementById('inputRedeemCode');
+            const redeemAlert = document.getElementById('redeemAlert');
+
+            function openRedeemShareModal() {
+                if (!currentUser) {
+                    openAuthModal('請先登入帳號以載入他人分享的地圖！', 'login');
+                    return;
+                }
+                if (redeemAlert) { redeemAlert.style.display = 'none'; redeemAlert.textContent = ''; }
+                if (inputRedeemCode) { inputRedeemCode.value = ''; }
+                redeemShareModalBackdrop?.classList.add('show');
+                setTimeout(() => inputRedeemCode?.focus(), 100);
+            }
+
+            function closeRedeemShareModal() {
+                redeemShareModalBackdrop?.classList.remove('show');
+                if (redeemAlert) redeemAlert.style.display = 'none';
+            }
+
+            btnConfirmRedeemShare?.addEventListener('click', () => {
+                const code = inputRedeemCode ? inputRedeemCode.value.trim().toUpperCase() : '';
+                if (!code) {
+                    if (redeemAlert) {
+                        redeemAlert.className = 'auth-alert error';
+                        redeemAlert.textContent = '請輸入 6 碼分享代碼！';
+                        redeemAlert.style.display = 'block';
+                    }
+                    return;
+                }
+
+                btnConfirmRedeemShare.disabled = true;
+                btnConfirmRedeemShare.textContent = '驗證載入中…';
+
+                fetch('share_api.php?action=redeem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    btnConfirmRedeemShare.disabled = false;
+                    btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮';
+
+                    if (!res.success) {
+                        if (redeemAlert) {
+                            redeemAlert.className = 'auth-alert error';
+                            redeemAlert.textContent = res.message || '兌換失敗';
+                            redeemAlert.style.display = 'block';
+                        }
+                        return;
+                    }
+
+                    closeRedeemShareModal();
+                    if (res.data) {
+                        editor.loadData(res.data);
+                        maze3D.resetOrbitCamera();
+                    }
+                    showToast(res.message);
+                })
+                .catch(() => {
+                    btnConfirmRedeemShare.disabled = false;
+                    btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮';
+                    if (redeemAlert) {
+                        redeemAlert.className = 'auth-alert error';
+                        redeemAlert.textContent = '伺服器連線失敗，請稍後再試';
+                        redeemAlert.style.display = 'block';
+                    }
+                });
+            });
+
+            btnCloseRedeemShareModal?.addEventListener('click', closeRedeemShareModal);
+            btnCancelRedeemShare?.addEventListener('click', closeRedeemShareModal);
+            redeemShareModalBackdrop?.addEventListener('click', (e) => {
+                if (e.target === redeemShareModalBackdrop) closeRedeemShareModal();
+            });
+
+            document.getElementById('btnOpenCreateShare')?.addEventListener('click', openCreateShareModal);
+            document.getElementById('btnOpenRedeemShare')?.addEventListener('click', openRedeemShareModal);
+
+            // ============================================
             // 11. 練習賽一鍵發布至官方排位賽圖庫
             // ============================================
             function isMazeSolvable(data) {
@@ -2744,6 +3280,10 @@
             function openPublishModal() {
                 if (!currentUser) {
                     openAuthModal('訪客限制：【發布至官方排位賽圖庫】需要登入會員帳號！請先登入或免費註冊。', 'login');
+                    return;
+                }
+                if (currentUser.role === 'junior') {
+                    showToast('🔒 權限限制：初級使用者不能上傳排位賽地圖！需由高級使用者提升為中級或高級使用者。', true);
                     return;
                 }
 
@@ -2836,6 +3376,507 @@
                     showToast('無法連接排位賽伺服器進行發布', true);
                 });
             });
+
+            // ============================================
+            // 12. 高級管理者功能：帳號管理、地圖審核與 2D 預覽、地圖刪除
+            // ============================================
+            const adminUsersModalBackdrop = document.getElementById('adminUsersModalBackdrop');
+            const btnCloseAdminUsersModal = document.getElementById('btnCloseAdminUsersModal');
+            const btnRefreshAdminUsers = document.getElementById('btnRefreshAdminUsers');
+            const adminUsersTableBody = document.getElementById('adminUsersTableBody');
+
+            function openAdminUsersModal() {
+                if (!currentUser || currentUser.role !== 'senior') {
+                    showToast('🔒 權限不足：僅高級使用者可管理帳號！', true);
+                    return;
+                }
+                adminUsersModalBackdrop?.classList.add('show');
+                loadAdminUsersList();
+            }
+
+            function closeAdminUsersModal() {
+                adminUsersModalBackdrop?.classList.remove('show');
+            }
+
+            function loadAdminUsersList() {
+                if (!adminUsersTableBody) return;
+                adminUsersTableBody.innerHTML = '<tr><td colspan="5" class="table-note">載入初級與中級帳號清單中…</td></tr>';
+
+                fetch('admin_api.php?action=list_users')
+                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.success) {
+                            adminUsersTableBody.innerHTML = `<tr><td colspan="5" class="table-note error">${escapeHtml(res.message || '載入失敗')}</td></tr>`;
+                            return;
+                        }
+                        const users = res.users || [];
+                        if (users.length === 0) {
+                            adminUsersTableBody.innerHTML = '<tr><td colspan="5" class="table-note">目前沒有初級或中級使用者帳號</td></tr>';
+                            return;
+                        }
+
+                        let html = '';
+                        users.forEach(u => {
+                            const isJunior = u.role === 'junior';
+                            html += `
+                                <tr>
+                                    <td><strong>${escapeHtml(u.username)}</strong></td>
+                                    <td><span class="role-badge ${escapeHtml(u.role)}">${escapeHtml(u.roleTitle)}</span></td>
+                                    <td>${escapeHtml(u.createdAt || '-')}</td>
+                                    <td>${escapeHtml(u.lastLogin || '尚未登入')}</td>
+                                    <td>
+                                        <select class="admin-role-select" data-user-id="${u.id}" data-username="${escapeHtml(u.username)}">
+                                            <option value="junior" ${isJunior ? 'selected' : ''}>初級使用者</option>
+                                            <option value="intermediate" ${!isJunior ? 'selected' : ''}>中級使用者</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        adminUsersTableBody.innerHTML = html;
+
+                        // 監聽身分變更事件
+                        adminUsersTableBody.querySelectorAll('.admin-role-select').forEach(sel => {
+                            sel.addEventListener('change', (e) => {
+                                const targetUserId = parseInt(e.target.getAttribute('data-user-id'), 10);
+                                const targetUsername = e.target.getAttribute('data-username');
+                                const newRole = e.target.value;
+                                e.target.disabled = true;
+
+                                fetch('admin_api.php?action=update_user_role', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: targetUserId, role: newRole })
+                                })
+                                .then(r => r.json())
+                                .then(r => {
+                                    e.target.disabled = false;
+                                    if (r.success) {
+                                        showToast(r.message || `已將【${targetUsername}】身分變更！`);
+                                        loadAdminUsersList();
+                                    } else {
+                                        showToast(r.message || '變更失敗', true);
+                                        loadAdminUsersList();
+                                    }
+                                })
+                                .catch(() => {
+                                    e.target.disabled = false;
+                                    showToast('連線失敗，無法更新權限', true);
+                                    loadAdminUsersList();
+                                });
+                            });
+                        });
+                    })
+                    .catch(() => {
+                        adminUsersTableBody.innerHTML = '<tr><td colspan="5" class="table-note error">無法連線至管理員伺服器</td></tr>';
+                    });
+            }
+
+            btnCloseAdminUsersModal?.addEventListener('click', closeAdminUsersModal);
+            btnRefreshAdminUsers?.addEventListener('click', loadAdminUsersList);
+            adminUsersModalBackdrop?.addEventListener('click', (e) => {
+                if (e.target === adminUsersModalBackdrop) closeAdminUsersModal();
+            });
+            document.getElementById('btnAdminUsers')?.addEventListener('click', openAdminUsersModal);
+
+            // ============================================
+            // 12-1. 排位賽地圖審核、官方題庫管理與刪除
+            // ============================================
+            const adminReviewModalBackdrop = document.getElementById('adminReviewModalBackdrop');
+            const btnCloseAdminReviewModal = document.getElementById('btnCloseAdminReviewModal');
+            const btnRefreshAdminReview = document.getElementById('btnRefreshAdminReview');
+            const tabAdminPending = document.getElementById('tabAdminPending');
+            const tabAdminOfficial = document.getElementById('tabAdminOfficial');
+            const panelAdminPending = document.getElementById('panelAdminPending');
+            const panelAdminOfficial = document.getElementById('panelAdminOfficial');
+            const adminSubmissionsTableBody = document.getElementById('adminSubmissionsTableBody');
+            const adminOfficialMapsTableBody = document.getElementById('adminOfficialMapsTableBody');
+            const tabPendingCount = document.getElementById('tabPendingCount');
+
+            let currentAdminReviewTab = 'pending'; // 'pending' | 'official'
+
+            function openAdminReviewModal() {
+                if (!currentUser || currentUser.role !== 'senior') {
+                    showToast('🔒 權限不足：僅高級使用者可審核地圖！', true);
+                    return;
+                }
+                adminReviewModalBackdrop?.classList.add('show');
+                switchAdminReviewTab(currentAdminReviewTab);
+            }
+
+            function closeAdminReviewModal() {
+                adminReviewModalBackdrop?.classList.remove('show');
+            }
+
+            function switchAdminReviewTab(tab) {
+                currentAdminReviewTab = tab;
+                if (tab === 'pending') {
+                    tabAdminPending?.classList.add('active');
+                    tabAdminOfficial?.classList.remove('active');
+                    if (panelAdminPending) panelAdminPending.style.display = 'block';
+                    if (panelAdminOfficial) panelAdminOfficial.style.display = 'none';
+                    loadAdminSubmissionsList();
+                } else {
+                    tabAdminPending?.classList.remove('active');
+                    tabAdminOfficial?.classList.add('active');
+                    if (panelAdminPending) panelAdminPending.style.display = 'none';
+                    if (panelAdminOfficial) panelAdminOfficial.style.display = 'block';
+                    loadAdminOfficialMapsList();
+                }
+            }
+
+            tabAdminPending?.addEventListener('click', () => switchAdminReviewTab('pending'));
+            tabAdminOfficial?.addEventListener('click', () => switchAdminReviewTab('official'));
+            btnCloseAdminReviewModal?.addEventListener('click', closeAdminReviewModal);
+            btnRefreshAdminReview?.addEventListener('click', () => {
+                if (currentAdminReviewTab === 'pending') loadAdminSubmissionsList();
+                else loadAdminOfficialMapsList();
+            });
+            adminReviewModalBackdrop?.addEventListener('click', (e) => {
+                if (e.target === adminReviewModalBackdrop) closeAdminReviewModal();
+            });
+            document.getElementById('btnAdminReview')?.addEventListener('click', openAdminReviewModal);
+
+            // 載入待審核清單
+            function loadAdminSubmissionsList() {
+                if (!adminSubmissionsTableBody) return;
+                adminSubmissionsTableBody.innerHTML = '<tr><td colspan="5" class="table-note">載入待審核地圖清單中…</td></tr>';
+
+                fetch('admin_api.php?action=list_submissions&status=pending')
+                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.success) {
+                            adminSubmissionsTableBody.innerHTML = `<tr><td colspan="5" class="table-note error">${escapeHtml(res.message || '載入失敗')}</td></tr>`;
+                            return;
+                        }
+                        const subs = res.submissions || [];
+                        if (tabPendingCount) tabPendingCount.textContent = subs.length;
+                        refreshAdminPendingCount();
+
+                        if (subs.length === 0) {
+                            adminSubmissionsTableBody.innerHTML = '<tr><td colspan="5" class="table-note">目前沒有待審核的排位賽地圖</td></tr>';
+                            return;
+                        }
+
+                        let html = '';
+                        subs.forEach(s => {
+                            html += `
+                                <tr>
+                                    <td><span class="role-badge intermediate">${escapeHtml(s.size)}</span></td>
+                                    <td><strong>${escapeHtml(s.name)}</strong></td>
+                                    <td>${escapeHtml(s.authorName)}</td>
+                                    <td>${escapeHtml(s.createdAt)}</td>
+                                    <td class="actions">
+                                        <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-2d" data-json='${escapeHtml(JSON.stringify(s.mazeData))}' data-title="${escapeHtml(s.name)}" data-meta="${escapeHtml(s.authorName + ' ・ ' + s.createdAt)}"><svg class="icon"><use href="assets/icons.svg#focus-centered"></use></svg>2D 地圖</button>
+                                        <button type="button" class="tool-btn btn-save btn-sm btn-approve-sub" data-sub-id="${s.id}"><svg class="icon"><use href="assets/icons.svg#check"></use></svg>核准</button>
+                                        <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-reject-sub" data-sub-id="${s.id}"><svg class="icon"><use href="assets/icons.svg#x"></use></svg>退回</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        adminSubmissionsTableBody.innerHTML = html;
+
+                        // 綁定 2D 預覽、核准、退回按鈕
+                        adminSubmissionsTableBody.querySelectorAll('.btn-preview-2d').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const rawJson = btn.getAttribute('data-json');
+                                const title = btn.getAttribute('data-title');
+                                const meta = btn.getAttribute('data-meta');
+                                try {
+                                    const mazeData = JSON.parse(rawJson);
+                                    openPreview2DModal(mazeData, title, meta);
+                                } catch (e) {
+                                    showToast('解析地圖資料失敗', true);
+                                }
+                            });
+                        });
+
+                        adminSubmissionsTableBody.querySelectorAll('.btn-approve-sub').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const subId = parseInt(btn.getAttribute('data-sub-id'), 10);
+                                if (!confirm('確定核准通過此地圖？核准後將正式加入官方排位賽題庫！')) return;
+                                btn.disabled = true;
+
+                                fetch('admin_api.php?action=review_submission', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ submissionId: subId, decision: 'approve' })
+                                })
+                                .then(r => r.json())
+                                .then(r => {
+                                    if (r.success) {
+                                        showToast(r.message);
+                                        loadAdminSubmissionsList();
+                                    } else {
+                                        btn.disabled = false;
+                                        showToast(r.message || '審核失敗', true);
+                                    }
+                                })
+                                .catch(() => {
+                                    btn.disabled = false;
+                                    showToast('伺服器連線失敗', true);
+                                });
+                            });
+                        });
+
+                        adminSubmissionsTableBody.querySelectorAll('.btn-reject-sub').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const subId = parseInt(btn.getAttribute('data-sub-id'), 10);
+                                if (!confirm('確定退回此地圖投稿？')) return;
+                                btn.disabled = true;
+
+                                fetch('admin_api.php?action=review_submission', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ submissionId: subId, decision: 'reject' })
+                                })
+                                .then(r => r.json())
+                                .then(r => {
+                                    if (r.success) {
+                                        showToast(r.message);
+                                        loadAdminSubmissionsList();
+                                    } else {
+                                        btn.disabled = false;
+                                        showToast(r.message || '退回失敗', true);
+                                    }
+                                })
+                                .catch(() => {
+                                    btn.disabled = false;
+                                    showToast('伺服器連線失敗', true);
+                                });
+                            });
+                        });
+                    })
+                    .catch(() => {
+                        adminSubmissionsTableBody.innerHTML = '<tr><td colspan="5" class="table-note error">無法連線到伺服器</td></tr>';
+                    });
+            }
+
+            // 載入官方地圖清單（支援檢視 2D 與刪除）
+            function loadAdminOfficialMapsList() {
+                if (!adminOfficialMapsTableBody) return;
+                adminOfficialMapsTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入官方排位題庫中…</td></tr>';
+
+                fetch('ranked_api.php?action=list_maps')
+                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.success) {
+                            adminOfficialMapsTableBody.innerHTML = `<tr><td colspan="6" class="table-note error">載入失敗</td></tr>`;
+                            return;
+                        }
+                        const mapsBySize = res.maps || {};
+                        let html = '';
+                        let count = 0;
+
+                        Object.keys(mapsBySize).forEach(size => {
+                            const list = mapsBySize[size] || [];
+                            list.forEach(m => {
+                                count++;
+                                html += `
+                                    <tr>
+                                        <td><span class="role-badge senior">${escapeHtml(size)}</span></td>
+                                        <td><code>${escapeHtml(m.mapId || '-')}</code></td>
+                                        <td><strong>${escapeHtml(m.name || '-')}</strong></td>
+                                        <td>${escapeHtml(m.author || '官方')}</td>
+                                        <td>${escapeHtml(m.createdAt || '-')}</td>
+                                        <td class="actions">
+                                            <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-official" data-json='${escapeHtml(JSON.stringify(m))}' data-title="${escapeHtml(m.name)}" data-meta="${escapeHtml((m.author || '官方') + ' ・ ' + (m.createdAt || ''))}"><svg class="icon"><use href="assets/icons.svg#focus-centered"></use></svg>2D 地圖</button>
+                                            <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-delete-official" data-size="${escapeHtml(size)}" data-map-id="${escapeHtml(m.mapId)}"><svg class="icon"><use href="assets/icons.svg#trash"></use></svg>刪除</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        });
+
+                        if (count === 0) {
+                            adminOfficialMapsTableBody.innerHTML = '<tr><td colspan="6" class="table-note">目前官方題庫為空</td></tr>';
+                            return;
+                        }
+
+                        adminOfficialMapsTableBody.innerHTML = html;
+
+                        // 綁定 2D 檢視
+                        adminOfficialMapsTableBody.querySelectorAll('.btn-preview-official').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const rawJson = btn.getAttribute('data-json');
+                                const title = btn.getAttribute('data-title');
+                                const meta = btn.getAttribute('data-meta');
+                                try {
+                                    openPreview2DModal(JSON.parse(rawJson), title, meta);
+                                } catch (e) {
+                                    showToast('解析地圖失敗', true);
+                                }
+                            });
+                        });
+
+                        // 綁定刪除排位賽地圖
+                        adminOfficialMapsTableBody.querySelectorAll('.btn-delete-official').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const size = btn.getAttribute('data-size');
+                                const mapId = btn.getAttribute('data-map-id');
+                                if (!confirm(`⚠️ 確定要刪除官方排位賽地圖【${size}/${mapId}】嗎？\n刪除後此地圖將不再出現在排位賽題庫中！`)) return;
+
+                                btn.disabled = true;
+                                fetch('admin_api.php?action=delete_ranked_map', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ size, mapId })
+                                })
+                                .then(r => r.json())
+                                .then(r => {
+                                    if (r.success) {
+                                        showToast(r.message);
+                                        loadAdminOfficialMapsList();
+                                    } else {
+                                        btn.disabled = false;
+                                        showToast(r.message || '刪除失敗', true);
+                                    }
+                                })
+                                .catch(() => {
+                                    btn.disabled = false;
+                                    showToast('連線失敗，無法刪除地圖', true);
+                                });
+                            });
+                        });
+                    })
+                    .catch(() => {
+                        adminOfficialMapsTableBody.innerHTML = '<tr><td colspan="6" class="table-note error">無法連線到官方地圖庫</td></tr>';
+                    });
+            }
+
+            // ============================================
+            // 12-2. 2D 地圖畫布繪製與預覽
+            // ============================================
+            const preview2DModalBackdrop = document.getElementById('preview2DModalBackdrop');
+            const btnClosePreview2DModal = document.getElementById('btnClosePreview2DModal');
+            const btnDismissPreview2D = document.getElementById('btnDismissPreview2D');
+            const preview2DTitle = document.getElementById('preview2DTitle');
+            const preview2DSub = document.getElementById('preview2DSub');
+            const preview2DMeta = document.getElementById('preview2DMeta');
+            const preview2DCanvas = document.getElementById('preview2DCanvas');
+
+            function openPreview2DModal(mazeData, title = '2D 地圖預覽', meta = '') {
+                if (!preview2DModalBackdrop || !preview2DCanvas || !mazeData) return;
+                if (preview2DTitle) preview2DTitle.textContent = title;
+                const rows = mazeData.gridSize?.rows || (mazeData.hWalls ? mazeData.hWalls.length - 1 : 10);
+                const cols = mazeData.gridSize?.cols || (mazeData.hWalls ? mazeData.hWalls[0].length : 10);
+                if (preview2DSub) preview2DSub.textContent = `迷宮規格：${cols} × ${rows} 格（${cols * 30} × ${rows * 30} cm）`;
+                if (preview2DMeta) preview2DMeta.textContent = meta || '-';
+
+                render2DMapToCanvas(preview2DCanvas, mazeData);
+                preview2DModalBackdrop.classList.add('show');
+            }
+
+            function closePreview2DModal() {
+                preview2DModalBackdrop?.classList.remove('show');
+            }
+
+            btnClosePreview2DModal?.addEventListener('click', closePreview2DModal);
+            btnDismissPreview2D?.addEventListener('click', closePreview2DModal);
+            preview2DModalBackdrop?.addEventListener('click', (e) => {
+                if (e.target === preview2DModalBackdrop) closePreview2DModal();
+            });
+
+            // 繪製 2D 迷宮至 Canvas (清晰呈現起終點、水平垂直隔板牆壁與外框)
+            function render2DMapToCanvas(canvas, data) {
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                ctx.clearRect(0, 0, width, height);
+
+                const rows = data.gridSize?.rows || (data.hWalls ? data.hWalls.length - 1 : 10);
+                const cols = data.gridSize?.cols || (data.hWalls ? data.hWalls[0].length : 10);
+                const hWalls = data.hWalls || [];
+                const vWalls = data.vWalls || [];
+                const start = data.start || { x: 0, y: rows - 1 };
+                const goal = data.goal || { x: cols - 1, y: 0 };
+
+                const padding = 20;
+                const drawW = width - padding * 2;
+                const drawH = height - padding * 2;
+                const cellSize = Math.floor(Math.min(drawW / cols, drawH / rows));
+                const totalW = cols * cellSize;
+                const totalH = rows * cellSize;
+                const offsetX = padding + Math.floor((drawW - totalW) / 2);
+                const offsetY = padding + Math.floor((drawH - totalH) / 2);
+
+                // 繪製背景底色與格線
+                ctx.fillStyle = '#0E1424';
+                ctx.fillRect(offsetX, offsetY, totalW, totalH);
+
+                ctx.strokeStyle = '#1D263B';
+                ctx.lineWidth = 1;
+                for (let r = 0; r <= rows; r++) {
+                    ctx.beginPath();
+                    ctx.moveTo(offsetX, offsetY + r * cellSize);
+                    ctx.lineTo(offsetX + totalW, offsetY + r * cellSize);
+                    ctx.stroke();
+                }
+                for (let c = 0; c <= cols; c++) {
+                    ctx.beginPath();
+                    ctx.moveTo(offsetX + c * cellSize, offsetY);
+                    ctx.lineTo(offsetX + c * cellSize, offsetY + totalH);
+                    ctx.stroke();
+                }
+
+                // 標示起點 (綠色底塊 + S)
+                const sx = offsetX + start.x * cellSize;
+                const sy = offsetY + start.y * cellSize;
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.28)';
+                ctx.fillRect(sx + 2, sy + 2, cellSize - 4, cellSize - 4);
+                ctx.fillStyle = '#4ADE80';
+                ctx.font = `bold ${Math.max(12, Math.floor(cellSize * 0.55))}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('S', sx + cellSize / 2, sy + cellSize / 2);
+
+                // 標示終點 (紅色底塊 + G)
+                const gx = offsetX + goal.x * cellSize;
+                const gy = offsetY + goal.y * cellSize;
+                ctx.fillStyle = 'rgba(248, 113, 113, 0.28)';
+                ctx.fillRect(gx + 2, gy + 2, cellSize - 4, cellSize - 4);
+                ctx.fillStyle = '#F87171';
+                ctx.font = `bold ${Math.max(12, Math.floor(cellSize * 0.55))}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('G', gx + cellSize / 2, gy + cellSize / 2);
+
+                // 繪製牆壁 (水平牆與垂直牆)
+                ctx.strokeStyle = '#38BDF8';
+                ctx.lineWidth = Math.max(2.5, Math.floor(cellSize * 0.12));
+                ctx.lineCap = 'round';
+
+                // 水平牆
+                for (let r = 0; r <= rows; r++) {
+                    if (!hWalls[r]) continue;
+                    for (let c = 0; c < cols; c++) {
+                        if (hWalls[r][c]) {
+                            ctx.beginPath();
+                            ctx.moveTo(offsetX + c * cellSize, offsetY + r * cellSize);
+                            ctx.lineTo(offsetX + (c + 1) * cellSize, offsetY + r * cellSize);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // 垂直牆
+                for (let r = 0; r < rows; r++) {
+                    if (!vWalls[r]) continue;
+                    for (let c = 0; c <= cols; c++) {
+                        if (vWalls[r][c]) {
+                            ctx.beginPath();
+                            ctx.moveTo(offsetX + c * cellSize, offsetY + r * cellSize);
+                            ctx.lineTo(offsetX + c * cellSize, offsetY + (r + 1) * cellSize);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // 迷宮外框加強
+                ctx.strokeStyle = '#FBBF24';
+                ctx.lineWidth = Math.max(3, Math.floor(cellSize * 0.15));
+                ctx.strokeRect(offsetX, offsetY, totalW, totalH);
+            }
 
             // 頁面初次載入：預設訪客模式，先檢查登入狀態與權限，再載入迷宮配置
             updateAuthUI(null);
