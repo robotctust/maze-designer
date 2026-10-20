@@ -57,6 +57,8 @@ class Maze3D {
         this.keys = {};
         this.mazeData = null;
         this.wallMeshes = [];
+        this.arenaColor = null; // 排位賽段位色（例如 '#FF6B57'）；null 為一般外觀
+        this.goalBeamMat = null;
         this.sharedHGeo = null;
         this.sharedVGeo = null;
 
@@ -316,6 +318,9 @@ class Maze3D {
 
     setMode(mode) {
         this.currentMode = mode;
+        // 車載視角用較廣的視野，看得到兩側牆面；俯瞰維持 45 度
+        this.camera.fov = mode === 'driver' ? 65 : 45;
+        this.camera.updateProjectionMatrix();
         if (mode === 'driver') {
             if (this.orbitControls) this.orbitControls.enabled = false;
             this.updateDriverCamera();
@@ -418,6 +423,7 @@ class Maze3D {
         this.wallMeshes.forEach(mesh => {
             this.scene.remove(mesh);
             mesh.material.dispose();
+            if (mesh.userData.ownGeo) mesh.geometry.dispose();
         });
         this.wallMeshes = [];
         this.spatialGrid.clear();
@@ -430,7 +436,13 @@ class Maze3D {
         if (this.goalMarker) this.scene.remove(this.goalMarker);
         if (this.robotModel) this.scene.remove(this.robotModel);
 
+        this.applyArenaLighting();
+
         const wallMat = this.getWallMaterial();
+        if (this.arenaColor) {
+            wallMat.emissive = new THREE.Color(this.arenaColor);
+            wallMat.emissiveIntensity = 0.08;
+        }
         const h = this.wallHeight; // 15cm
         const t = this.wallThick; // 1.2cm
         const cSize = this.cellSize; // 30cm
@@ -495,6 +507,21 @@ class Maze3D {
             mesh.receiveShadow = true;
             this.scene.add(mesh);
             this.wallMeshes.push(mesh);
+
+            if (this.arenaColor) {
+                // 排位賽：牆頂加一道段位色發光邊線
+                const capGeo = geo === this.sharedHGeo
+                    ? new THREE.BoxGeometry(cSize + t, 1.2, t + 0.6)
+                    : new THREE.BoxGeometry(t + 0.6, 1.2, cSize + t);
+                const cap = new THREE.InstancedMesh(capGeo, new THREE.MeshBasicMaterial({ color: this.arenaColor }), count);
+                for (let i = 0; i < count; i++) {
+                    m.makeTranslation(pos[i * 2], h + 0.6, pos[i * 2 + 1]);
+                    cap.setMatrixAt(i, m);
+                }
+                cap.userData.ownGeo = true;
+                this.scene.add(cap);
+                this.wallMeshes.push(cap);
+            }
         });
         wallMat.dispose();
 
@@ -508,6 +535,19 @@ class Maze3D {
         if (!this.isDriving) {
             this.placePlayerAtStart();
         }
+    }
+
+    // 排位賽：環境光與背景帶一點段位色；一般模式恢復原色
+    applyArenaLighting() {
+        const base = new THREE.Color(0x0a0f1d);
+        const ambient = new THREE.Color(0xffffff);
+        if (this.arenaColor) {
+            base.lerp(new THREE.Color(this.arenaColor), 0.12);
+            ambient.lerp(new THREE.Color(this.arenaColor), 0.25);
+        }
+        this.scene.background = base;
+        this.scene.fog.color.copy(base);
+        this.ambientLight.color.copy(ambient);
     }
 
     createStartMarker(pt) {
@@ -616,6 +656,27 @@ class Maze3D {
         flag.position.set(0, 20.5, 5);
         flag.castShadow = true;
         group.add(flag);
+
+        this.goalBeamMat = null;
+        if (this.arenaColor) {
+            // 排位賽：終點上方一道段位色光柱，車子視角遠遠就看得到
+            const beamOpts = { transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide };
+            this.goalBeamMat = new THREE.MeshBasicMaterial({ ...beamOpts, color: this.arenaColor, opacity: 0.28 });
+            const beam = new THREE.Mesh(new THREE.CylinderGeometry(6, 9, 260, 24, 1, true), this.goalBeamMat);
+            beam.position.y = 130;
+            group.add(beam);
+
+            const core = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.2, 1.2, 260, 12, 1, true),
+                new THREE.MeshBasicMaterial({ ...beamOpts, color: 0xffffff, opacity: 0.5 })
+            );
+            core.position.y = 130;
+            group.add(core);
+
+            const glow = new THREE.PointLight(this.arenaColor, 1.6, 120);
+            glow.position.y = 20;
+            group.add(glow);
+        }
 
         this.goalMarker = group;
         this.scene.add(group);
@@ -814,12 +875,17 @@ class Maze3D {
     }
 
     updateDriverCamera() {
-        // 相機設在玩家視線高 (8cm)
-        this.camera.position.set(this.player.x, this.player.y, this.player.z);
+        // 相機設在玩家視線高 (8cm)，並往車頭前移 5.5cm：廣角時不會拍到自己的車身，
+        // 又留在 7cm 碰撞半徑內，貼牆時不會穿進牆裡
+        const fx = -Math.sin(this.player.yaw);
+        const fz = -Math.cos(this.player.yaw);
+        const camX = this.player.x + fx * 5.5;
+        const camZ = this.player.z + fz * 5.5;
+        this.camera.position.set(camX, this.player.y, camZ);
 
         // 朝向
-        const lookX = this.player.x - Math.sin(this.player.yaw) * 60;
-        const lookZ = this.player.z - Math.cos(this.player.yaw) * 60;
+        const lookX = this.player.x + fx * 60;
+        const lookZ = this.player.z + fz * 60;
         this.camera.lookAt(lookX, this.player.y, lookZ);
 
         // 車燈跟隨
@@ -849,6 +915,10 @@ class Maze3D {
 
         if (this.currentMode === 'orbit' && this.orbitControls) {
             this.orbitControls.update();
+        }
+
+        if (this.goalBeamMat) {
+            this.goalBeamMat.opacity = 0.22 + 0.08 * Math.sin(performance.now() / 400);
         }
 
         this.renderer.render(this.scene, this.camera);
