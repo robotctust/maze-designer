@@ -29,6 +29,9 @@ config.local.php
 .env
 .env.local
 
+# 執行時自動產生的本機迷宮備份，每台電腦各自不同
+data/maze_config.json
+
 # Temporary files
 *.tmp
 *.bak

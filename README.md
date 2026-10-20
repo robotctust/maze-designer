@@ -25,10 +25,18 @@
 
 ## 🚀 快速安裝與使用
 
+### Windows（XAMPP）
+
 1. 將本專案放置於 XAMPP 的 `htdocs/3Dmaze` 目錄。
 2. 啟動 XAMPP Control Panel 的 **Apache** 與 **MySQL**。
 3. （選用）可複製 `config.example.php` 為 `config.php` 自訂資料庫帳號與密碼。預設使用本機 `root` 與無密碼連線。
 4. 打開瀏覽器訪問 `http://localhost/3Dmaze/` 即可開始使用（資料庫與資料表將自動建立）。
+
+### macOS（Homebrew）
+
+1. 安裝 PHP 與 MySQL：`brew install php mysql`
+2. 啟動 MySQL：`mysql.server start`
+3. 在專案資料夾執行 `php -S localhost:8000`，打開 `http://localhost:8000/`
 
 ---
 
@@ -55,3 +63,4 @@
 - 支援 2D 地圖編輯器與路徑自動生成。
 - 支援排位計時挑戰賽與排行榜紀錄。
 - 支援會員帳號註冊登入與個人地圖儲存。
+- 新增 macOS 的安裝與執行方式。
