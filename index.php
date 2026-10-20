@@ -43,51 +43,69 @@
         </div>
     </header>
 
+    <!-- 練習模式編輯列：規格、地圖、檔案選單與儲存 -->
+    <div class="editbar" id="practiceToolsToolbar">
+        <div class="menu-wrap">
+            <button type="button" class="tool-btn" id="btnSpecMenu" aria-haspopup="menu" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#ruler"></use></svg><span id="specMenuLabel">10 × 10</span><svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
+            <div class="menu spec-menu" id="specMenu" hidden>
+                <div id="practiceSpecBar">
+                    <p class="menu-heading">迷宮規格</p>
+                    <div class="spec-inputs-row">
+                        <label for="inputCols">寬</label>
+                        <input type="number" id="inputCols" min="2" max="30" value="10" class="spec-input">
+                        <span class="spec-times">×</span>
+                        <label for="inputRows">高</label>
+                        <input type="number" id="inputRows" min="2" max="30" value="10" class="spec-input">
+                        <button type="button" class="tool-btn btn-save btn-sm" id="btnApplyGridSize" title="套用輸入的迷宮規格">套用</button>
+                    </div>
+                    <div class="spec-presets-row">
+                        <button type="button" class="spec-preset-btn" data-cols="5" data-rows="5">5×5</button>
+                        <button type="button" class="spec-preset-btn" data-cols="8" data-rows="8">8×8</button>
+                        <button type="button" class="spec-preset-btn active" data-cols="10" data-rows="10">10×10</button>
+                        <button type="button" class="spec-preset-btn" data-cols="12" data-rows="12">12×12</button>
+                        <button type="button" class="spec-preset-btn" data-cols="16" data-rows="16">16×16</button>
+                    </div>
+                    <div class="menu-sep"></div>
+                    <dl class="spec-facts">
+                        <dt>每格</dt><dd>30 × 30 cm</dd>
+                        <dt>牆高</dt><dd>15 cm</dd>
+                        <dt>總尺寸</dt><dd id="specDimensionsCm">300 × 300 cm</dd>
+                    </dl>
+                    <p class="menu-note">可設定 2～30 格，訪客最多 10 × 10</p>
+                </div>
+            </div>
+        </div>
+        <div class="menu-wrap">
+            <button type="button" class="tool-btn btn-ghost" id="btnMapMenu" aria-haspopup="menu" aria-expanded="false">地圖<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
+            <div class="menu" id="mapMenu" role="menu" hidden>
+                <button type="button" class="menu-item" id="btnRandom" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>隨機產生迷宮</button>
+                <button type="button" class="menu-item" id="btnOuterWalls" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#square"></use></svg>四周圍牆開／關</button>
+                <button type="button" class="menu-item" id="btnClearInner" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eraser"></use></svg>清空內牆<span class="menu-end">保留圍牆</span></button>
+                <div class="menu-sep"></div>
+                <button type="button" class="menu-item danger" id="btnClearAll" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trash"></use></svg>全部清空</button>
+            </div>
+        </div>
+        <div class="menu-wrap">
+            <button type="button" class="tool-btn btn-ghost" id="btnFileMenu" aria-haspopup="menu" aria-expanded="false">檔案<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
+            <div class="menu" id="fileMenu" role="menu" hidden>
+                <button type="button" class="menu-item" id="btnFileMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫</button>
+                <div class="menu-sep"></div>
+                <button type="button" class="menu-item" id="btnImportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-import"></use></svg>匯入 JSON</button>
+                <button type="button" class="menu-item" id="btnExportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-code"></use></svg>匯出 JSON</button>
+                <button type="button" class="menu-item" id="btnExportPNG" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#photo"></use></svg>匯出 PNG 圖片</button>
+            </div>
+            <input type="file" id="fileInputJSON" accept=".json" style="display: none;">
+        </div>
+        <div class="editbar-spacer"></div>
+        <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽</button>
+        <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（最多 5 張）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
+    </div>
+
     <!-- 主操作區域：左側 2D 編輯器，右側 3D 模擬視窗 -->
     <div class="app-container">
         
         <!-- 左側：2D 迷宮規劃編輯器 -->
         <section class="editor-panel">
-            <div class="panel-header">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div class="panel-title">✏️ 2D 迷宮規劃</div>
-                    <button class="map-size-toggle-btn" id="btnToggleMapSize" title="切換 2D 版面大小（一半版面設計 ↔ 遙控模式）">
-                        <span id="mapSizeIcon">🌓</span> <span id="mapSizeText">一半版面設計</span>
-                    </button>
-                </div>
-                <div id="toolTip" style="font-size: 13px; color: var(--accent);">目前工具：點擊格線增刪牆壁</div>
-            </div>
-
-            <!-- 練習賽：迷宮規格調整列 (自訂格數) -->
-            <div class="grid-spec-bar" id="practiceSpecBar">
-                <div class="spec-inputs-row">
-                    <span class="spec-title">📐 迷宮規格：</span>
-                    <div class="spec-input-item">
-                        <label for="inputCols">寬 (X)：</label>
-                        <input type="number" id="inputCols" min="2" max="30" value="10" class="spec-input">
-                        <span>格</span>
-                    </div>
-                    <span class="spec-times">×</span>
-                    <div class="spec-input-item">
-                        <label for="inputRows">高 (Y)：</label>
-                        <input type="number" id="inputRows" min="2" max="30" value="10" class="spec-input">
-                        <span>格</span>
-                    </div>
-                    <button class="tool-btn btn-spec-apply" id="btnApplyGridSize" title="套用輸入的迷宮規格">
-                        ⚡ 套用規格
-                    </button>
-                </div>
-                <div class="spec-presets-row">
-                    <span class="spec-preset-label">快速規格：</span>
-                    <button class="spec-preset-btn" data-cols="5" data-rows="5">5×5</button>
-                    <button class="spec-preset-btn" data-cols="8" data-rows="8">8×8</button>
-                    <button class="spec-preset-btn active" data-cols="10" data-rows="10">10×10</button>
-                    <button class="spec-preset-btn" data-cols="12" data-rows="12">12×12</button>
-                    <button class="spec-preset-btn" data-cols="16" data-rows="16">16×16</button>
-                    <span class="spec-cm-info" id="specDimensionsCm">300 × 300 cm</span>
-                </div>
-            </div>
-
             <!-- 排位賽：官方規格級別選擇列 (僅 10x10, 15x15, 20x20, 25x25) -->
             <div class="ranked-spec-bar" id="rankedSpecBar" style="display: none;">
                 <div class="ranked-spec-title">
@@ -126,82 +144,37 @@
                 </div>
             </div>
 
-            <!-- 工具列 -->
-            <div class="tools-toolbar" id="practiceToolsToolbar">
-                <button class="tool-btn active" id="toolWall" data-tool="wall">
-                    🧱 設置/切換牆壁
-                </button>
-                <button class="tool-btn" id="toolStart" data-tool="start">
-                    🟢 設定起點 (S)
-                </button>
-                <button class="tool-btn" id="toolGoal" data-tool="goal">
-                    🏁 設定終點 (G)
-                </button>
-                <button class="tool-btn" id="toolPan" data-tool="pan" title="拖曳平移地圖視圖 (也可按住右鍵或空白鍵拖曳)">
-                    ✋ 拖曳平移
-                </button>
-                
-                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
-
-                <button class="tool-btn btn-action" id="btnOuterWalls" title="一鍵切換四周圍牆 (全開 / 全關)">
-                    🔲 四周圍牆開關
-                </button>
-                <button class="tool-btn btn-action" id="btnClearInner" title="清空內部牆壁，保留四周圍牆">
-                    🧹 清空內牆
-                </button>
-                <button class="tool-btn btn-action" id="btnClearAll" title="清空所有牆壁 (包含四周圍牆)">
-                    🗑️ 全部清空
-                </button>
-                <button class="tool-btn btn-action" id="btnRandom" title="一鍵隨機產生 10x10 合法迷宮">
-                    🎲 隨機迷宮
-                </button>
-
-                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
-
-                <button class="tool-btn btn-export" id="btnExportPNG" title="匯出高解析度 2D 迷宮圖片 (PNG)">
-                    🖼️ 匯出 2D 地圖 (PNG)
-                </button>
-                <button class="tool-btn btn-action" id="btnExportJSON" title="匯出迷宮設定資料檔 (JSON)">
-                    📄 匯出 JSON
-                </button>
-                <button class="tool-btn btn-action" id="btnImportJSON" title="從電腦載入先前匯出的 JSON 地圖檔">
-                    📥 匯入 JSON
-                </button>
-                <input type="file" id="fileInputJSON" accept=".json" style="display: none;">
-
-                <span style="border-right: 1px solid var(--border-strong); margin: 0 4px;"></span>
-
-                <button class="tool-btn btn-publish-ranked" id="btnPublishToRanked" title="將目前練習賽設計好的迷宮，一鍵發布至官方排位賽圖庫">
-                    <span>📤</span> 發布至排位賽圖庫
-                </button>
-                <button class="tool-btn btn-save" id="btnSave" title="將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)">
-                    <span>💾</span> 儲存
-                </button>
-            </div>
-
             <!-- 排位賽鎖定提示列 -->
             <div class="ranked-tools-banner" id="rankedToolsBanner" style="display: none; padding: 8px 16px; background: rgba(217, 119, 6, 0.15); border-bottom: 1px solid var(--ranked-fill); font-size: 13px; color: var(--ranked); align-items: center; justify-content: space-between;">
                 <span>🔒 排位賽地圖為官方統一版本，已鎖定編輯功能以維護公平性。</span>
                 <span>★ 盲測競技模式 ★</span>
             </div>
 
-            <!-- 2D 地圖縮放與檢視控制列 -->
-            <div class="map-zoom-bar" id="practiceZoomBar">
-                <div class="zoom-group">
-                    <span class="zoom-title">🔍 地圖縮放：</span>
-                    <button type="button" class="zoom-btn" id="btnZoomOut" title="縮小 (滾輪向下 或 Ctrl -)">➖</button>
-                    <span class="zoom-value" id="zoomPercentDisplay" title="目前縮放比例 (點擊重設 100%)">100%</span>
-                    <button type="button" class="zoom-btn" id="btnZoomIn" title="放大 (滾輪向上 或 Ctrl +)">➕</button>
-                    <button type="button" class="zoom-btn" id="btnZoomReset" title="重設縮放為 100%">⟲ 100%</button>
-                    <button type="button" class="zoom-btn" id="btnZoomFit" title="適配視窗大小">📐 適配全圖</button>
-                </div>
-                <div class="zoom-tips">
-                    <span>💡 支援滾輪縮放、按住右鍵/空白鍵拖曳平移</span>
-                </div>
-            </div>
-
-            <!-- 2D 畫布底圖容器 -->
-            <div class="map-canvas-container">
+            <div class="editor-body">
+                <nav class="tool-rail" id="practiceToolRail" aria-label="編輯工具">
+                    <button type="button" class="tool active" id="toolWall" data-tool="wall" title="牆壁：點格線新增或移除"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wall"></use></svg>牆壁</button>
+                    <button type="button" class="tool" id="toolStart" data-tool="start" title="起點：點格子設定"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#map-pin"></use></svg>起點</button>
+                    <button type="button" class="tool" id="toolGoal" data-tool="goal" title="終點：點格子設定"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#flag"></use></svg>終點</button>
+                    <button type="button" class="tool" id="toolPan" data-tool="pan" title="平移（也可按住空白鍵或右鍵拖曳）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-move"></use></svg>平移</button>
+                    <div class="tool-rail-spacer"></div>
+                    <div class="menu-wrap">
+                        <button type="button" class="tool" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#keyboard"></use></svg>快捷鍵</button>
+                        <div class="menu menu-side" id="shortcutsMenu" hidden>
+                            <p class="menu-heading">2D 編輯</p>
+                            <div class="kbd-row"><kbd>滾輪</kbd><span>縮放</span></div>
+                            <div class="kbd-row"><kbd>Ctrl</kbd><kbd>+</kbd><kbd>−</kbd><span>放大／縮小</span></div>
+                            <div class="kbd-row"><kbd>Ctrl</kbd><kbd>0</kbd><span>重設為 100%</span></div>
+                            <div class="kbd-row"><kbd>空白鍵</kbd>或<kbd>右鍵</kbd>拖曳<span>平移</span></div>
+                            <div class="menu-sep"></div>
+                            <p class="menu-heading">試跑</p>
+                            <div class="kbd-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵<span>操控</span></div>
+                            <div class="kbd-row"><kbd>空白鍵</kbd><span>跳躍</span></div>
+                            <div class="kbd-row"><kbd>拖曳</kbd><kbd>滾輪</kbd><span>旋轉／縮放 3D</span></div>
+                        </div>
+                    </div>
+                </nav>
+                <!-- 2D 畫布底圖容器 -->
+                <div class="map-canvas-container">
                 <div class="map-viewport" id="mapViewport">
                     <div class="grid-wrapper" id="gridWrapper" style="background-image: url('map_10x10.jpg?v=<?= time() ?>');">
                         <!-- SVG 覆蓋層：負責處理格線熱區、牆壁繪製與起終點顯示 -->
@@ -230,30 +203,27 @@
                     </div>
                 </div>
 
-                <!-- 鍵盤操控與操作指引 (挪至 2D 地圖下方) -->
-                <div class="sim-instructions" id="simInstructions">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <div id="driveStatusBadge" class="drive-status-tag inactive">
-                            <span id="driveStatusDot">⚪</span> <span id="driveStatusText">鍵盤操控功能：已停止</span>
-                        </div>
-                        <div id="subTimerBadge" style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: var(--font-mono);">
-                            ⏱️ 00:00.0 (完賽計時)
-                        </div>
-                    </div>
-                    <div id="simWalkControlTitle"><strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong></div>
-                    <div style="margin-top: 4px;">
-                        <kbd>W</kbd> 前進 &nbsp; <kbd>S</kbd> 後退 &nbsp; <kbd>A</kbd> 左轉 &nbsp; <kbd>D</kbd> 右轉
-                    </div>
-                    <div id="driveTipText" style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
-                        * 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能
+                    <div class="zoom-float" id="practiceZoomBar">
+                        <button type="button" class="zoom-btn" id="btnZoomOut" title="縮小（滾輪或 Ctrl −）" aria-label="縮小"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#minus"></use></svg></button>
+                        <button type="button" class="zoom-btn zoom-value" id="zoomPercentDisplay" title="目前縮放比例">100%</button>
+                        <button type="button" class="zoom-btn" id="btnZoomIn" title="放大（滾輪或 Ctrl +）" aria-label="放大"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#plus"></use></svg></button>
+                        <button type="button" class="zoom-btn" id="btnZoomReset" title="重設為 100%" aria-label="重設為 100%"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#focus-centered"></use></svg></button>
+                        <button type="button" class="zoom-btn" id="btnZoomFit" title="適配全圖" aria-label="適配全圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#maximize"></use></svg></button>
                     </div>
                 </div>
             </div>
 
             <!-- 狀態列 -->
             <div class="editor-status-bar">
-                <div>起點: <strong id="statStart">(0, 9)</strong> | 終點: <strong id="statGoal">(9, 0)</strong></div>
-                <div>牆壁段數: <strong id="statWallCount">0</strong> 段・<span id="headerTagGrid">規格：10×10 格</span>・<span id="headerTagTotal">總長寬：300×300 cm</span>・每格 30 cm・牆高 15 cm</div>
+                <span id="toolTip">點格線新增或移除牆壁</span>
+                <span class="status-spacer"></span>
+                <span>起點 <strong id="statStart">(0, 9)</strong> → 終點 <strong id="statGoal">(9, 0)</strong></span>
+                <span>牆 <strong id="statWallCount">0</strong> 段</span>
+                <span id="headerTagGrid" hidden></span>
+                <span id="headerTagTotal">總長寬：300×300 cm</span>
+                <button class="map-size-toggle-btn" id="btnToggleMapSize" title="切換版面大小">
+                    <span id="mapSizeIcon">🌓</span> <span id="mapSizeText">一半版面設計</span>
+                </button>
             </div>
         </section>
 
@@ -346,6 +316,26 @@
 
             <!-- Three.js 渲染畫布容器 -->
             <div class="threejs-canvas-wrapper" id="canvasContainer"></div>
+
+            <!-- 鍵盤操控與操作指引（Beta 4 改為 3D 底部操控列） -->
+            <div class="sim-instructions" id="simInstructions">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div id="driveStatusBadge" class="drive-status-tag inactive">
+                        <span id="driveStatusDot">⚪</span> <span id="driveStatusText">鍵盤操控功能：已停止</span>
+                    </div>
+                    <div id="subTimerBadge" style="font-size: 13px; font-weight: 700; color: var(--accent); font-family: var(--font-mono);">
+                        ⏱️ 00:00.0 (完賽計時)
+                    </div>
+                </div>
+                <div id="simWalkControlTitle"><strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong></div>
+                <div style="margin-top: 4px;">
+                    <kbd>W</kbd> 前進 &nbsp; <kbd>S</kbd> 後退 &nbsp; <kbd>A</kbd> 左轉 &nbsp; <kbd>D</kbd> 右轉
+                </div>
+                <div id="driveTipText" style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
+                    * 請點擊右上方「<strong>▶ 開始操控</strong>」按鈕以啟用鍵盤功能
+                </div>
+            </div>
+
 
             <!-- 即時座標 HUD -->
             <div class="sim-pos-hud" id="posHud">
@@ -1243,6 +1233,7 @@
                     const tagTotal = document.getElementById('headerTagTotal');
                     const specDim = document.getElementById('specDimensionsCm');
                     if (tagGrid) tagGrid.textContent = `規格：${cols}×${rows} 格`;
+                    document.getElementById('specMenuLabel').textContent = `${cols} × ${rows}`;
                     if (tagTotal) tagTotal.textContent = `總長寬：${cols * 30}×${rows * 30} cm`;
                     if (specDim) specDim.textContent = `${cols * 30} × ${rows * 30} cm`;
 
@@ -1303,10 +1294,10 @@
 
             function getOptimalDesignCanvasSize() {
                 // 設計時 50% 版面下的最佳畫布像素尺寸 (兼顧寬度與高度)
-                const panelWidth = editorPanel ? editorPanel.clientWidth : (window.innerWidth * 0.5);
-                const maxW = Math.floor(panelWidth - 64);
-                const maxH = Math.floor(window.innerHeight - 270);
-                return Math.max(480, Math.min(620, maxW > 0 ? maxW : 560, maxH > 400 ? maxH : 560));
+                const viewport = document.getElementById('mapViewport');
+                const maxW = viewport ? viewport.clientWidth - 32 : 560;
+                const maxH = viewport ? viewport.clientHeight - 32 : 560;
+                return Math.max(320, Math.min(720, maxW, maxH));
             }
 
             function set2DMapMode(mode, showNotification = false) {
@@ -1424,10 +1415,10 @@
 
             // 3. 工具切換 (設置牆壁 / 設定起點 / 設定終點 / 拖曳平移)
             const toolButtons = [
-                { id: 'toolWall', tool: 'wall', tip: '目前工具：點擊格線增刪 15cm 牆壁 (支援滾輪縮放)' },
-                { id: 'toolStart', tool: 'start', tip: '目前工具：點擊任一格設定為【起點】' },
-                { id: 'toolGoal', tool: 'goal', tip: '目前工具：點擊任一格設定為【終點】' },
-                { id: 'toolPan', tool: 'pan', tip: '目前工具：按住滑鼠左鍵即可拖曳平移 2D 地圖 (亦可滾輪縮放)' }
+                { id: 'toolWall', tool: 'wall', tip: '點格線新增或移除牆壁' },
+                { id: 'toolStart', tool: 'start', tip: '點任一格設為起點' },
+                { id: 'toolGoal', tool: 'goal', tip: '點任一格設為終點' },
+                { id: 'toolPan', tool: 'pan', tip: '按住拖曳平移地圖' }
             ];
 
             toolButtons.forEach(btnObj => {
@@ -1789,7 +1780,7 @@
                     // 會員解鎖儲存、個人地圖庫與發布按鈕
                     if (btnSave) {
                         btnSave.classList.remove('guest-locked');
-                        btnSave.innerHTML = '<span>💾</span> 儲存';
+                        btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
                         btnSave.title = '將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)';
                     }
                     if (btnMapLibrary) {
@@ -1798,7 +1789,7 @@
                     }
                     if (btnPublishToRanked) {
                         btnPublishToRanked.classList.remove('guest-locked');
-                        btnPublishToRanked.innerHTML = '<span>📤</span> 發布至排位賽圖庫';
+                        btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽';
                         btnPublishToRanked.title = '將目前練習賽設計好的迷宮，一鍵發布至官方排位賽圖庫';
                     }
                     refreshMapLibraryBadge();
@@ -1816,7 +1807,7 @@
                         const rows = parseInt(btn.getAttribute('data-rows'), 10);
                         if (cols > 10 || rows > 10) {
                             btn.classList.add('locked');
-                            btn.textContent = `🔒 ${cols}×${rows}`;
+                            btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>${cols}×${rows}`;
                             btn.title = `🔒 未登入已鎖定：登入帳號即可解鎖 ${cols}×${rows} 規格！`;
                         } else {
                             btn.classList.remove('locked');
@@ -1833,7 +1824,7 @@
                     // 訪客限制：儲存、個人地圖庫與發布按鈕顯示鎖定狀態
                     if (btnSave) {
                         btnSave.classList.add('guest-locked');
-                        btnSave.innerHTML = '<span>🔒</span> 儲存 (需登入)';
+                        btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>儲存（需登入）';
                         btnSave.title = '🔒 訪客限制：儲存個人迷宮至雲端資料庫需登入會員帳號！';
                     }
                     if (btnMapLibrary) {
@@ -1845,7 +1836,7 @@
                     }
                     if (btnPublishToRanked) {
                         btnPublishToRanked.classList.add('guest-locked');
-                        btnPublishToRanked.innerHTML = '<span>🔒</span> 發布至排位賽圖庫 (需登入)';
+                        btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>發布到排位賽（需登入）';
                         btnPublishToRanked.title = '🔒 訪客限制：發布自訂迷宮至官方排位賽圖庫需登入會員帳號！';
                     }
                 }
@@ -2433,6 +2424,12 @@
             }
 
             // 我的地圖庫按鈕點擊
+            document.getElementById('btnFileMapLibrary').addEventListener('click', () => document.getElementById('btnMapLibrary').click());
+            setupMenu(document.getElementById('btnSpecMenu'), document.getElementById('specMenu'));
+            setupMenu(document.getElementById('btnMapMenu'), document.getElementById('mapMenu'));
+            setupMenu(document.getElementById('btnFileMenu'), document.getElementById('fileMenu'));
+            setupMenu(document.getElementById('btnShortcuts'), document.getElementById('shortcutsMenu'));
+
             document.getElementById('btnMapLibrary')?.addEventListener('click', () => {
                 if (currentGameMode === 'ranked') {
                     showToast('🔒 排位賽官方盲測模式禁止存取個人圖庫！請切換至【練習賽】進行管理。', true);
@@ -2480,6 +2477,7 @@
                     practiceSpecBar.style.display = 'none';
                     rankedSpecBar.style.display = 'flex';
                     practiceToolsToolbar.style.display = 'none';
+                    document.getElementById('practiceToolRail').style.display = 'none';
                     rankedToolsBanner.style.display = 'flex';
                     practiceZoomBar.style.display = 'none';
                     rankedBlindOverlay.style.display = 'flex';
@@ -2518,9 +2516,10 @@
                     btnModePractice.classList.add('active');
                     btnModeRanked.classList.remove('active');
 
-                    practiceSpecBar.style.display = 'flex';
+                    practiceSpecBar.style.display = '';
                     rankedSpecBar.style.display = 'none';
                     practiceToolsToolbar.style.display = 'flex';
+                    document.getElementById('practiceToolRail').style.display = 'flex';
                     rankedToolsBanner.style.display = 'none';
                     practiceZoomBar.style.display = 'flex';
                     rankedBlindOverlay.style.display = 'none';

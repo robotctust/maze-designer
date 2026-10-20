@@ -82,226 +82,33 @@ body {
 
 
 /* Main Layout */
-.app-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-}
 
 /* Left: 2D Editor (設計時用一半版面 50%，遙控時恢復正常大小 480px) */
-.editor-panel {
-    width: 50%;
-    flex: 0 0 50%;
-    max-width: 50%;
-    min-width: 480px;
-    background: var(--surface);
-    border-right: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), flex 0.35s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.editor-panel.mode-compact {
-    width: 480px;
-    flex: 0 0 480px;
-    max-width: 480px;
-    min-width: 420px;
-}
 
-.panel-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
 
-.panel-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-2);
-}
 
-.map-size-toggle-btn {
-    background: rgba(2, 132, 199, 0.18);
-    color: var(--accent);
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    padding: 3px 10px;
-    border-radius: var(--radius-lg);
-    font-size: 12px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    transition: all 0.25s ease;
-    user-select: none;
-}
 
-.map-size-toggle-btn:hover {
-    background: var(--accent-fill);
-    color: var(--on-accent);
-    box-shadow: none !important;
-    transform: none !important;
-}
 
-.map-size-toggle-btn.compact {
-    background: rgba(51, 65, 85, 0.6);
-    color: var(--text-muted);
-    border-color: var(--border-strong);
-}
 
-.map-size-toggle-btn.compact:hover {
-    background: var(--border);
-    color: var(--text);
-    border-color: var(--text-muted);
-}
 
 /* Grid Specification Bar */
-.grid-spec-bar {
-    background: var(--surface-sunken);
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
 
-.spec-inputs-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--text-2);
-}
 
-.spec-title {
-    font-weight: 600;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
 
-.spec-input-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
 
-.spec-input-item label {
-    font-size: 13px;
-    color: var(--text-muted);
-}
 
-.spec-input {
-    width: 52px;
-    padding: 4px 6px;
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: 4px;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    outline: none;
-    transition: border-color 0.2s ease;
-}
 
-.spec-input:focus {
-    border-color: var(--accent);
-    box-shadow: none;
-}
 
-.spec-times {
-    color: var(--text-muted);
-    font-weight: bold;
-    font-size: 14px;
-}
 
-.btn-spec-apply {
-    background: var(--accent-fill);
-    border: 1px solid var(--accent);
-    color: var(--on-accent);
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
 
-.btn-spec-apply:hover {
-    background: var(--accent-fill-hover);
-    box-shadow: none !important;
-    transform: none !important;
-    color: var(--on-accent);
-}
 
-.spec-presets-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-    font-size: 13px;
-}
 
-.spec-preset-label {
-    color: var(--text-muted);
-    font-size: 13px;
-}
 
-.spec-preset-btn {
-    background: var(--surface);
-    color: var(--text-muted);
-    border: 1px solid var(--border-strong);
-    padding: 3px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
 
-.spec-preset-btn:hover {
-    background: var(--border);
-    color: var(--text);
-    border-color: var(--text-muted);
-}
 
-.spec-preset-btn.active {
-    background: var(--accent-tint);
-    border-color: var(--accent);
-    color: var(--accent-soft);
-    font-weight: 600;
-    box-shadow: none !important;
-}
 
-.spec-cm-info {
-    margin-left: auto;
-    color: var(--accent);
-    font-weight: 600;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    background: rgba(2, 132, 199, 0.15);
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-}
 
-.tools-toolbar {
-    padding: 10px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-}
 
 .tool-btn {
     background: var(--surface-2);
@@ -362,117 +169,17 @@ body {
 }
 
 /* 2D Map Zoom Bar */
-.map-zoom-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    flex-wrap: wrap;
-    gap: 8px;
-}
 
-.zoom-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
 
-.zoom-title {
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-}
 
-.zoom-btn {
-    background: var(--surface);
-    color: var(--text-2);
-    border: 1px solid var(--border-strong);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
 
-.zoom-btn:hover {
-    background: var(--accent-fill);
-    color: var(--on-accent);
-    border-color: var(--accent);
-    box-shadow: none !important;
-    transform: none !important;
-}
 
-.zoom-value {
-    min-width: 48px;
-    text-align: center;
-    background: rgba(2, 132, 199, 0.15);
-    color: var(--accent);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.2s ease;
-}
 
-.zoom-value:hover {
-    background: rgba(2, 132, 199, 0.3);
-    border-color: var(--accent);
-    color: var(--text);
-}
 
-.zoom-tips {
-    color: var(--text-muted);
-    font-size: 12px;
-}
 
 /* 2D Map Canvas Wrapper & Viewport */
-.map-canvas-container {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 1;
-    gap: 12px;
-}
 
-.map-viewport {
-    position: relative;
-    width: 100%;
-    height: 590px;
-    min-height: 440px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
-    user-select: none;
-    touch-action: none;
-    cursor: default;
-    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.editor-panel.mode-compact .map-viewport {
-    height: 430px;
-    min-height: 380px;
-}
 
 .map-viewport.panning {
     cursor: grabbing !important;
@@ -585,28 +292,9 @@ body {
 }
 
 /* Tip / Status */
-.editor-status-bar {
-    padding: 10px 16px;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    font-size: 14px;
-    color: var(--text-muted);
-    display: flex;
-    justify-content: space-between;
-}
 
-.editor-status-bar strong {
-    color: var(--accent);
-}
 
 /* Right: 3D Simulator */
-.simulator-panel {
-    flex: 1;
-    position: relative;
-    background: var(--surface-sunken);
-    display: flex;
-    flex-direction: column;
-}
 
 /* 3D 視圖懸浮主控儀表板 (整齊雙層結構 HUD Deck) */
 .sim-hud-deck {
@@ -835,19 +523,6 @@ body {
 }
 
 /* Keyboard Instructions Box under 2D Map */
-.sim-instructions {
-    width: 460px;
-    margin-top: 14px;
-    box-sizing: border-box;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    font-size: 14px;
-    color: var(--text-2);
-    line-height: 1.5;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-}
 
 .sim-instructions kbd {
     background: var(--border);
@@ -1145,19 +820,7 @@ body {
 
 
 /* Preset buttons locked styling */
-.spec-preset-btn.locked {
-    position: relative;
-    border-color: var(--text-muted);
-    color: var(--text-muted);
-    background: var(--bg);
-}
 
-.spec-preset-btn.locked:hover {
-    border-color: var(--ranked-fill);
-    color: var(--ranked);
-    box-shadow: none !important;
-    transform: none !important;
-}
 
 /* Auth Modal Backdrop & Card */
 .auth-modal-backdrop {
@@ -2615,5 +2278,392 @@ button:hover,
 .auth-status-badge {
     font-size: 12px;
     color: var(--accent-soft);
+}
+
+/* ========================================================
+   練習模式版面 (v2)：編輯列、工具欄、畫布、狀態列
+   ======================================================== */
+.editbar {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.editbar-spacer,
+.status-spacer,
+.tool-rail-spacer {
+    flex: 1;
+}
+
+.tool-btn.btn-sm {
+    min-height: 30px;
+    padding: 0 10px;
+    font-size: 13px;
+}
+
+.app-container {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    position: relative;
+}
+
+.editor-panel,
+.simulator-panel {
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.simulator-panel {
+    background: var(--surface-sunken);
+}
+
+/* 「放大 3D」時 2D 收窄 */
+.editor-panel.mode-compact {
+    flex: 0 0 440px;
+}
+
+.editor-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+/* 左側工具欄 */
+.tool-rail {
+    width: 60px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+    border-right: 1px solid var(--border);
+}
+
+.tool {
+    width: 48px;
+    height: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tool:hover,
+.tool[aria-expanded="true"] {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.tool.active {
+    background: var(--accent-tint);
+    color: var(--accent);
+}
+
+/* 規格選單 */
+.spec-menu {
+    width: 300px;
+    padding: 14px;
+}
+
+.menu-heading {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.menu-note {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.spec-inputs-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.spec-inputs-row .tool-btn {
+    margin-left: auto;
+}
+
+.spec-input {
+    width: 60px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+.spec-input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.spec-presets-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.spec-preset-btn {
+    height: 28px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.spec-preset-btn:hover {
+    border-color: var(--accent);
+}
+
+.spec-preset-btn.active {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent-soft);
+}
+
+.spec-preset-btn.locked {
+    border-style: dashed;
+    color: var(--text-muted);
+}
+
+.spec-preset-btn .icon {
+    width: 13px;
+    height: 13px;
+    vertical-align: 0;
+}
+
+.spec-facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 16px;
+    row-gap: 4px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.spec-facts dt {
+    color: var(--text-muted);
+}
+
+.spec-facts dd {
+    margin: 0;
+}
+
+/* 快捷鍵說明（從工具欄往右展開） */
+.menu.menu-side {
+    top: auto;
+    bottom: 0;
+    left: calc(100% + 10px);
+    width: 300px;
+    padding: 10px 6px;
+}
+
+.kbd-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.kbd-row span {
+    margin-left: auto;
+}
+
+kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border: 1px solid var(--border-strong);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-2);
+}
+
+/* 2D 畫布 */
+.map-canvas-container {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    display: flex;
+}
+
+.map-viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--surface-sunken);
+    user-select: none;
+    touch-action: none;
+    cursor: default;
+}
+
+.zoom-float {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    z-index: 5;
+}
+
+.zoom-btn {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font: inherit;
+    cursor: pointer;
+}
+
+.zoom-btn:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.zoom-btn .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.zoom-value {
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+/* 狀態列 */
+.editor-status-bar {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.editor-status-bar strong {
+    color: var(--text);
+    font-weight: 500;
+    font-family: var(--font-mono);
+}
+
+.map-size-toggle-btn {
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-2);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.map-size-toggle-btn:hover {
+    background: var(--surface-2);
+}
+
+/* 鍵盤說明（Beta 4 改為 3D 底部操控列） */
+.sim-instructions {
+    flex: none;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-2);
+    background: var(--surface);
+}
+
+/* 平板直向：2D 在上、3D 在下 */
+@media (max-width: 1023px) {
+    .app-container {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .editor-panel,
+    .editor-panel.mode-compact {
+        flex: none;
+        height: 520px;
+    }
+
+    .simulator-panel {
+        flex: none;
+        height: 480px;
+    }
+
+    .editbar #btnPublishToRanked {
+        font-size: 0;
+        gap: 0;
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+    }
 }
 
