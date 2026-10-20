@@ -531,32 +531,6 @@ button:hover,
     border-radius: 8px;
 }
 
-.seg .mode-tab-btn {
-    height: 30px;
-    padding: 0 16px;
-    border: 0;
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-muted);
-    font: inherit;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.seg .mode-tab-btn:hover {
-    color: var(--text);
-}
-
-.seg .mode-tab-btn.active {
-    background: var(--selected);
-    color: var(--text);
-}
-
-.seg .mode-tab-btn.ranked-mode.active {
-    background: var(--ranked-fill);
-    color: var(--on-ranked);
-}
-
 /* 頭像 */
 .avatar {
     width: 28px;
@@ -1336,19 +1310,25 @@ kbd {
 /* 段位色：body[data-tier] 決定排位賽畫面的主色，段位按鈕各自帶自己的顏色 */
 :root,
 [data-tier="10x10"],
-.ranked-tier-btn[data-size="10x10"] { --tier: #D99A6C; }
+.ranked-tier-btn[data-size="10x10"],
+.leaderboard-tab-btn[data-size="10x10"] { --tier: #D99A6C; }
 [data-tier="15x15"],
-.ranked-tier-btn[data-size="15x15"] { --tier: #B4C3D6; }
+.ranked-tier-btn[data-size="15x15"],
+.leaderboard-tab-btn[data-size="15x15"] { --tier: #B4C3D6; }
 [data-tier="20x20"],
-.ranked-tier-btn[data-size="20x20"] { --tier: #FBBF24; }
+.ranked-tier-btn[data-size="20x20"],
+.leaderboard-tab-btn[data-size="20x20"] { --tier: #FBBF24; }
 [data-tier="25x25"],
-.ranked-tier-btn[data-size="25x25"] { --tier: #B197FC; }
+.ranked-tier-btn[data-size="25x25"],
+.leaderboard-tab-btn[data-size="25x25"] { --tier: #B197FC; }
 [data-tier="30x30"],
-.ranked-tier-btn[data-size="30x30"] { --tier: #FF6B57; }
+.ranked-tier-btn[data-size="30x30"],
+.leaderboard-tab-btn[data-size="30x30"] { --tier: #FF6B57; }
 
 :root,
 [data-tier],
-.ranked-tier-btn {
+.ranked-tier-btn,
+.leaderboard-tab-btn {
     --tier-tint: color-mix(in srgb, var(--tier) 14%, transparent);
     --tier-line: color-mix(in srgb, var(--tier) 40%, transparent);
     --tier-glow: color-mix(in srgb, var(--tier) 45%, transparent);
@@ -3153,4 +3133,261 @@ kbd {
     max-height: 360px;
     display: block;
     border-radius: 4px;
+}
+
+/* ========================================================
+   排位賽入口（頂部列）：獨立的段位風格按鈕
+   ======================================================== */
+.ranked-entry {
+    --tier: #FBBF24;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 14px 0 10px;
+    border: 0;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    background:
+        repeating-linear-gradient(-45deg, color-mix(in srgb, var(--tier) 10%, transparent) 0 8px, transparent 8px 16px),
+        color-mix(in srgb, var(--tier) 14%, var(--surface-2));
+    color: var(--tier);
+    font: inherit;
+    cursor: pointer;
+}
+
+.ranked-entry:hover {
+    background:
+        repeating-linear-gradient(-45deg, color-mix(in srgb, var(--tier) 16%, transparent) 0 8px, transparent 8px 16px),
+        color-mix(in srgb, var(--tier) 24%, var(--surface-2));
+}
+
+.ranked-entry-crest {
+    width: 30px;
+    height: 30px;
+    flex: none;
+}
+
+.ranked-entry-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    text-align: left;
+}
+
+.ranked-entry-en {
+    font: 600 10px var(--font-mono);
+    letter-spacing: 0.28em;
+}
+
+.ranked-entry-name {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: var(--text);
+}
+
+/* ========================================================
+   排行榜彈窗：排位賽風格，主色跟著目前段位頁籤
+   ======================================================== */
+.ranked-board .auth-modal-card {
+    position: relative;
+    border-color: var(--tier-line);
+    border-radius: 4px;
+    background-color: rgba(11, 16, 32, 0.98);
+    background-image:
+        radial-gradient(ellipse 70% 40% at 80% 0%, color-mix(in srgb, var(--tier) 14%, transparent), transparent 70%),
+        linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: auto, 32px 32px, 32px 32px;
+    box-shadow: 0 0 60px color-mix(in srgb, var(--tier) 20%, transparent), 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.ranked-board .auth-modal-card::before,
+.ranked-board .auth-modal-card::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 0 solid var(--tier);
+    pointer-events: none;
+}
+
+.ranked-board .auth-modal-card::before {
+    left: -1px;
+    top: -1px;
+    border-width: 3px 0 0 3px;
+}
+
+.ranked-board .auth-modal-card::after {
+    right: -1px;
+    bottom: -1px;
+    border-width: 0 3px 3px 0;
+}
+
+.ranked-board .dlg-head {
+    gap: 14px;
+}
+
+.board-crest {
+    width: 56px;
+    height: 56px;
+    flex: none;
+    color: var(--tier);
+    filter: drop-shadow(0 0 10px var(--tier-glow));
+}
+
+.board-kicker {
+    margin: 0;
+    font: 600 12px var(--font-mono);
+    letter-spacing: 0.26em;
+    color: var(--tier);
+}
+
+.ranked-board .dlg-title {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+/* 段位頁籤：徽章＋段位名 */
+.board-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.board-tabs .leaderboard-tab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(18, 24, 41, 0.8);
+    color: var(--text-2);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+}
+
+.board-tabs .leaderboard-tab-btn:hover {
+    border-color: var(--tier-line);
+}
+
+.board-tabs .leaderboard-tab-btn.active {
+    border-color: var(--tier);
+    background: color-mix(in srgb, var(--tier) 12%, rgba(18, 24, 41, 0.8));
+    color: var(--tier);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--tier) 20%, transparent);
+}
+
+.board-tabs .leaderboard-tab-btn span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.board-tabs .leaderboard-tab-btn small {
+    font: 500 11px var(--font-mono);
+    color: var(--text-muted);
+}
+
+.board-tab-crest {
+    width: 30px;
+    height: 30px;
+    flex: none;
+    color: var(--tier);
+}
+
+/* 我的最佳 */
+.ranked-board .user-best-banner {
+    border: 1px solid var(--tier-line);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--tier) 8%, var(--surface-sunken));
+}
+
+.ranked-board .user-best-banner .stat-value {
+    font-family: var(--font-mono);
+    color: var(--text);
+}
+
+.ranked-board .user-best-banner .stat-value.best {
+    color: var(--tier);
+}
+
+/* 排行表：前三名領獎台、自己那列段位色 */
+.ranked-board .leaderboard-table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(8, 12, 26, 0.6);
+}
+
+.ranked-board .leaderboard-table th {
+    font: 600 11px var(--font-mono);
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+}
+
+.ranked-board .leaderboard-table td.num {
+    font-family: var(--font-mono);
+}
+
+.ranked-board .leaderboard-table td.strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.ranked-board .medal,
+.ranked-board .rank-num {
+    width: 32px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    border-radius: 0;
+    font: 700 15px var(--font-mono);
+}
+
+.ranked-board .rank-num {
+    background: var(--surface-raised);
+    color: var(--text-muted);
+}
+
+.ranked-board .medal-1 { background: #FBBF24; color: #2A1700; }
+.ranked-board .medal-2 { background: #CBD5E1; color: #0F172A; }
+.ranked-board .medal-3 { background: #D99A6C; color: #2A1405; }
+
+.ranked-board tr.top-1 td,
+.ranked-board tr.top-2 td,
+.ranked-board tr.top-3 td,
+.ranked-board tr.is-me td {
+    background: transparent;
+}
+
+.ranked-board tr.top-1 { background: linear-gradient(90deg, rgba(251, 191, 36, 0.16), transparent 75%); }
+.ranked-board tr.top-2 { background: linear-gradient(90deg, rgba(203, 213, 225, 0.1), transparent 75%); }
+.ranked-board tr.top-3 { background: linear-gradient(90deg, rgba(217, 154, 108, 0.12), transparent 75%); }
+.ranked-board tr.is-me { background: color-mix(in srgb, var(--tier) 14%, transparent); }
+
+.ranked-board tr.top-1 td.strong {
+    color: #FBBF24;
+}
+
+.ranked-board tr.is-me td:first-child {
+    box-shadow: inset 3px 0 0 var(--tier);
+}
+
+.ranked-board .me-tag {
+    color: var(--tier);
+}
+
+@media (max-width: 767px) {
+    .board-tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }

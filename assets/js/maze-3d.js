@@ -318,6 +318,9 @@ class Maze3D {
 
     setMode(mode) {
         this.currentMode = mode;
+        // 車載視角用較廣的視野，看得到兩側牆面；俯瞰維持 45 度
+        this.camera.fov = mode === 'driver' ? 65 : 45;
+        this.camera.updateProjectionMatrix();
         if (mode === 'driver') {
             if (this.orbitControls) this.orbitControls.enabled = false;
             this.updateDriverCamera();

@@ -14,10 +14,12 @@
             <svg class="icon" style="width:24px;height:24px;color:var(--accent)" aria-hidden="true"><use href="assets/icons.svg#compass"></use></svg>
             <span class="brand-name">迷宮設計器</span>
         </div>
-        <div class="seg" id="gameModeSwitch" role="group" aria-label="模式">
-            <button type="button" class="mode-tab-btn active" id="btnModePractice" title="自由設計迷宮並試跑">練習</button>
-            <button type="button" class="mode-tab-btn ranked-mode" id="btnModeRanked" title="官方地圖限時挑戰，成績登上排行榜">排位賽</button>
-        </div>
+        <!-- 排位賽入口：獨立按鈕；進入後由大廳的「回到練習」離開 -->
+        <button type="button" class="ranked-entry" id="btnModeRanked" title="官方地圖限時挑戰，成績登上排行榜">
+            <svg class="ranked-entry-crest" aria-hidden="true"><use href="assets/icons.svg#crest-3"></use></svg>
+            <span class="ranked-entry-text"><span class="ranked-entry-en">RANKED</span><span class="ranked-entry-name">排位賽</span></span>
+            <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chevron-right"></use></svg>
+        </button>
         <div class="topbar-side end" id="userAuthBar">
             <button type="button" class="tool-btn btn-ghost" id="btnOpenLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
             <button type="button" class="tool-btn btn-ghost" id="btnOpenAuthModal" title="登入後可用到 30 × 30、存地圖、參加排位賽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#user"></use></svg>登入</button>
@@ -478,22 +480,24 @@
     </div>
 
     <!-- 排行榜 -->
-    <div class="auth-modal-backdrop" id="leaderboardModalBackdrop">
+    <div class="auth-modal-backdrop ranked-board" id="leaderboardModalBackdrop" data-tier="10x10">
         <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
             <div class="dlg-head">
+                <svg class="board-crest" aria-hidden="true"><use id="boardCrestUse" href="assets/icons.svg#crest-1"></use></svg>
                 <div class="dlg-titles">
+                    <p class="board-kicker" id="boardKicker">LEADERBOARD・ELITE</p>
                     <h2 class="dlg-title" id="leaderboardTitle">排行榜</h2>
-                    <p class="dlg-sub">每位選手在每個級別只保留最佳成績</p>
+                    <p class="dlg-sub">每位選手在每個段位只保留最佳成績</p>
                 </div>
                 <button type="button" class="dlg-close auth-modal-close" id="btnCloseLeaderboardModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
             </div>
             <div class="dlg-body">
-                <div class="seg seg-full dlg-tabs" id="leaderboardTabs" role="tablist">
-                    <button type="button" class="leaderboard-tab-btn active" data-size="10x10" role="tab">10 × 10・1 分</button>
-                    <button type="button" class="leaderboard-tab-btn" data-size="15x15" role="tab">15 × 15・3 分</button>
-                    <button type="button" class="leaderboard-tab-btn" data-size="20x20" role="tab">20 × 20・20 分</button>
-                    <button type="button" class="leaderboard-tab-btn" data-size="25x25" role="tab">25 × 25・30 分</button>
-                    <button type="button" class="leaderboard-tab-btn" data-size="30x30" role="tab">30 × 30・40 分</button>
+                <div class="board-tabs" id="leaderboardTabs" role="tablist">
+                    <button type="button" class="leaderboard-tab-btn active" data-size="10x10" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-1"></use></svg><span>菁英級<small>10 × 10</small></span></button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="15x15" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-2"></use></svg><span>戰將級<small>15 × 15</small></span></button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="20x20" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-3"></use></svg><span>大師級<small>20 × 20</small></span></button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="25x25" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-4"></use></svg><span>宗師級<small>25 × 25</small></span></button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="30x30" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-5"></use></svg><span>傳奇級<small>30 × 30</small></span></button>
                 </div>
                 <div class="user-best-banner" id="userBestBanner"></div>
                 <div class="leaderboard-table-wrap">
@@ -2591,7 +2595,6 @@
             // ============================================
             // 10. 排位賽與天梯排行榜系統 (Ranked Match & Leaderboard)
             // ============================================
-            const btnModePractice = document.getElementById('btnModePractice');
             const btnModeRanked = document.getElementById('btnModeRanked');
             const btnOpenLeaderboard = document.getElementById('btnOpenLeaderboard');
             const practiceSpecBar = document.getElementById('practiceSpecBar');
@@ -2613,9 +2616,6 @@
                         return;
                     }
                     currentGameMode = 'ranked';
-
-                    btnModeRanked.classList.add('active');
-                    btnModePractice.classList.remove('active');
 
                     practiceSpecBar.style.display = 'none';
                     document.body.classList.add('is-ranked');
@@ -2651,9 +2651,6 @@
                 } else {
                     currentGameMode = 'practice';
                     RankedFx.cancelIntro();
-
-                    btnModePractice.classList.add('active');
-                    btnModeRanked.classList.remove('active');
 
                     practiceSpecBar.style.display = '';
                     document.body.classList.remove('is-ranked', 'ranked-live');
@@ -2693,7 +2690,6 @@
                 }
             }
 
-            btnModePractice?.addEventListener('click', () => switchGameMode('practice'));
             btnModeRanked?.addEventListener('click', () => switchGameMode('ranked'));
 
             // 段位資料：徽章等級、名稱與限時（顏色寫在 CSS 的 [data-tier]）
@@ -2924,6 +2920,11 @@
 
             function loadLeaderboardData(size) {
                 if (!leaderboardTableBody) return;
+                // 彈窗主色、徽章跟著目前段位頁籤
+                const tier = RANKED_TIERS[size];
+                leaderboardModalBackdrop.dataset.tier = size;
+                document.getElementById('boardCrestUse').setAttribute('href', `assets/icons.svg#crest-${tier.level}`);
+                document.getElementById('boardKicker').textContent = `LEADERBOARD・${tier.en}`;
                 leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入中…</td></tr>';
 
                 fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
@@ -2979,7 +2980,7 @@
                     const dateStr = row.createdAt ? row.createdAt.substring(0, 16) : '-';
 
                     html += `
-                        <tr class="${isMe ? 'is-me' : ''}">
+                        <tr class="${isMe ? 'is-me' : ''}${row.rank <= 3 ? ` top-${row.rank}` : ''}">
                             <td>${rankBadge}</td>
                             <td>${escapeHtml(row.username)}${isMe ? ' <span class="me-tag">（你）</span>' : ''}</td>
                             <td class="num strong">${usedSec}</td>
