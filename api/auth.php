@@ -2,27 +2,9 @@
 /**
  * 使用者帳號認證 API (登入 / 註冊 / 登出 / 狀態檢查)
  */
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
-require_once __DIR__ . '/db.php';
-
-$action = $_GET['action'] ?? ($_POST['action'] ?? '');
-
-try {
-    $db = getDbConnection();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => '資料庫連線失敗，請確認 XAMPP MySQL 服務已啟動：' . $e->getMessage()
-    ]);
-    exit;
-}
-
-// 取得 JSON 請求主體 (若以 application/json 送出)
-$rawInput = file_get_contents('php://input');
-$jsonBody = json_decode($rawInput, true) ?: [];
+$db = connectDbOrExit();
 
 // 檢查目前登入狀態
 if ($action === 'status') {

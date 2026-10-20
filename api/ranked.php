@@ -2,12 +2,7 @@
 /**
  * 排位賽 API (取得隨機官方地圖 / 提交成績 / 排行榜查詢)
  */
-session_start();
-header('Content-Type: application/json; charset=utf-8');
-
-require_once __DIR__ . '/db.php';
-
-$action = $_GET['action'] ?? ($_POST['action'] ?? '');
+require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
 $allowedSizes = [
     '10x10' => ['dim' => 10, 'limitMs' => 60 * 1000, 'desc' => '1 分鐘 (60秒)'],
@@ -17,13 +12,7 @@ $allowedSizes = [
     '30x30' => ['dim' => 30, 'limitMs' => 40 * 60 * 1000, 'desc' => '40 分鐘 (2400秒)']
 ];
 
-try {
-    $db = getDbConnection();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => '資料庫連線失敗：' . $e->getMessage()]);
-    exit;
-}
+$db = connectDbOrExit();
 
 // 1. 取得隨機排位賽地圖
 if ($action === 'get_map') {
@@ -44,7 +33,7 @@ if ($action === 'get_map') {
         exit;
     }
 
-    $mapDir = __DIR__ . "/data/ranked_maps/{$size}";
+    $mapDir = dirname(__DIR__) . "/data/ranked_maps/{$size}";
     $mapFiles = glob("{$mapDir}/map_*.json");
 
     if (empty($mapFiles)) {
@@ -255,7 +244,7 @@ if ($action === 'leaderboard') {
     $myMapCount = null;
     if (!empty($_SESSION['user_id'])) {
         $myMapCount = ['total' => 0, 'size' => 0];
-        foreach (glob(__DIR__ . '/data/ranked_maps/*/map_*.json') as $f) {
+        foreach (glob(dirname(__DIR__) . '/data/ranked_maps/*/map_*.json') as $f) {
             $m = json_decode(file_get_contents($f), true);
             if (intval($m['authorId'] ?? 0) === intval($_SESSION['user_id'])) {
                 $myMapCount['total']++;
@@ -336,7 +325,7 @@ if ($action === 'publish_map') {
 
         // 同步檢查磁碟官方題庫檔案中是否已有由該帳號發布的此規格地圖
         $diskCount = 0;
-        foreach (glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json") as $f) {
+        foreach (glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json") as $f) {
             $m = json_decode(file_get_contents($f), true);
             if (intval($m['authorId'] ?? 0) === $userId) $diskCount++;
         }
@@ -410,7 +399,7 @@ if ($action === 'publish_map') {
     }
 
     // 確定存放資料夾
-    $mapDir = __DIR__ . "/data/ranked_maps/{$size}";
+    $mapDir = dirname(__DIR__) . "/data/ranked_maps/{$size}";
     if (!is_dir($mapDir)) {
         mkdir($mapDir, 0777, true);
     }
@@ -535,7 +524,7 @@ if ($action === 'list_maps') {
     $maps = [];
     foreach (array_keys($allowedSizes) as $size) {
         $maps[$size] = [];
-        $files = glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json");
+        $files = glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json");
         natsort($files);
         foreach ($files as $f) {
             $m = json_decode(file_get_contents($f), true);

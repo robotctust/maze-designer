@@ -2,22 +2,12 @@
 /**
  * 高級管理者專屬 API (初中級帳號管理 / 排位賽地圖審核 / 刪除排位地圖)
  */
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
-require_once __DIR__ . '/db.php';
-
-$action = $_GET['action'] ?? ($_POST['action'] ?? '');
 $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;
 
-try {
-    $db = getDbConnection();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => '資料庫連線失敗：' . $e->getMessage()]);
-    exit;
-}
+$db = connectDbOrExit();
 
 if (!$isLoggedIn) {
     http_response_code(401);
@@ -38,9 +28,6 @@ if ($myRole !== ROLE_SENIOR) {
     echo json_encode(['success' => false, 'message' => '🔒 權限不足：此頁面與功能僅限【高級使用者】存取！']);
     exit;
 }
-
-$rawInput = file_get_contents('php://input');
-$jsonBody = json_decode($rawInput, true) ?: [];
 
 // ============================================================
 // 1. 取得未審核地圖數量 (Header 徽章)
@@ -233,7 +220,7 @@ if ($action === 'review_submission') {
 
     // 核准通過：將地圖正式加入官方排位賽檔案庫
     $size = $sub['size'];
-    $mapDir = __DIR__ . "/data/ranked_maps/{$size}";
+    $mapDir = dirname(__DIR__) . "/data/ranked_maps/{$size}";
     if (!is_dir($mapDir)) {
         @mkdir($mapDir, 0777, true);
     }
@@ -321,7 +308,7 @@ if ($action === 'delete_ranked_map') {
             exit;
         }
 
-        $filePath = __DIR__ . "/data/ranked_maps/{$size}/{$mapId}.json";
+        $filePath = dirname(__DIR__) . "/data/ranked_maps/{$size}/{$mapId}.json";
         if (!file_exists($filePath)) {
             http_response_code(404);
             echo json_encode(['success' => false, 'message' => "找不到地圖檔案：{$size}/{$mapId}.json"]);
@@ -329,7 +316,7 @@ if ($action === 'delete_ranked_map') {
         }
 
         // 安全限制：每個規格至少保留 1 張地圖，避免排位賽無圖可抽
-        $allFiles = glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json");
+        $allFiles = glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json");
         if (count($allFiles) <= 1) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => "⚠️ 無法刪除：{$size} 級別至少需保留 1 張官方地圖以供排位賽抽題！"]);
@@ -342,7 +329,7 @@ if ($action === 'delete_ranked_map') {
             exit;
         }
 
-        $remainingCount = count(glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json"));
+        $remainingCount = count(glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json"));
 
         echo json_encode([
             'success' => true,
