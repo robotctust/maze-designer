@@ -1333,15 +1333,42 @@ kbd {
 /* ========================================================
    排位賽 (v2)：大廳、比賽中滿版、結算對話框
    ======================================================== */
+/* 段位色：body[data-tier] 決定排位賽畫面的主色，段位按鈕各自帶自己的顏色 */
+:root,
+[data-tier="10x10"],
+.ranked-tier-btn[data-size="10x10"] { --tier: #D99A6C; }
+[data-tier="15x15"],
+.ranked-tier-btn[data-size="15x15"] { --tier: #B4C3D6; }
+[data-tier="20x20"],
+.ranked-tier-btn[data-size="20x20"] { --tier: #FBBF24; }
+[data-tier="25x25"],
+.ranked-tier-btn[data-size="25x25"] { --tier: #B197FC; }
+[data-tier="30x30"],
+.ranked-tier-btn[data-size="30x30"] { --tier: #FF6B57; }
+
+:root,
+[data-tier],
+.ranked-tier-btn {
+    --tier-tint: color-mix(in srgb, var(--tier) 14%, transparent);
+    --tier-line: color-mix(in srgb, var(--tier) 40%, transparent);
+    --tier-glow: color-mix(in srgb, var(--tier) 45%, transparent);
+    --on-tier: #160A04;
+}
+
 .ranked-lobby {
     display: none;
     width: 420px;
     flex: none;
     flex-direction: column;
-    gap: 22px;
+    gap: 18px;
     padding: 22px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background-color: var(--surface);
+    background-image:
+        radial-gradient(ellipse 90% 40% at 75% 0%, color-mix(in srgb, var(--tier) 16%, transparent), transparent 70%),
+        linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: auto, 32px 32px, 32px 32px;
+    border: 1px solid color-mix(in srgb, var(--tier) 30%, var(--border));
     border-radius: var(--radius);
     overflow-y: auto;
 }
@@ -1356,15 +1383,86 @@ kbd {
     display: none;
 }
 
-.lobby-title {
+.lobby-kicker {
     margin: 0;
-    font-size: 22px;
-    font-weight: 700;
+    font: 600 12px var(--font-mono);
+    letter-spacing: 0.3em;
+    color: var(--tier);
 }
 
-.lobby-sub {
-    margin: 4px 0 0;
-    color: var(--text-muted);
+.lobby-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+}
+
+/* 目前段位：大徽章＋段位名，四角有 HUD 括號 */
+.lobby-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 18px;
+    border: 1px solid var(--tier-line);
+    border-radius: 4px;
+    background: rgba(11, 16, 32, 0.6);
+}
+
+.lobby-hero::before,
+.lobby-hero::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 0 solid var(--tier);
+}
+
+.lobby-hero::before {
+    left: -1px;
+    top: -1px;
+    border-width: 3px 0 0 3px;
+}
+
+.lobby-hero::after {
+    right: -1px;
+    bottom: -1px;
+    border-width: 0 3px 3px 0;
+}
+
+.lobby-crest {
+    width: 96px;
+    height: 96px;
+    flex: none;
+    color: var(--tier);
+    filter: drop-shadow(0 0 10px var(--tier-glow));
+}
+
+.lobby-hero-text {
+    min-width: 0;
+}
+
+.lobby-tier-en {
+    margin: 0;
+    font: 600 12px var(--font-mono);
+    letter-spacing: 0.2em;
+    color: var(--tier);
+}
+
+.lobby-tier-name {
+    margin: 2px 0 4px;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    color: var(--tier);
+    text-shadow: 0 0 20px var(--tier-glow);
+}
+
+.lobby-tier-sub {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-2);
 }
 
 .lobby-label {
@@ -1386,10 +1484,9 @@ kbd {
 
 .ranked-tier-btn {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    padding: 12px 14px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--surface-2);
@@ -1400,26 +1497,40 @@ kbd {
 }
 
 .ranked-tier-btn:hover {
-    border-color: var(--border-strong);
+    border-color: var(--tier-line);
 }
 
 .ranked-tier-btn.active {
-    border-color: var(--ranked-fill);
-    background: var(--ranked-tint);
+    border-color: var(--tier);
+    background: color-mix(in srgb, var(--tier) 12%, var(--surface-2));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--tier) 22%, transparent);
 }
 
-.tier-size {
-    font-size: 18px;
+.tier-crest {
+    width: 34px;
+    height: 34px;
+    flex: none;
+    color: var(--tier);
+}
+
+.tier-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tier-name {
+    font-size: 16px;
     font-weight: 700;
 }
 
 .tier-meta {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
 }
 
-.ranked-tier-btn.active .tier-meta {
-    color: var(--ranked);
+.ranked-tier-btn.active .tier-name {
+    color: var(--tier);
 }
 
 .lobby-card {
@@ -1452,7 +1563,7 @@ kbd {
     font-family: var(--font-mono);
     font-size: 22px;
     font-weight: 700;
-    color: var(--ranked);
+    color: var(--tier);
 }
 
 .tool-btn.icon-btn {
@@ -1475,29 +1586,52 @@ kbd {
     flex: 1;
 }
 
+/* 開始挑戰：固定在大廳底部，不用捲動就按得到 */
+.lobby-cta {
+    position: sticky;
+    bottom: -22px;
+    margin: 0 -22px -22px;
+    padding: 14px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: linear-gradient(to bottom, transparent, var(--surface) 18px);
+}
+
+/* 開始挑戰：斜切角＋段位色，下方警示斜紋 */
 .lobby-start {
-    height: 52px;
+    height: 58px;
     flex: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     border: 0;
-    border-radius: var(--radius-sm);
-    background: var(--ranked-fill);
-    color: var(--on-ranked);
+    border-radius: 0;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    background: var(--tier);
+    color: var(--on-tier);
     font: inherit;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
     cursor: pointer;
 }
 
 .lobby-start:hover {
-    background: var(--ranked-fill-hover);
+    background: color-mix(in srgb, var(--tier) 82%, #FFFFFF);
+}
+
+.lobby-stripes {
+    flex: none;
+    height: 6px;
+    margin-top: -4px;
+    opacity: 0.7;
+    background-image: repeating-linear-gradient(-45deg, var(--tier) 0 10px, transparent 10px 20px);
 }
 
 .lobby-hint {
-    margin: -14px 0 0;
+    margin: 0;
     text-align: center;
     font-size: 12px;
     color: var(--text-muted);
