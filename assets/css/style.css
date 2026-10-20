@@ -2563,21 +2563,11 @@ button:hover,
     border-color: #d97706;
 }
 
-.ranked-gallery-item svg,
-.ranked-gallery-hidden {
+.ranked-gallery-item svg {
     display: block;
     width: 100%;
     aspect-ratio: 1;
     margin-bottom: 6px;
-}
-
-.ranked-gallery-hidden {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0f172a;
-    border-radius: 4px;
-    color: #64748b;
 }
 
 .ranked-gallery-name {

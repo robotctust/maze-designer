@@ -596,7 +596,7 @@
             <div class="auth-modal-header">
                 <div class="auth-modal-icon">📚</div>
                 <h3 class="auth-modal-title">排位賽地圖總覽</h3>
-                <p class="auth-modal-subtitle">官方排位圖庫所有地圖 • 為維護盲測公平，目前抽中的地圖不提供預覽</p>
+                <p class="auth-modal-subtitle">官方排位圖庫所有地圖 • 橘框為本場地圖</p>
             </div>
 
             <div class="ranked-gallery" id="rankedGalleryList"></div>
@@ -2855,8 +2855,8 @@
                                 const isCurrent = size === currentRankedSize && m.mapId === currentRankedMapId;
                                 html += `
                                     <div class="ranked-gallery-item${isCurrent ? ' is-current' : ''}" title="${escapeHtml(String(m.name || m.mapId))}">
-                                        ${isCurrent ? '<div class="ranked-gallery-hidden">🙈 目前抽中<br>不提供預覽</div>' : mazePreviewSvg(m)}
-                                        <div class="ranked-gallery-name">${escapeHtml(String(m.mapId))}</div>
+                                        ${mazePreviewSvg(m)}
+                                        <div class="ranked-gallery-name">${escapeHtml(String(m.mapId))}${isCurrent ? '（本場）' : ''}</div>
                                         <div>👤 ${escapeHtml(String(m.author || '官方'))}</div>
                                     </div>
                                 `;
