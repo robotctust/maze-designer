@@ -1237,7 +1237,7 @@
                         RankedFx.play('finish');
                         RankedFx.celebrate(document.querySelector('.sim-stage'));
 
-                        fetch('ranked_api.php?action=submit_score', {
+                        fetch('api/ranked.php?action=submit_score', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -1759,7 +1759,7 @@
 
             setupMenu(btnAccountMenu, accountMenu, () => {
                 const el = document.getElementById('myRankedMapCount');
-                fetch('ranked_api.php?action=leaderboard&size=10x10')
+                fetch('api/ranked.php?action=leaderboard&size=10x10')
                     .then(res => res.json())
                     .then(res => { if (res.myMapCount) el.textContent = `共 ${res.myMapCount.total} 張`; })
                     .catch(() => {});
@@ -1857,7 +1857,7 @@
                     headerMapCountBadge.textContent = '需登入';
                     return;
                 }
-                fetch('api.php?action=list')
+                fetch('api/maps.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (res.success) {
@@ -1871,7 +1871,7 @@
             function refreshAdminPendingCount() {
                 const badge = document.getElementById('adminPendingCountBadge');
                 if (!badge || !currentUser || currentUser.role !== 'senior') return;
-                fetch('admin_api.php?action=pending_count')
+                fetch('api/admin.php?action=pending_count')
                     .then(res => res.json())
                     .then(res => {
                         if (res.success && typeof res.count === 'number') {
@@ -2026,7 +2026,7 @@
 
             // 檢查伺服器 Session 狀態
             function checkAuthStatus() {
-                return fetch('auth.php?action=status')
+                return fetch('api/auth.php?action=status')
                     .then(res => res.json())
                     .then(res => {
                         if (res.success && res.loggedIn && res.user) {
@@ -2053,7 +2053,7 @@
 
                 showAuthAlert('⏳ 驗證登入中，請稍候...', 'warning');
 
-                fetch('auth.php?action=login', {
+                fetch('api/auth.php?action=login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -2111,7 +2111,7 @@
 
                 showAuthAlert('⏳ 帳號建立中，請稍候...', 'warning');
 
-                fetch('auth.php?action=register', {
+                fetch('api/auth.php?action=register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2149,7 +2149,7 @@
 
             // 登出
             btnLogout?.addEventListener('click', () => {
-                fetch('auth.php?action=logout', { method: 'POST' })
+                fetch('api/auth.php?action=logout', { method: 'POST' })
                     .then(res => res.json())
                     .then(res => {
                         updateAuthUI(null);
@@ -2176,7 +2176,7 @@
             // ============================================
 
             const loadMazeConfig = () => {
-                fetch('api.php')
+                fetch('api/maps.php')
                     .then(res => res.json())
                     .then(res => {
                         if (res.success && res.data) {
@@ -2256,7 +2256,7 @@
                 saveMapModalBackdrop?.classList.add('show');
 
                 // 讀取當前地圖庫狀態
-                fetch('api.php?action=list')
+                fetch('api/maps.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -2399,7 +2399,7 @@
                 btnConfirmSaveMap.disabled = true;
                 btnConfirmSaveMap.textContent = '儲存中…';
 
-                fetch('api.php', {
+                fetch('api/maps.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(currentData)
@@ -2477,7 +2477,7 @@
                 if (!mapLibraryList) return;
                 mapLibraryList.innerHTML = '<div class="list-note">載入中…</div>';
 
-                fetch('api.php?action=list')
+                fetch('api/maps.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -2549,7 +2549,7 @@
             }
 
             function loadUserMapById(id, name) {
-                fetch(`api.php?action=load&id=${id}`)
+                fetch(`api/maps.php?action=load&id=${id}`)
                     .then(res => res.json())
                     .then(res => {
                         if (res.success && res.data) {
@@ -2571,7 +2571,7 @@
                     return;
                 }
 
-                fetch(`api.php?action=delete&id=${id}`, { method: 'POST' })
+                fetch(`api/maps.php?action=delete&id=${id}`, { method: 'POST' })
                     .then(res => res.json())
                     .then(res => {
                         if (res.success) {
@@ -2748,7 +2748,7 @@
                 document.getElementById('rankedVictoryModal').style.display = 'none';
                 document.getElementById('rankedTimeoutModal').style.display = 'none';
 
-                fetch('ranked_api.php?action=get_map&size=' + encodeURIComponent(size))
+                fetch('api/ranked.php?action=get_map&size=' + encodeURIComponent(size))
                     .then(res => res.json())
                     .then(res => {
                         if (res.success && res.mapData) {
@@ -2819,7 +2819,7 @@
 
             // 大廳：我的成績、開始比賽、看排行榜
             function refreshLobbyScore(size) {
-                fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
+                fetch('api/ranked.php?action=leaderboard&size=' + encodeURIComponent(size))
                     .then(res => res.json())
                     .then(res => {
                         const best = res.userBest;
@@ -2942,7 +2942,7 @@
                 document.getElementById('boardKicker').textContent = `LEADERBOARD・${tier.en}`;
                 leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入中…</td></tr>';
 
-                fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
+                fetch('api/ranked.php?action=leaderboard&size=' + encodeURIComponent(size))
                     .then(res => res.json())
                     .then(res => {
                         if (res.success) {
@@ -3057,7 +3057,7 @@
                 rankedGalleryBackdrop.classList.add('show');
                 rankedGalleryList.innerHTML = '<div class="list-note">載入中…</div>';
 
-                fetch('ranked_api.php?action=list_maps')
+                fetch('api/ranked.php?action=list_maps')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -3185,7 +3185,7 @@
 
             function pollShareStatus() {
                 if (!currentShareCode) return;
-                fetch(`share_api.php?action=status&code=${encodeURIComponent(currentShareCode)}`)
+                fetch(`api/share.php?action=status&code=${encodeURIComponent(currentShareCode)}`)
                     .then(res => res.json())
                     .then(res => {
                         if (res.success) {
@@ -3210,7 +3210,7 @@
                 const mapData = editor.getData();
                 const mapName = `我的迷宮 (${editor.cols}×${editor.rows})`;
 
-                fetch('share_api.php?action=create', {
+                fetch('api/share.php?action=create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mapData, name: mapName })
@@ -3318,7 +3318,7 @@
                 btnConfirmRedeemShare.disabled = true;
                 btnConfirmRedeemShare.textContent = '驗證載入中…';
 
-                fetch('share_api.php?action=redeem', {
+                fetch('api/share.php?action=redeem', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code })
@@ -3503,7 +3503,7 @@
                 btnConfirmPublish.disabled = true;
                 btnConfirmPublish.textContent = '發布中…';
 
-                fetch('ranked_api.php?action=publish_map', {
+                fetch('api/ranked.php?action=publish_map', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3555,7 +3555,7 @@
                 if (!adminUsersTableBody) return;
                 adminUsersTableBody.innerHTML = '<tr><td colspan="5" class="table-note">載入初級與中級帳號清單中…</td></tr>';
 
-                fetch('admin_api.php?action=list_users')
+                fetch('api/admin.php?action=list_users')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -3596,7 +3596,7 @@
                                 const newRole = e.target.value;
                                 e.target.disabled = true;
 
-                                fetch('admin_api.php?action=update_user_role', {
+                                fetch('api/admin.php?action=update_user_role', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ userId: targetUserId, role: newRole })
@@ -3695,7 +3695,7 @@
                 if (!adminSubmissionsTableBody) return;
                 adminSubmissionsTableBody.innerHTML = '<tr><td colspan="5" class="table-note">載入待審核地圖清單中…</td></tr>';
 
-                fetch('admin_api.php?action=list_submissions&status=pending')
+                fetch('api/admin.php?action=list_submissions&status=pending')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -3750,7 +3750,7 @@
                                 if (!confirm('確定核准通過此地圖？核准後將正式加入官方排位賽題庫！')) return;
                                 btn.disabled = true;
 
-                                fetch('admin_api.php?action=review_submission', {
+                                fetch('api/admin.php?action=review_submission', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ submissionId: subId, decision: 'approve' })
@@ -3778,7 +3778,7 @@
                                 if (!confirm('確定退回此地圖投稿？')) return;
                                 btn.disabled = true;
 
-                                fetch('admin_api.php?action=review_submission', {
+                                fetch('api/admin.php?action=review_submission', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ submissionId: subId, decision: 'reject' })
@@ -3810,7 +3810,7 @@
                 if (!adminOfficialMapsTableBody) return;
                 adminOfficialMapsTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入官方排位題庫中…</td></tr>';
 
-                fetch('ranked_api.php?action=list_maps')
+                fetch('api/ranked.php?action=list_maps')
                     .then(res => res.json())
                     .then(res => {
                         if (!res.success) {
@@ -3870,7 +3870,7 @@
                                 if (!confirm(`⚠️ 確定要刪除官方排位賽地圖【${size}/${mapId}】嗎？\n刪除後此地圖將不再出現在排位賽題庫中！`)) return;
 
                                 btn.disabled = true;
-                                fetch('admin_api.php?action=delete_ranked_map', {
+                                fetch('api/admin.php?action=delete_ranked_map', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ size, mapId })

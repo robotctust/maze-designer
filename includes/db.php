@@ -13,8 +13,8 @@ $dbName = 'maze_db';
 $dbPort = 3306;
 
 // 若有自訂本機設定檔 (已列入 .gitignore)，優先載入自訂設定
-if (file_exists(__DIR__ . '/config.php')) {
-    $customConfig = require __DIR__ . '/config.php';
+if (file_exists(dirname(__DIR__) . '/config.php')) {
+    $customConfig = require dirname(__DIR__) . '/config.php';
     if (is_array($customConfig)) {
         $dbHost = $customConfig['db_host'] ?? $dbHost;
         $dbUser = $customConfig['db_user'] ?? $dbUser;

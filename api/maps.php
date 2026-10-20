@@ -2,12 +2,9 @@
 /**
  * 迷宮配置儲存與讀取 API (支援每位使用者獨立儲存最多 5 張地圖)
  */
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
-require_once __DIR__ . '/db.php';
-
-$dataFile = __DIR__ . '/data/maze_config.json';
+$dataFile = dirname(__DIR__) . '/data/maze_config.json';
 const MAX_USER_MAPS = 5;
 
 // 預設 10x10 迷宮配置
@@ -62,7 +59,6 @@ function isValidMazeData($data) {
     return true;
 }
 
-$action = $_GET['action'] ?? ($_POST['action'] ?? '');
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;

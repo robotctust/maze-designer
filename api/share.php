@@ -3,25 +3,12 @@
  * 分享碼 API (中高級使用者產生 / 全員兌換載入 / 狀態查詢)
  * 規則：限時 1 分鐘，限 3 人使用，儲存於資料庫
  */
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
-require_once __DIR__ . '/db.php';
-
-$action = $_GET['action'] ?? ($_POST['action'] ?? '');
 $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;
 
-try {
-    $db = getDbConnection();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => '資料庫連線失敗：' . $e->getMessage()]);
-    exit;
-}
-
-$rawInput = file_get_contents('php://input');
-$jsonBody = json_decode($rawInput, true) ?: [];
+$db = connectDbOrExit();
 
 // 輔助函式：取得使用者即時角色
 function getUserRole($db, $userId) {
