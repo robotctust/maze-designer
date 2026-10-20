@@ -90,9 +90,10 @@ class Maze3D {
             precision: "highp"
         });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        // 效能：高解析螢幕最多 1.5 倍像素，一般陰影即可
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFShadowMap;
         this.container.appendChild(this.renderer.domElement);
 
         // 軌道控制器 (俯瞰模式)
@@ -124,8 +125,8 @@ class Maze3D {
         this.sunLight = new THREE.DirectionalLight(0xffffff, 0.75);
         this.sunLight.position.set(140, 260, 160);
         this.sunLight.castShadow = true;
-        this.sunLight.shadow.mapSize.width = 2048;
-        this.sunLight.shadow.mapSize.height = 2048;
+        this.sunLight.shadow.mapSize.width = 1024;
+        this.sunLight.shadow.mapSize.height = 1024;
         this.sunLight.shadow.bias = -0.0004;
         this.sunLight.shadow.camera.near = 10;
         this.sunLight.shadow.camera.far = 1000;
@@ -171,7 +172,7 @@ class Maze3D {
         const baseGeo = new THREE.BoxGeometry(this.widthSize + 8, 2, this.heightSize + 8);
         const baseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
         this.baseMesh = new THREE.Mesh(baseGeo, baseMat);
-        this.baseMesh.position.y = -1.01;
+        this.baseMesh.position.y = -1.5; // 頂面低於地板 0.5，避免與地板重疊閃爍
         this.baseMesh.receiveShadow = true;
         this.scene.add(this.baseMesh);
     }
@@ -413,6 +414,7 @@ class Maze3D {
         // 徹底清除舊牆壁並釋放記憶體
         this.wallMeshes.forEach(mesh => {
             this.scene.remove(mesh);
+            mesh.material.dispose();
         });
         this.wallMeshes = [];
         this.spatialGrid.clear();
@@ -434,18 +436,17 @@ class Maze3D {
         this.sharedHGeo = new THREE.BoxGeometry(cSize + t, h, t);
         this.sharedVGeo = new THREE.BoxGeometry(t, h, cSize + t);
 
+        // 牆面座標先收集，最後用 InstancedMesh 一次畫完（上千道牆只需 2 次繪製）
+        const hPos = [];
+        const vPos = [];
+
         // 1. 水平牆面
         for (let r = 0; r <= this.rows; r++) {
             const zPos = -halfH + r * cSize;
             for (let c = 0; c < this.cols; c++) {
                 if (mazeData.hWalls && mazeData.hWalls[r] && mazeData.hWalls[r][c]) {
                     const xPos = -halfW + (c + 0.5) * cSize;
-                    const mesh = new THREE.Mesh(this.sharedHGeo, wallMat);
-                    mesh.position.set(xPos, h / 2, zPos);
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
-                    this.scene.add(mesh);
-                    this.wallMeshes.push(mesh);
+                    hPos.push(xPos, zPos);
 
                     // 記錄碰撞箱並加入空間分割網格
                     const box = {
@@ -465,12 +466,7 @@ class Maze3D {
             for (let c = 0; c <= this.cols; c++) {
                 if (mazeData.vWalls && mazeData.vWalls[r] && mazeData.vWalls[r][c]) {
                     const xPos = -halfW + c * cSize;
-                    const mesh = new THREE.Mesh(this.sharedVGeo, wallMat);
-                    mesh.position.set(xPos, h / 2, zPos);
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
-                    this.scene.add(mesh);
-                    this.wallMeshes.push(mesh);
+                    vPos.push(xPos, zPos);
 
                     const box = {
                         minX: xPos - t / 2,
@@ -482,6 +478,22 @@ class Maze3D {
                 }
             }
         }
+
+        [[this.sharedHGeo, hPos], [this.sharedVGeo, vPos]].forEach(([geo, pos]) => {
+            const count = pos.length / 2;
+            if (count === 0) return;
+            const mesh = new THREE.InstancedMesh(geo, wallMat.clone(), count);
+            const m = new THREE.Matrix4();
+            for (let i = 0; i < count; i++) {
+                m.makeTranslation(pos[i * 2], h / 2, pos[i * 2 + 1]);
+                mesh.setMatrixAt(i, m);
+            }
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            this.scene.add(mesh);
+            this.wallMeshes.push(mesh);
+        });
+        wallMat.dispose();
 
         // 3. 起點標記與自走車模型
         this.createStartMarker(mazeData.start);
