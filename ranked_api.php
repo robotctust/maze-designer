@@ -13,7 +13,8 @@ $allowedSizes = [
     '10x10' => ['dim' => 10, 'limitMs' => 60 * 1000, 'desc' => '1 分鐘 (60秒)'],
     '15x15' => ['dim' => 15, 'limitMs' => 180 * 1000, 'desc' => '3 分鐘 (180秒)'],
     '20x20' => ['dim' => 20, 'limitMs' => 20 * 60 * 1000, 'desc' => '20 分鐘 (1200秒)'],
-    '25x25' => ['dim' => 25, 'limitMs' => 30 * 60 * 1000, 'desc' => '30 分鐘 (1800秒)']
+    '25x25' => ['dim' => 25, 'limitMs' => 30 * 60 * 1000, 'desc' => '30 分鐘 (1800秒)'],
+    '30x30' => ['dim' => 30, 'limitMs' => 40 * 60 * 1000, 'desc' => '40 分鐘 (2400秒)']
 ];
 
 try {
@@ -29,7 +30,7 @@ if ($action === 'get_map') {
     $size = $_GET['size'] ?? '10x10';
     if (!isset($allowedSizes[$size])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => '無效的排位賽規格，僅支援 10x10, 15x15, 20x20, 25x25']);
+        echo json_encode(['success' => false, 'message' => '無效的排位賽規格，僅支援 10x10, 15x15, 20x20, 25x25, 30x30']);
         exit;
     }
 
@@ -320,7 +321,7 @@ if ($action === 'publish_map') {
         http_response_code(400);
         echo json_encode([
             'success' => false,
-            'message' => "⚠️ 規格不符：官方排位賽僅支援 10×10、15×15、20×20、25×25 四種規格！目前為 {$size}。"
+            'message' => "⚠️ 規格不符：官方排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 {$size}。"
         ]);
         exit;
     }

@@ -1374,6 +1374,10 @@ kbd {
     color: var(--text-muted);
 }
 
+.tier-grid > :last-child:nth-child(odd) {
+    grid-column: span 2;
+}
+
 .tier-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1914,6 +1918,8 @@ kbd {
 .dlg-tabs .leaderboard-tab-btn {
     flex: 1;
     height: 32px;
+    padding: 0 4px;
+    white-space: nowrap;
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;

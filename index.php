@@ -182,6 +182,7 @@
                     <button type="button" class="ranked-tier-btn" data-size="15x15"><span class="tier-size">15 × 15</span><span class="tier-meta">戰將級・限時 3 分鐘</span></button>
                     <button type="button" class="ranked-tier-btn" data-size="20x20"><span class="tier-size">20 × 20</span><span class="tier-meta">大師級・限時 20 分鐘</span></button>
                     <button type="button" class="ranked-tier-btn" data-size="25x25"><span class="tier-size">25 × 25</span><span class="tier-meta">宗師級・限時 30 分鐘</span></button>
+                    <button type="button" class="ranked-tier-btn" data-size="30x30"><span class="tier-size">30 × 30</span><span class="tier-meta">傳奇級・限時 40 分鐘</span></button>
                 </div>
             </div>
             <div>
@@ -434,6 +435,7 @@
                     <button type="button" class="leaderboard-tab-btn" data-size="15x15" role="tab">15 × 15・3 分</button>
                     <button type="button" class="leaderboard-tab-btn" data-size="20x20" role="tab">20 × 20・20 分</button>
                     <button type="button" class="leaderboard-tab-btn" data-size="25x25" role="tab">25 × 25・30 分</button>
+                    <button type="button" class="leaderboard-tab-btn" data-size="30x30" role="tab">30 × 30・40 分</button>
                 </div>
                 <div class="user-best-banner" id="userBestBanner"></div>
                 <div class="leaderboard-table-wrap">
@@ -789,7 +791,7 @@
 
             // 賽事模式：'practice' (練習賽) | 'ranked' (排位賽)
             let currentGameMode = 'practice';
-            let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25
+            let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25, 30x30
             let currentRankedMapId = 'map_1';
             let rankedHudLabel = '';
             let currentRankedLimitMs = 90 * 1000;
@@ -2595,7 +2597,7 @@
             btnModeRanked?.addEventListener('click', () => switchGameMode('ranked'));
 
             function loadRankedMatch(size = '10x10') {
-                if (!['10x10', '15x15', '20x20', '25x25'].includes(size)) {
+                if (!['10x10', '15x15', '20x20', '25x25', '30x30'].includes(size)) {
                     size = '10x10';
                 }
                 currentRankedSize = size;
@@ -2646,7 +2648,8 @@
                                 '10x10': '10×10 菁英級',
                                 '15x15': '15×15 戰將級',
                                 '20x20': '20×20 大師級',
-                                '25x25': '25×25 宗師級'
+                                '25x25': '25×25 宗師級',
+                                '30x30': '30×30 傳奇級'
                             };
 
                             const tierTitle = tierNames[size] || size;
@@ -3291,10 +3294,10 @@
                 const cols = editor.cols;
                 const rows = editor.rows;
                 const size = `${cols}x${rows}`;
-                const allowed = ['10x10', '15x15', '20x20', '25x25'];
+                const allowed = ['10x10', '15x15', '20x20', '25x25', '30x30'];
 
                 if (!allowed.includes(size)) {
-                    showToast(`規格不符：排位賽僅支援 10×10、15×15、20×20、25×25！目前為 ${cols}×${rows}。`, true);
+                    showToast(`規格不符：排位賽僅支援 10×10、15×15、20×20、25×25、30×30！目前為 ${cols}×${rows}。`, true);
                     return;
                 }
 
@@ -3311,7 +3314,8 @@
                     '10x10': '10×10 菁英級',
                     '15x15': '15×15 戰將級',
                     '20x20': '20×20 大師級',
-                    '25x25': '25×25 宗師級'
+                    '25x25': '25×25 宗師級',
+                    '30x30': '30×30 傳奇級'
                 };
 
                 if (publishModalSpec) publishModalSpec.textContent = tierLabels[size] || size;

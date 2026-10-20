@@ -103,7 +103,7 @@ class Maze3D {
             this.orbitControls.dampingFactor = 0.08;
             this.orbitControls.maxPolarAngle = Math.PI / 2 - 0.02; // 不低於地面
             this.orbitControls.minDistance = 40;
-            this.orbitControls.maxDistance = 800;
+            this.orbitControls.maxDistance = 1600;
         }
 
         // 光源
@@ -274,6 +274,9 @@ class Maze3D {
     resetOrbitCamera() {
         const maxDim = Math.max(this.widthSize || 300, this.heightSize || 300);
         const camDist = maxDim * 0.82;
+        if (this.orbitControls) {
+            this.orbitControls.maxDistance = Math.max(1600, maxDim * 2);
+        }
         this.camera.position.set(0, camDist, camDist);
         this.camera.lookAt(0, 0, 0);
         if (this.orbitControls) {
