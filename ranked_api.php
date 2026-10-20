@@ -422,6 +422,29 @@ if ($action === 'publish_map') {
     exit;
 }
 
+// 5. 列出所有排位賽地圖 (供地圖總覽預覽)
+if ($action === 'list_maps') {
+    if (empty($_SESSION['user_id'])) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'requireLogin' => true, 'message' => '🔒 查看排位賽地圖總覽需要登入帳號！']);
+        exit;
+    }
+
+    $maps = [];
+    foreach (array_keys($allowedSizes) as $size) {
+        $maps[$size] = [];
+        $files = glob(__DIR__ . "/data/ranked_maps/{$size}/map_*.json");
+        natsort($files);
+        foreach ($files as $f) {
+            $m = json_decode(file_get_contents($f), true);
+            if ($m) $maps[$size][] = $m + ['mapId' => basename($f, '.json')];
+        }
+    }
+
+    echo json_encode(['success' => true, 'maps' => $maps]);
+    exit;
+}
+
 http_response_code(400);
-echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: get_map, submit_score, leaderboard, publish_map)']);
+echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: get_map, submit_score, leaderboard, publish_map, list_maps)']);
 

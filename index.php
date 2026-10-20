@@ -139,6 +139,9 @@
                     <button type="button" class="btn-repick-map" id="btnRepickMap" title="重新抽選同一級別的另一張官方地圖">
                         🎲 隨機換圖
                     </button>
+                    <button type="button" class="btn-repick-map" id="btnOpenRankedGallery" title="瀏覽所有官方排位賽地圖的簡易預覽">
+                        📚 地圖總覽
+                    </button>
                 </div>
             </div>
 
@@ -582,6 +585,21 @@
                 <span class="leaderboard-tip">💡 排名依【完賽耗時】最短者優先排序；盲測排位挑戰公平客觀。</span>
                 <button type="button" class="tool-btn btn-action" id="btnRefreshLeaderboard"><span>🔄</span> 重新整理</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 排位賽地圖總覽彈窗 -->
+    <div class="auth-modal-backdrop" id="rankedGalleryBackdrop">
+        <div class="auth-modal-card leaderboard-card">
+            <button class="auth-modal-close" id="btnCloseRankedGallery" title="關閉視窗">&times;</button>
+
+            <div class="auth-modal-header">
+                <div class="auth-modal-icon">📚</div>
+                <h3 class="auth-modal-title">排位賽地圖總覽</h3>
+                <p class="auth-modal-subtitle">官方排位圖庫所有地圖 • 為維護盲測公平，目前抽中的地圖不提供預覽</p>
+            </div>
+
+            <div class="ranked-gallery" id="rankedGalleryList"></div>
         </div>
     </div>
 
@@ -2798,6 +2816,64 @@
 
             btnRefreshLeaderboard?.addEventListener('click', () => {
                 loadLeaderboardData(currentLeaderboardTab);
+            });
+
+            // 排位賽地圖總覽 Modal
+            const rankedGalleryBackdrop = document.getElementById('rankedGalleryBackdrop');
+            const rankedGalleryList = document.getElementById('rankedGalleryList');
+
+            // 用 SVG 畫出迷宮簡易預覽 (座標一律轉成數字，避免地圖檔內容被當成 HTML)
+            function mazePreviewSvg(m) {
+                const rows = Number(m.gridSize?.rows) || 10;
+                const cols = Number(m.gridSize?.cols) || 10;
+                let d = '';
+                (m.hWalls || []).forEach((row, r) => row.forEach((w, c) => { if (w) d += `M${c} ${r}h1`; }));
+                (m.vWalls || []).forEach((row, r) => row.forEach((w, c) => { if (w) d += `M${c} ${r}v1`; }));
+                const cell = (p, color) => p ? `<rect x="${Number(p.x) + 0.15}" y="${Number(p.y) + 0.15}" width="0.7" height="0.7" fill="${color}"/>` : '';
+                return `<svg viewBox="-0.2 -0.2 ${cols + 0.4} ${rows + 0.4}">${cell(m.start, '#22c55e')}${cell(m.goal, '#ef4444')}<path d="${d}" stroke="#e2e8f0" stroke-width="0.12" stroke-linecap="square" fill="none"/></svg>`;
+            }
+
+            function openRankedGallery() {
+                if (maze3D.isDriving) {
+                    showToast('排位賽進行中無法查看地圖總覽', true);
+                    return;
+                }
+                rankedGalleryBackdrop.classList.add('show');
+                rankedGalleryList.innerHTML = '<div style="text-align: center; color: #64748b; padding: 32px;">⏳ 讀取排位圖庫中...</div>';
+
+                fetch('ranked_api.php?action=list_maps')
+                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.success) {
+                            rankedGalleryList.innerHTML = `<div style="text-align: center; color: #ef4444; padding: 24px;">無法載入地圖總覽：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                            return;
+                        }
+                        let html = '';
+                        Object.entries(res.maps).forEach(([size, maps]) => {
+                            html += `<h4 class="ranked-gallery-tier">${size.replace('x', '×')}（${maps.length} 張）</h4><div class="ranked-gallery-grid">`;
+                            maps.forEach(m => {
+                                const isCurrent = size === currentRankedSize && m.mapId === currentRankedMapId;
+                                html += `
+                                    <div class="ranked-gallery-item${isCurrent ? ' is-current' : ''}" title="${escapeHtml(String(m.name || m.mapId))}">
+                                        ${isCurrent ? '<div class="ranked-gallery-hidden">🙈 目前抽中<br>不提供預覽</div>' : mazePreviewSvg(m)}
+                                        <div class="ranked-gallery-name">${escapeHtml(String(m.mapId))}</div>
+                                        <div>👤 ${escapeHtml(String(m.author || '官方'))}</div>
+                                    </div>
+                                `;
+                            });
+                            html += '</div>';
+                        });
+                        rankedGalleryList.innerHTML = html;
+                    })
+                    .catch(() => {
+                        rankedGalleryList.innerHTML = '<div style="text-align: center; color: #ef4444; padding: 24px;">伺服器連線失敗</div>';
+                    });
+            }
+
+            document.getElementById('btnOpenRankedGallery')?.addEventListener('click', openRankedGallery);
+            document.getElementById('btnCloseRankedGallery')?.addEventListener('click', () => rankedGalleryBackdrop.classList.remove('show'));
+            rankedGalleryBackdrop?.addEventListener('click', (e) => {
+                if (e.target === rankedGalleryBackdrop) rankedGalleryBackdrop.classList.remove('show');
             });
 
             // ============================================
