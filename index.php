@@ -8,57 +8,38 @@
 </head>
 <body>
 
-    <!-- 頂部標題與規格導航列 -->
-    <header>
-        <div class="header-title-box">
-            <div class="logo-text">
-                <span>🧭</span> <span id="headerTitleText">3D 迷宮模擬與自訂規格牆壁規劃系統</span>
-            </div>
-            <div class="specs-tags">
-                <span class="tag highlight" id="headerTagGrid">規格：10×10 格</span>
-                <span class="tag" id="headerTagCell">每格：30×30 cm</span>
-                <span class="tag" id="headerTagWall">牆高：15 cm</span>
-                <span class="tag" id="headerTagTotal">總長寬：300×300 cm</span>
-            </div>
+    <!-- 頂部列：名稱、模式切換、排行榜、帳號 -->
+    <header class="topbar">
+        <div class="topbar-side">
+            <svg class="icon" style="width:24px;height:24px;color:var(--accent)" aria-hidden="true"><use href="assets/icons.svg#compass"></use></svg>
+            <span class="brand-name">迷宮設計器</span>
         </div>
-        <div class="header-actions">
-            <!-- 賽事模式切換 (練習賽 / 排位賽) -->
-            <div class="game-mode-switch" id="gameModeSwitch">
-                <button class="mode-tab-btn active" id="btnModePractice" title="自由練習賽：自由規劃增刪牆壁、無限制探索">
-                    <span>🛠️</span> 練習賽
+        <div class="seg" id="gameModeSwitch" role="group" aria-label="模式">
+            <button type="button" class="mode-tab-btn active" id="btnModePractice" title="自由設計迷宮並試跑">練習</button>
+            <button type="button" class="mode-tab-btn ranked-mode" id="btnModeRanked" title="官方地圖限時挑戰，成績登上排行榜">排位賽</button>
+        </div>
+        <div class="topbar-side end" id="userAuthBar">
+            <button type="button" class="tool-btn btn-ghost" id="btnOpenLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
+            <button type="button" class="tool-btn btn-ghost" id="btnOpenAuthModal" title="登入後可用到 30 × 30、存地圖、參加排位賽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#user"></use></svg>登入</button>
+            <div class="menu-wrap">
+                <button type="button" class="tool-btn btn-ghost account-trigger" id="btnAccountMenu" aria-haspopup="menu" aria-expanded="false" style="display: none;">
+                    <span class="avatar" id="accountAvatar"></span><span id="accountName"></span><svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg>
                 </button>
-                <button class="mode-tab-btn ranked-mode" id="btnModeRanked" title="官方排位賽：遮蔽2D地圖、統一官方地圖、倒數挑戰天梯排名！">
-                    <span>🏆</span> 排位賽
-                </button>
+                <div class="menu menu-end-align" id="accountMenu" role="menu" hidden>
+                    <div class="account-head">
+                        <span class="avatar lg" id="accountAvatarLg"></span>
+                        <div>
+                            <div class="account-name" id="accountNameLg"></div>
+                            <div class="auth-status-badge" id="authBadge"></div>
+                        </div>
+                    </div>
+                    <div class="menu-sep"></div>
+                    <button type="button" class="menu-item" id="btnMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫<span class="menu-end" id="headerMapCountBadge">0 / 5</span></button>
+                    <div class="menu-item static" role="menuitem" aria-disabled="true"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>我發布的排位地圖<span class="menu-end" id="myRankedMapCount">—</span></div>
+                    <div class="menu-sep"></div>
+                    <button type="button" class="menu-item" id="btnLogout" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#logout"></use></svg>登出</button>
+                </div>
             </div>
-
-            <button class="tool-btn btn-leaderboard" id="btnOpenLeaderboard" title="查看全服排位賽天梯排行榜">
-                <span>🏆</span> 排行榜
-            </button>
-
-            <!-- 帳號管理與權限狀態 -->
-            <div class="user-auth-bar" id="userAuthBar">
-                <span class="auth-status-badge guest" id="authBadge">
-                    <span class="badge-icon">👤</span>
-                    <span class="badge-text" id="authBadgeText">訪客模式 (限 10×10)</span>
-                </span>
-                <button class="tool-btn btn-auth-action" id="btnOpenAuthModal" title="登入或註冊以解鎖 11×11 至 30×30 大型地圖">
-                    <span>🔑</span> 登入 / 註冊
-                </button>
-                <button class="tool-btn btn-auth-logout" id="btnLogout" style="display: none;" title="登出目前帳號">
-                    <span>🚪</span> 登出
-                </button>
-            </div>
-
-            <span class="ranked-no-save-pill" id="rankedNoSavePill" style="display: none;" title="排位賽採用官方統一地圖盲測競技，禁止覆蓋或存入個人資料庫">
-                <span>🔒</span> 官方排位賽地圖（禁止儲存至資料庫）
-            </span>
-            <button class="tool-btn btn-save" id="btnSave" title="將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)">
-                <span>💾</span> 儲存迷宮設定 (PHP)
-            </button>
-            <button class="tool-btn btn-action" id="btnMapLibrary" title="開啟我的迷宮圖庫 (管理與載入已存地圖，最多 5 張)">
-                <span>📁</span> 我的地圖庫 <span class="map-count-pill" id="headerMapCountBadge">(0/5)</span>
-            </button>
         </div>
     </header>
 
@@ -193,6 +174,9 @@
                 <button class="tool-btn btn-publish-ranked" id="btnPublishToRanked" title="將目前練習賽設計好的迷宮，一鍵發布至官方排位賽圖庫">
                     <span>📤</span> 發布至排位賽圖庫
                 </button>
+                <button class="tool-btn btn-save" id="btnSave" title="將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)">
+                    <span>💾</span> 儲存
+                </button>
             </div>
 
             <!-- 排位賽鎖定提示列 -->
@@ -269,7 +253,7 @@
             <!-- 狀態列 -->
             <div class="editor-status-bar">
                 <div>起點: <strong id="statStart">(0, 9)</strong> | 終點: <strong id="statGoal">(9, 0)</strong></div>
-                <div>牆壁段數: <strong id="statWallCount">0</strong> 段 (15cm 高)</div>
+                <div>牆壁段數: <strong id="statWallCount">0</strong> 段・<span id="headerTagGrid">規格：10×10 格</span>・<span id="headerTagTotal">總長寬：300×300 cm</span>・每格 30 cm・牆高 15 cm</div>
             </div>
         </section>
 
@@ -1625,6 +1609,45 @@
             const authBadge = document.getElementById('authBadge');
             const btnOpenAuthModal = document.getElementById('btnOpenAuthModal');
             const btnLogout = document.getElementById('btnLogout');
+            const btnAccountMenu = document.getElementById('btnAccountMenu');
+            const accountMenu = document.getElementById('accountMenu');
+
+            // 下拉選單：點按鈕開關，點外面或按 Esc 關閉
+            function closeMenu(menu) {
+                if (!menu || menu.hidden) return;
+                menu.hidden = true;
+                document.querySelector(`[aria-controls="${menu.id}"]`)?.setAttribute('aria-expanded', 'false');
+            }
+            function setupMenu(trigger, menu, onOpen) {
+                trigger.setAttribute('aria-controls', menu.id);
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const willOpen = menu.hidden;
+                    document.querySelectorAll('.menu').forEach(closeMenu);
+                    if (willOpen) {
+                        menu.hidden = false;
+                        trigger.setAttribute('aria-expanded', 'true');
+                        if (onOpen) onOpen();
+                    }
+                });
+                menu.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) closeMenu(menu);
+                });
+            }
+            document.addEventListener('click', (e) => {
+                document.querySelectorAll('.menu').forEach(m => { if (!m.contains(e.target)) closeMenu(m); });
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') document.querySelectorAll('.menu').forEach(closeMenu);
+            });
+
+            setupMenu(btnAccountMenu, accountMenu, () => {
+                const el = document.getElementById('myRankedMapCount');
+                fetch('ranked_api.php?action=leaderboard&size=10x10')
+                    .then(res => res.json())
+                    .then(res => { if (res.myMapCount) el.textContent = `共 ${res.myMapCount.total} 張`; })
+                    .catch(() => {});
+            });
             const authModalBackdrop = document.getElementById('authModalBackdrop');
             const btnCloseAuthModal = document.getElementById('btnCloseAuthModal');
             const tabBtnLogin = document.getElementById('tabBtnLogin');
@@ -1715,14 +1738,14 @@
                 const headerMapCountBadge = document.getElementById('headerMapCountBadge');
                 if (!headerMapCountBadge) return;
                 if (!currentUser) {
-                    headerMapCountBadge.textContent = '(需登入)';
+                    headerMapCountBadge.textContent = '需登入';
                     return;
                 }
                 fetch('api.php?action=list')
                     .then(res => res.json())
                     .then(res => {
                         if (res.success) {
-                            headerMapCountBadge.textContent = `(${res.count || 0}/${res.max || 5})`;
+                            headerMapCountBadge.textContent = `${res.count || 0} / ${res.max || 5}`;
                         }
                     })
                     .catch(() => {});
@@ -1739,10 +1762,15 @@
                 
                 if (user) {
                     // 已登入
-                    authBadge.className = 'auth-status-badge logged-in';
-                    authBadge.innerHTML = `<span class="badge-icon">👑</span><span class="badge-text">${escapeHtml(user.username)} (全規格解鎖)</span>`;
+                    authBadge.textContent = '會員・可用 2～30 格';
                     btnOpenAuthModal.style.display = 'none';
-                    btnLogout.style.display = 'inline-flex';
+                    btnLogout.style.display = 'flex';
+                    btnAccountMenu.style.display = 'inline-flex';
+                    const initial = user.username.charAt(0).toUpperCase();
+                    document.getElementById('accountAvatar').textContent = initial;
+                    document.getElementById('accountAvatarLg').textContent = initial;
+                    document.getElementById('accountName').textContent = user.username;
+                    document.getElementById('accountNameLg').textContent = user.username;
 
                     // 解除所有預設按鈕鎖定
                     presetButtons.forEach(btn => {
@@ -1761,7 +1789,7 @@
                     // 會員解鎖儲存、個人地圖庫與發布按鈕
                     if (btnSave) {
                         btnSave.classList.remove('guest-locked');
-                        btnSave.innerHTML = '<span>💾</span> 儲存迷宮設定 (PHP)';
+                        btnSave.innerHTML = '<span>💾</span> 儲存';
                         btnSave.title = '將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)';
                     }
                     if (btnMapLibrary) {
@@ -1776,10 +1804,11 @@
                     refreshMapLibraryBadge();
                 } else {
                     // 訪客 (未登入)
-                    authBadge.className = 'auth-status-badge guest';
-                    authBadge.innerHTML = `<span class="badge-icon">👤</span><span class="badge-text">訪客模式 (限 10×10)</span>`;
+                    authBadge.textContent = '訪客・最多 10 × 10';
                     btnOpenAuthModal.style.display = 'inline-flex';
                     btnLogout.style.display = 'none';
+                    btnAccountMenu.style.display = 'none';
+                    closeMenu(accountMenu);
 
                     // 鎖定大於 10x10 的預設按鈕
                     presetButtons.forEach(btn => {
@@ -1804,7 +1833,7 @@
                     // 訪客限制：儲存、個人地圖庫與發布按鈕顯示鎖定狀態
                     if (btnSave) {
                         btnSave.classList.add('guest-locked');
-                        btnSave.innerHTML = '<span>🔒</span> 儲存迷宮設定 (需登入)';
+                        btnSave.innerHTML = '<span>🔒</span> 儲存 (需登入)';
                         btnSave.title = '🔒 訪客限制：儲存個人迷宮至雲端資料庫需登入會員帳號！';
                     }
                     if (btnMapLibrary) {
@@ -1812,7 +1841,7 @@
                         btnMapLibrary.title = '🔒 訪客限制：個人地圖庫功能需登入會員帳號！';
                     }
                     if (headerMapCountBadge) {
-                        headerMapCountBadge.textContent = '(需登入)';
+                        headerMapCountBadge.textContent = '需登入';
                     }
                     if (btnPublishToRanked) {
                         btnPublishToRanked.classList.add('guest-locked');
@@ -1991,7 +2020,7 @@
                             if (res.count !== undefined && res.max) {
                                 const headerMapCountBadge = document.getElementById('headerMapCountBadge');
                                 if (headerMapCountBadge && currentUser) {
-                                    headerMapCountBadge.textContent = `(${res.count}/${res.max})`;
+                                    headerMapCountBadge.textContent = `${res.count} / ${res.max}`;
                                 }
                             }
                         }
@@ -2078,7 +2107,7 @@
                         }
 
                         const headerMapCountBadge = document.getElementById('headerMapCountBadge');
-                        if (headerMapCountBadge) headerMapCountBadge.textContent = `(${count}/${max})`;
+                        if (headerMapCountBadge) headerMapCountBadge.textContent = `${count} / ${max}`;
 
                         // 判斷是否已滿 5 張
                         if (count >= max) {
@@ -2304,7 +2333,7 @@
                         }
 
                         const headerMapCountBadge = document.getElementById('headerMapCountBadge');
-                        if (headerMapCountBadge) headerMapCountBadge.textContent = `(${count}/${max})`;
+                        if (headerMapCountBadge) headerMapCountBadge.textContent = `${count} / ${max}`;
 
                         if (list.length === 0) {
                             mapLibraryList.innerHTML = `
@@ -2459,15 +2488,12 @@
                     // 排位賽時完全隱藏儲存與我的地圖庫按鈕，並顯示禁止儲存提示標籤
                     const btnSaveEl = document.getElementById('btnSave');
                     const btnMapLibraryEl = document.getElementById('btnMapLibrary');
-                    const rankedNoSavePill = document.getElementById('rankedNoSavePill');
                     if (btnSaveEl) btnSaveEl.style.display = 'none';
                     if (btnMapLibraryEl) btnMapLibraryEl.style.display = 'none';
-                    if (rankedNoSavePill) rankedNoSavePill.style.display = 'inline-flex';
 
                     if (btnToggleMapSize) btnToggleMapSize.style.display = 'none';
                     set2DMapMode('compact', false);
 
-                    document.getElementById('headerTitleText').textContent = '3D 迷宮全服天梯排位賽 (盲測競技模式)';
 
                     // 排位賽：比賽開始前可以自由調整視角，確保視角切換功能啟用
                     if (btnModeOrbit) {
@@ -2503,10 +2529,8 @@
                     // 練習賽恢復顯示儲存與我的地圖庫按鈕
                     const btnSaveEl = document.getElementById('btnSave');
                     const btnMapLibraryEl = document.getElementById('btnMapLibrary');
-                    const rankedNoSavePill = document.getElementById('rankedNoSavePill');
                     if (btnSaveEl) btnSaveEl.style.display = 'inline-flex';
-                    if (btnMapLibraryEl) btnMapLibraryEl.style.display = 'inline-flex';
-                    if (rankedNoSavePill) rankedNoSavePill.style.display = 'none';
+                    if (btnMapLibraryEl) btnMapLibraryEl.style.display = 'flex';
                     updateAuthUI(currentUser);
 
                     if (btnModeOrbit) {
@@ -2521,7 +2545,6 @@
                     if (walkTitlePractice) walkTitlePractice.innerHTML = '<strong>🎮 行走控制 (俯瞰與車子視角皆可使用)：</strong>';
 
                     if (btnToggleMapSize) btnToggleMapSize.style.display = 'inline-flex';
-                    document.getElementById('headerTitleText').textContent = '3D 迷宮模擬與自訂規格牆壁規劃系統';
 
                     // 關閉排位賽彈窗
                     document.getElementById('rankedVictoryModal').style.display = 'none';
