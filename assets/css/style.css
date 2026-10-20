@@ -75,40 +75,11 @@ body {
 
 /* Header */
 
-
-
-
-
-
-
 /* Main Layout */
 
 /* Left: 2D Editor (設計時用一半版面 50%，遙控時恢復正常大小 480px) */
 
-
-
-
-
-
-
-
 /* Grid Specification Bar */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .tool-btn {
     background: var(--surface-2);
@@ -170,16 +141,7 @@ body {
 
 /* 2D Map Zoom Bar */
 
-
-
-
-
-
-
-
 /* 2D Map Canvas Wrapper & Viewport */
-
-
 
 .map-viewport.panning {
     cursor: grabbing !important;
@@ -293,21 +255,9 @@ body {
 
 /* Tip / Status */
 
-
 /* Right: 3D Simulator */
 
 /* 3D 視圖懸浮主控儀表板 (整齊雙層結構 HUD Deck) */
-
-
-
-
-
-
-
-
-
-
-
 
 .drive-actions-group {
     display: flex;
@@ -382,10 +332,6 @@ body {
     color: var(--on-go);
 }
 
-@keyframes pulse-green {
-    0%, 100% { box-shadow: none; transform: none; }
-}
-
 .sim-btn.btn-stop-drive {
     background: transparent;
     border-color: #7F1D1D;
@@ -398,10 +344,6 @@ body {
     color: var(--danger-soft);
 }
 
-
-
-
-
 #threeCanvas {
     width: 100%;
     height: 100%;
@@ -410,115 +352,13 @@ body {
 
 /* Keyboard Instructions Box under 2D Map */
 
-
-
 /* Victory Toast */
-.victory-modal {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.95);
-    border: 2px solid var(--go-fill);
-    box-shadow: none;
-    padding: 24px 36px;
-    border-radius: var(--radius-lg);
-    text-align: center;
-    z-index: 100;
-}
-
-.victory-modal h2 {
-    color: var(--go);
-    margin-bottom: 10px;
-    font-size: 28px;
-}
-
-.victory-modal p {
-    color: var(--text-2);
-    margin-bottom: 16px;
-}
-
-.victory-btn {
-    background: var(--go-fill);
-    border: none;
-    color: var(--on-go);
-    padding: 8px 18px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    cursor: pointer;
-}
 
 /* Timer Display & Mode in 3D Toolbar */
 
-
-
-
 /* Custom Timer Duration Input Group */
 
-
-
-
-
-
-
-
-
-@keyframes timer-pulse-danger {
-    0%, 100% {
-        box-shadow: none;
-        transform: none;
-    }
-}
-
 /* Victory & Timeout Modal Time Results */
-.victory-time-box {
-    background: rgba(2, 132, 199, 0.15);
-    border: 1px solid var(--accent-fill);
-    border-radius: var(--radius);
-    padding: 12px 20px;
-    margin: 12px 0 16px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.victory-time-label {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
-.victory-time-value {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: var(--accent);
-    font-family: var(--font-mono);
-    letter-spacing: 2px;
-}
-
-.victory-time-sub {
-    font-size: 16px;
-    color: var(--go);
-    margin-top: 4px;
-}
-
-.timeout-modal {
-    border-color: var(--danger-fill) !important;
-    box-shadow: none;
-}
-
-.timeout-btn {
-    background: var(--danger-fill) !important;
-    color: var(--on-danger);
-}
-
-.timeout-btn:hover {
-    background: var(--danger-fill-hover) !important;
-    box-shadow: none;
-    color: var(--on-danger);
-}
 
 /* Toast Notification */
 .toast {
@@ -562,18 +402,11 @@ body {
     filter: none;
 }
 
-
 /* ========================================================
    User Authentication & Account Management UI
    ======================================================== */
 
-
-
-
-
-
 /* Preset buttons locked styling */
-
 
 /* Auth Modal Backdrop & Card */
 .auth-modal-backdrop {
@@ -874,17 +707,8 @@ body {
     border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
-
 /* Prompt pulse animation for start drive button after restart / reset to start */
 /* Prompt pulse animation for start drive button - disabled per user request (no pulsing, no size change, no glow) */
-
-@keyframes pulse-start-prompt {
-    0%, 100% {
-        box-shadow: none;
-        transform: none;
-    }
-}
-
 
 /* ========================================================
    Ranked Match (排位賽) & Leaderboard (排行榜) UI
@@ -892,255 +716,9 @@ body {
 
 /* Header Mode Switch */
 
-
-
-
-
-
-
 /* Ranked Spec Bar */
-.ranked-spec-bar {
-    background: var(--bg);
-    border-bottom: 2px solid var(--ranked-fill);
-    padding: 12px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    animation: auth-fadein 0.25s ease;
-}
-
-.ranked-spec-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--ranked);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.ranked-spec-presets {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-
-.ranked-tier-btn {
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 8px 6px;
-    color: var(--text-2);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    user-select: none;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-.ranked-tier-btn:hover {
-    border-color: var(--ranked-fill);
-    background: var(--surface-raised);
-    color: var(--text);
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-.ranked-tier-btn.active {
-    background: rgba(217, 119, 6, 0.18);
-    border: 2px solid var(--ranked-fill);
-    color: var(--ranked);
-    box-shadow: none !important;
-    transform: none !important;
-}
-
-.tier-icon {
-    font-size: 18px;
-    transform: none !important;
-    filter: none !important;
-}
-
-.tier-name {
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.tier-time {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-family: var(--font-mono);
-    white-space: nowrap;
-}
-
-.ranked-tier-btn.active .tier-time {
-    color: var(--ranked-soft);
-}
-
-.ranked-current-info {
-    font-size: 13px;
-    color: var(--text-2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface-sunken);
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    gap: 10px;
-    flex-wrap: nowrap;
-}
-
-.ranked-current-info > span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    flex: 1 1 auto;
-}
-
-.ranked-current-info strong {
-    color: var(--accent);
-}
-
-.btn-repick-map {
-    font-size: 12px;
-    padding: 4px 10px;
-    background: var(--border);
-    color: var(--text-2);
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-    border-radius: 4px;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    min-width: max-content;
-    text-align: center;
-    line-height: 1.3;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-.btn-repick-map:hover {
-    background: var(--ranked-fill);
-    border-color: var(--ranked-fill);
-    color: var(--on-ranked);
-    transform: none !important;
-    box-shadow: none !important;
-}
 
 /* Blind 2D Map Overlay */
-.ranked-blind-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.96);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 25;
-    padding: 24px;
-    text-align: center;
-    animation: auth-fadein 0.25s ease;
-}
-
-.blind-card {
-    max-width: 520px;
-    width: 95%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
-
-.blind-icon {
-    font-size: 3rem;
-    filter: none !important;
-    animation: none !important;
-    transform: none !important;
-}
-
-@keyframes pulse-icon {
-    0%, 100% { transform: none; filter: none; }
-}
-
-.blind-title {
-    font-size: 22px;
-    color: var(--text);
-    font-weight: 800;
-}
-
-.blind-badge {
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--ranked);
-    border: 1px solid var(--ranked-fill);
-    padding: 2px 10px;
-    border-radius: var(--radius-lg);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-}
-
-.blind-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-}
-
-.blind-match-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px 18px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 16px;
-    font-size: 13px;
-    color: var(--text-2);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.blind-match-info > div {
-    white-space: nowrap !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-}
-
-.tier-tag {
-    color: var(--ranked);
-    font-weight: 700;
-}
-
-.time-tag {
-    color: var(--danger);
-    font-weight: 700;
-    font-family: var(--font-mono);
-}
-
-.blind-prompt {
-    font-size: 14px;
-    color: var(--go);
-    font-weight: 700;
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px dashed rgba(34, 197, 94, 0.4);
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
-    animation: none !important;
-    transform: none !important;
-}
-
-@keyframes prompt-float {
-    0%, 100% { transform: none; }
-}
 
 /* Leaderboard Modal Card */
 .auth-modal-card.leaderboard-card {
@@ -1267,19 +845,6 @@ body {
     line-height: 1.4;
 }
 
-.ranked-rank-badge {
-    background: rgba(245, 158, 11, 0.18);
-    border: 1px solid var(--ranked-fill);
-    color: var(--ranked);
-    padding: 6px 14px;
-    border-radius: var(--radius-lg);
-    font-size: 16px;
-    font-weight: 700;
-    display: inline-block;
-    margin-top: 4px;
-}
-
-
 /* 一鍵發布至排位賽圖庫按鈕 */
 /* 發布確認彈窗樣式 */
 .auth-modal-card.publish-modal-card {
@@ -1322,7 +887,6 @@ body {
    ======================================================== */
 
 /* Header 我的地圖庫計數徽章 */
-
 
 /* 儲存彈窗與地圖庫彈窗尺寸 */
 .auth-modal-card.save-map-modal-card {
@@ -1749,11 +1313,6 @@ button,
 .auth-submit-btn,
 .auth-tab-btn,
 .custom-timer-btn,
-.victory-btn {
-    transform: none !important;
-    box-shadow: none !important;
-    white-space: nowrap !important;
-}
 
 button:hover,
 .tool-btn:hover,
@@ -1767,10 +1326,6 @@ button:hover,
 .auth-submit-btn:hover,
 .auth-tab-btn:hover,
 .custom-timer-btn:hover,
-.victory-btn:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
 
 /* 圖示穩定化，無散光 (drop-shadow / text-shadow / scale pulse) */
 .blind-icon,
@@ -1782,9 +1337,6 @@ button:hover,
     animation: none !important;
     text-shadow: none;
 }
-
-
-
 
 /* 排位賽地圖總覽 */
 .ranked-gallery {
@@ -2361,9 +1913,6 @@ kbd {
     font-family: var(--font-mono);
 }
 
-
-
-
 /* 平板直向：2D 在上、3D 在下 */
 @media (max-width: 1023px) {
     .app-container {
@@ -2676,6 +2225,436 @@ kbd {
 
     .is-driving .touch-jump {
         display: flex;
+    }
+}
+
+/* ========================================================
+   排位賽 (v2)：大廳、比賽中滿版、結算對話框
+   ======================================================== */
+.ranked-lobby {
+    display: none;
+    width: 420px;
+    flex: none;
+    flex-direction: column;
+    gap: 22px;
+    padding: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-y: auto;
+}
+
+.is-ranked .ranked-lobby {
+    display: flex;
+}
+
+.is-ranked .editor-panel,
+.is-ranked #btnStartDrive,
+.is-ranked #btnToggleMapSize {
+    display: none;
+}
+
+.lobby-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.lobby-sub {
+    margin: 4px 0 0;
+    color: var(--text-muted);
+}
+
+.lobby-label {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.tier-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.ranked-tier-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.ranked-tier-btn:hover {
+    border-color: var(--border-strong);
+}
+
+.ranked-tier-btn.active {
+    border-color: var(--ranked-fill);
+    background: var(--ranked-tint);
+}
+
+.tier-size {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.tier-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.ranked-tier-btn.active .tier-meta {
+    color: var(--ranked);
+}
+
+.lobby-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-sunken);
+}
+
+.lobby-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.lobby-map-id {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.lobby-card-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.lobby-best {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ranked);
+}
+
+.tool-btn.icon-btn {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
+}
+
+.lobby-rules {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lobby-spacer {
+    flex: 1;
+}
+
+.lobby-start {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--ranked-fill);
+    color: var(--on-ranked);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.lobby-start:hover {
+    background: var(--ranked-fill-hover);
+}
+
+.lobby-hint {
+    margin: -14px 0 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* 比賽中：隱藏頂部列與大廳，3D 佔滿畫面 */
+.ranked-live-chip,
+.ranked-live-keys {
+    display: none;
+}
+
+.ranked-live .topbar,
+.ranked-live .ranked-lobby,
+.ranked-live .sim-overlay,
+.ranked-live .drive-status-tag {
+    display: none;
+}
+
+.ranked-live .app-container {
+    padding: 0;
+}
+
+.ranked-live .simulator-panel {
+    border: 0;
+    border-radius: 0;
+}
+
+.ranked-live .drive-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    padding: 20px 24px;
+    justify-content: flex-end;
+    border: 0;
+    background: transparent;
+    pointer-events: none;
+    z-index: 6;
+}
+
+.ranked-live .drive-bar > * {
+    pointer-events: auto;
+}
+
+.ranked-live #btnStopDrive {
+    order: 2;
+}
+
+.ranked-live .drive-bar-spacer {
+    display: none;
+}
+
+.ranked-live .toast {
+    bottom: 76px;
+}
+
+.ranked-live .timer-display {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    transform: translateX(-50%);
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 10px 28px 12px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid #7C5410;
+    border-radius: 8px;
+}
+
+.ranked-live .timer-label {
+    color: var(--ranked);
+    font-weight: 500;
+}
+
+.ranked-live .timer-digits {
+    font-size: 44px;
+    line-height: 1.1;
+}
+
+.ranked-live .ranked-live-chip {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-2);
+    z-index: 6;
+}
+
+.ranked-live .ranked-live-keys {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(18, 24, 41, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    z-index: 6;
+}
+
+.ranked-live-keys .sep {
+    width: 1px;
+    height: 16px;
+    margin: 0 4px;
+    background: var(--border);
+}
+
+.ranked-live .sim-pos-hud {
+    right: 24px;
+    bottom: 24px;
+}
+
+/* 結算對話框 */
+.victory-modal {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(400px, calc(100% - 32px));
+    padding: 24px;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    z-index: 100;
+}
+
+.victory-modal[style*="block"] {
+    display: flex !important;
+}
+
+.victory-modal.ranked {
+    border-color: #7C5410;
+}
+
+.victory-modal h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.result-badge {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-badge .icon {
+    width: 26px;
+    height: 26px;
+}
+
+.result-badge.go {
+    background: #0E2A1A;
+    color: var(--go);
+}
+
+.result-badge.danger {
+    background: var(--danger-tint);
+    color: var(--danger);
+}
+
+.result-badge.ranked {
+    background: var(--ranked-tint);
+    color: var(--ranked);
+}
+
+.result-label {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.result-time {
+    font-family: var(--font-mono);
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.result-time.go {
+    color: var(--go);
+}
+
+.result-time.danger {
+    color: var(--danger);
+}
+
+.result-time.ranked {
+    color: var(--ranked);
+}
+
+.result-sub,
+.result-msg {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.result-msg:empty {
+    display: none;
+}
+
+.result-rank {
+    margin-top: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--ranked-tint);
+    border: 1px solid #7C5410;
+    color: var(--ranked-soft);
+    font-size: 13px;
+}
+
+.result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.tool-btn.btn-ranked {
+    background: var(--ranked-fill);
+    border-color: var(--ranked-fill);
+    color: var(--on-ranked);
+}
+
+.tool-btn.btn-ranked:hover {
+    background: var(--ranked-fill-hover);
+    border-color: var(--ranked-fill-hover);
+    color: var(--on-ranked);
+}
+
+/* 平板：大廳在上、3D 在下 */
+@media (max-width: 1023px) {
+    .ranked-lobby {
+        width: auto;
+    }
+
+    .lobby-spacer {
+        display: none;
     }
 }
 

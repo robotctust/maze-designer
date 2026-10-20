@@ -106,50 +106,6 @@
         
         <!-- 左側：2D 迷宮規劃編輯器 -->
         <section class="editor-panel">
-            <!-- 排位賽：官方規格級別選擇列 (僅 10x10, 15x15, 20x20, 25x25) -->
-            <div class="ranked-spec-bar" id="rankedSpecBar" style="display: none;">
-                <div class="ranked-spec-title">
-                    <span>⚔️ 官方排位賽級別 (點選自動抽選官方地圖)：</span>
-                </div>
-                <div class="ranked-spec-presets">
-                    <button type="button" class="ranked-tier-btn active" data-size="10x10" title="10×10 級別 (限時 1分鐘)">
-                        <span class="tier-icon">🥉</span>
-                        <span class="tier-name">10×10 菁英級</span>
-                        <span class="tier-time">⏳ 1分鐘</span>
-                    </button>
-                    <button type="button" class="ranked-tier-btn" data-size="15x15" title="15×15 級別 (限時 3分鐘)">
-                        <span class="tier-icon">🥈</span>
-                        <span class="tier-name">15×15 戰將級</span>
-                        <span class="tier-time">⏳ 3分鐘</span>
-                    </button>
-                    <button type="button" class="ranked-tier-btn" data-size="20x20" title="20×20 級別 (限時 20分鐘)">
-                        <span class="tier-icon">🥇</span>
-                        <span class="tier-name">20×20 大師級</span>
-                        <span class="tier-time">⏳ 20分鐘</span>
-                    </button>
-                    <button type="button" class="ranked-tier-btn" data-size="25x25" title="25×25 級別 (限時 30分鐘)">
-                        <span class="tier-icon">👑</span>
-                        <span class="tier-name">25×25 宗師級</span>
-                        <span class="tier-time">⏳ 30分鐘</span>
-                    </button>
-                </div>
-                <div class="ranked-current-info" id="rankedCurrentInfo">
-                    <span>地圖：<strong id="rankedMapName">10×10 官方排位賽地圖 #1</strong> | 限時：<strong id="rankedLimitText">1 分鐘</strong></span>
-                    <button type="button" class="btn-repick-map" id="btnRepickMap" title="重新抽選同一級別的另一張官方地圖">
-                        🎲 隨機換圖
-                    </button>
-                    <button type="button" class="btn-repick-map" id="btnOpenRankedGallery" title="瀏覽所有官方排位賽地圖的簡易預覽">
-                        📚 地圖總覽
-                    </button>
-                </div>
-            </div>
-
-            <!-- 排位賽鎖定提示列 -->
-            <div class="ranked-tools-banner" id="rankedToolsBanner" style="display: none; padding: 8px 16px; background: rgba(217, 119, 6, 0.15); border-bottom: 1px solid var(--ranked-fill); font-size: 13px; color: var(--ranked); align-items: center; justify-content: space-between;">
-                <span>🔒 排位賽地圖為官方統一版本，已鎖定編輯功能以維護公平性。</span>
-                <span>★ 盲測競技模式 ★</span>
-            </div>
-
             <div class="editor-body">
                 <nav class="tool-rail" id="practiceToolRail" aria-label="編輯工具">
                     <button type="button" class="tool active" id="toolWall" data-tool="wall" title="牆壁：點格線新增或移除"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wall"></use></svg>牆壁</button>
@@ -181,28 +137,7 @@
                         <svg id="mazeSvg" class="grid-svg" viewBox="0 0 560 560"></svg>
                     </div>
 
-                    <!-- 排位賽 2D 地圖屏蔽遮罩 (盲測機制) -->
-                    <div class="ranked-blind-overlay" id="rankedBlindOverlay" style="display: none;">
-                        <div class="blind-card">
-                            <div class="blind-icon">🔒</div>
-                            <h3 class="blind-title">2D 地圖雷達已全面屏蔽</h3>
-                            <div class="blind-badge">★ 排位賽公平天梯盲測機制 ★</div>
-                            <p class="blind-desc">
-                                為維護排位賽公正性與競技挑戰，選手無法於 2D 平面查看迷宮路徑！<br>
-                                比賽開始前可自由切換 <strong>3D 俯瞰視角</strong> 觀察地形；按下【開始遙控】啟動比賽後，將鎖定為 <strong>車子視角</strong> 全力衝刺！
-                            </p>
-                            <div class="blind-match-info">
-                                <div>級別：<span id="blindTierLabel" class="tier-tag">10×10 菁英級</span></div>
-                                <div>地圖：<span id="blindMapIdLabel">官方隨機</span></div>
-                                <div>限時：<span id="blindTimeLimitLabel" class="time-tag">1 分鐘 (60秒)</span></div>
-                            </div>
-                            <div class="blind-prompt">
-                                👉 請點擊右上方「<strong>▶ 開始遙控</strong>」啟動倒數並開始遙控行駛！
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
                     <div class="zoom-float" id="practiceZoomBar">
                         <button type="button" class="zoom-btn" id="btnZoomOut" title="縮小（滾輪或 Ctrl −）" aria-label="縮小"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#minus"></use></svg></button>
                         <button type="button" class="zoom-btn zoom-value" id="zoomPercentDisplay" title="目前縮放比例">100%</button>
@@ -222,6 +157,52 @@
                 <span id="headerTagGrid" hidden></span>
                 <span id="headerTagTotal">總長寬：300×300 cm</span>
             </div>
+        </section>
+
+        <!-- 排位賽大廳（排位賽模式取代 2D 編輯區） -->
+        <section class="ranked-lobby" id="rankedLobby" aria-label="排位賽大廳">
+            <div>
+                <h1 class="lobby-title">排位賽</h1>
+                <p class="lobby-sub">官方地圖隨機出題，限時內抵達終點，成績登上全服排行榜。</p>
+            </div>
+            <div>
+                <p class="lobby-label">級別</p>
+                <div class="tier-grid">
+                    <button type="button" class="ranked-tier-btn active" data-size="10x10"><span class="tier-size">10 × 10</span><span class="tier-meta">菁英級・限時 1 分鐘</span></button>
+                    <button type="button" class="ranked-tier-btn" data-size="15x15"><span class="tier-size">15 × 15</span><span class="tier-meta">戰將級・限時 3 分鐘</span></button>
+                    <button type="button" class="ranked-tier-btn" data-size="20x20"><span class="tier-size">20 × 20</span><span class="tier-meta">大師級・限時 20 分鐘</span></button>
+                    <button type="button" class="ranked-tier-btn" data-size="25x25"><span class="tier-size">25 × 25</span><span class="tier-meta">宗師級・限時 30 分鐘</span></button>
+                </div>
+            </div>
+            <div>
+                <p class="lobby-label">本場地圖</p>
+                <div class="lobby-card">
+                    <div class="lobby-card-main">
+                        <div class="lobby-map-id" id="rankedMapId">—</div>
+                        <div class="lobby-card-sub" id="rankedMapName">載入中…</div>
+                    </div>
+                    <button type="button" class="tool-btn" id="btnRepickMap" title="同級別換一張官方地圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張</button>
+                    <button type="button" class="tool-btn icon-btn" id="btnOpenRankedGallery" title="地圖總覽" aria-label="地圖總覽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg></button>
+                </div>
+            </div>
+            <div>
+                <p class="lobby-label" id="lobbyScoreLabel">我的 10 × 10 成績</p>
+                <div class="lobby-card">
+                    <div class="lobby-card-main">
+                        <div class="lobby-best" id="lobbyBest">—</div>
+                        <div class="lobby-card-sub" id="lobbyRank">還沒有成績</div>
+                    </div>
+                    <button type="button" class="tool-btn btn-ghost" id="btnLobbyLeaderboard">看排行榜</button>
+                </div>
+            </div>
+            <ul class="lobby-rules">
+                <li>開始後鎖定車子視角，並開始倒數</li>
+                <li>排位賽不顯示 2D 地圖，也不能編輯或存檔</li>
+                <li>每個級別只保留你的最佳成績</li>
+            </ul>
+            <div class="lobby-spacer"></div>
+            <button type="button" class="lobby-start" id="btnLobbyStart"><svg class="icon" style="width:20px;height:20px" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>開始比賽</button>
+            <p class="lobby-hint">WASD 或方向鍵操控・空白鍵跳躍・限時 <span id="rankedLimitText">1 分鐘</span></p>
         </section>
 
         <!-- 右側：3D 即時模擬視窗 -->
@@ -277,6 +258,10 @@
                     <button type="button" class="float-btn" id="btnToggleMapSize" title="放大 3D" aria-label="放大 3D"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-maximize"></use></svg></button>
                 </div>
 
+                <!-- 排位賽比賽中：鎖定提示與按鍵說明 -->
+                <div class="ranked-live-chip"><svg class="icon" style="color:var(--ranked)" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>排位賽進行中・車子視角已鎖定</div>
+                <div class="ranked-live-keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵操控<span class="sep"></span><kbd>空白鍵</kbd>跳躍</div>
+
                 <!-- 右下：即時座標 -->
                 <div class="sim-pos-hud" id="posHud">
                     <span id="posCm">X: 15 cm, Y: 285 cm</span> · <span id="posCell">格 (0, 9)</span>
@@ -307,65 +292,54 @@
                 </div>
             </div>
 
-            <!-- 到達終點獲勝視窗 -->
-            <div class="victory-modal" id="victoryModal">
-                <h2>🎉 恭喜順利抵達終點！</h2>
-                <div class="victory-time-box">
-                    <div class="victory-time-label" id="victoryTimeLabel">🏁 完賽成績</div>
-                    <div class="victory-time-value" id="victoryTimeValue">00:00.0</div>
-                    <div class="victory-time-sub" id="victoryTimeSub">總共耗時：0.0 秒</div>
-                </div>
-                <p id="victoryMsg">已成功走出 10×10 迷宮！</p>
-                <button class="victory-btn" id="btnVictoryRestart">🔄 重新挑戰 (回到起點)</button>
-            </div>
-
-            <!-- 時間到超時視窗 (倒數挑戰模式) -->
-            <div class="victory-modal timeout-modal" id="timeoutModal">
-                <h2 style="color: var(--danger-fill);">⏰ 時間到！挑戰超時</h2>
-                <div class="victory-time-box" style="border-color: var(--danger-fill); background: rgba(239, 68, 68, 0.12);">
-                    <div class="victory-time-label" style="color: var(--danger);">挑戰結果</div>
-                    <div class="victory-time-value" id="timeoutTimeValue" style="color: var(--danger);">60.0 秒 時間用盡</div>
-                    <div class="victory-time-sub" id="timeoutTimeSub" style="color: var(--text-2);">未能於 1 分鐘內抵達終點</div>
-                </div>
-                <p>別氣餒！調整行駛路線再試一次！</p>
-                <button class="victory-btn timeout-btn" id="btnTimeoutRestart">🔄 重新挑戰 (回到起點)</button>
-            </div>
-
-            <!-- 排位賽過關結算彈窗 -->
-            <div class="victory-modal ranked-victory-modal" id="rankedVictoryModal" style="display: none; border-color: var(--ranked-fill); box-shadow: none;">
-                <div style="font-size: 2.2rem; margin-bottom: 4px;">🏆</div>
-                <h2 style="color: var(--ranked); margin-bottom: 8px;">排位賽挑戰成功！</h2>
-                <div class="victory-time-box" style="border-color: var(--ranked-fill); background: rgba(245, 158, 11, 0.12);">
-                    <div class="victory-time-label" style="color: var(--ranked-soft);">成績已登錄排位賽天梯榜</div>
-                    <div class="victory-time-value" id="rankedVictoryTimeValue" style="color: var(--ranked);">00:00.0</div>
-                    <div class="victory-time-sub" id="rankedVictoryTimeSub" style="color: var(--go);">耗時：0.0 秒 | 剩餘：0.0 秒</div>
-                </div>
-                <div class="ranked-rank-badge" id="rankedVictoryRankBadge">
-                    🏆 當前全服排名：第 <strong id="rankedVictoryRankNum">1</strong> 名
-                </div>
-                <p id="rankedVictoryMsg" style="margin: 12px 0 16px 0; color: var(--text-2);">太強了！在 2D 地圖全面屏蔽下順利突圍走出迷宮！</p>
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <button type="button" class="victory-btn" id="btnRankedNextMatch" style="background: var(--ranked-fill); color: var(--on-ranked);">🎲 隨機換圖再戰</button>
-                    <button type="button" class="victory-btn" id="btnRankedViewLeaderboard" style="background: var(--accent-fill); color: var(--on-accent);">🏆 查看排行榜</button>
-                    <button type="button" class="victory-btn" id="btnRankedBackToPractice" style="background: var(--border);">🛠️ 回到練習賽</button>
+            <!-- 結算對話框：練習完賽／練習超時／排位完賽／排位超時 -->
+            <div class="victory-modal" id="victoryModal" role="dialog" aria-labelledby="victoryTitle">
+                <div class="result-badge go"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#flag"></use></svg></div>
+                <h2 id="victoryTitle">抵達終點</h2>
+                <p class="result-label" id="victoryTimeLabel">完賽成績</p>
+                <div class="result-time go" id="victoryTimeValue">00:00.0</div>
+                <p class="result-sub" id="victoryTimeSub">共 0.0 秒</p>
+                <p class="result-msg" id="victoryMsg"></p>
+                <div class="result-actions">
+                    <button type="button" class="tool-btn btn-save" id="btnVictoryRestart"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>再跑一次</button>
                 </div>
             </div>
 
-            <!-- 排位賽超時彈窗 -->
-            <div class="victory-modal timeout-modal ranked-timeout-modal" id="rankedTimeoutModal" style="display: none;">
-                <div style="font-size: 2.2rem; margin-bottom: 4px;">⏰</div>
-                <h2 style="color: var(--danger-fill); margin-bottom: 8px;">排位賽挑戰超時！</h2>
-                <div class="victory-time-box" style="border-color: var(--danger-fill); background: rgba(239, 68, 68, 0.12);">
-                    <div class="victory-time-label" style="color: var(--danger-soft);">挑戰結果</div>
-                    <div class="victory-time-value" id="rankedTimeoutValue" style="color: var(--danger);">時間用盡</div>
-                    <div class="victory-time-sub" id="rankedTimeoutSub" style="color: var(--text-2);">未能於限時內抵達終點</div>
+            <div class="victory-modal" id="timeoutModal" role="dialog" aria-labelledby="timeoutTitle">
+                <div class="result-badge danger"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg></div>
+                <h2 id="timeoutTitle">時間到</h2>
+                <div class="result-time danger" id="timeoutTimeValue">時間用盡</div>
+                <p class="result-sub" id="timeoutTimeSub">沒在時限內抵達終點</p>
+                <p class="result-msg">換條路線再試試。</p>
+                <div class="result-actions">
+                    <button type="button" class="tool-btn btn-save" id="btnTimeoutRestart"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>再跑一次</button>
                 </div>
-                <p style="margin: 12px 0 16px 0; color: var(--text-2);">別灰心！排位賽盲測極具挑戰性，調整駕駛視角與路線策略再次出戰！</p>
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <button type="button" class="victory-btn timeout-btn" id="btnRankedTimeoutRetry">🔄 重新挑戰 (回到起點)</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutNewMap" style="background: var(--ranked-fill); color: var(--on-ranked);">🎲 換新地圖再戰</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutLeaderboard" style="background: var(--accent-fill); color: var(--on-accent);">🏆 查看排行榜</button>
-                    <button type="button" class="victory-btn" id="btnRankedTimeoutBackPractice" style="background: var(--border);">🛠️ 回到練習賽</button>
+            </div>
+
+            <div class="victory-modal ranked" id="rankedVictoryModal" style="display: none;" role="dialog" aria-labelledby="rankedVictoryTitle">
+                <div class="result-badge ranked"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg></div>
+                <h2 id="rankedVictoryTitle">排位賽完賽</h2>
+                <div class="result-time ranked" id="rankedVictoryTimeValue">00:00.0</div>
+                <p class="result-sub" id="rankedVictoryTimeSub">耗時 0 秒・剩餘 0 秒</p>
+                <div class="result-rank" id="rankedVictoryRankBadge">全服第 <strong id="rankedVictoryRankNum">1</strong> 名</div>
+                <p class="result-msg" id="rankedVictoryMsg"></p>
+                <div class="result-actions">
+                    <button type="button" class="tool-btn btn-ranked" id="btnRankedNextMatch"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張再戰</button>
+                    <button type="button" class="tool-btn" id="btnRankedViewLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
+                    <button type="button" class="tool-btn btn-ghost" id="btnRankedBackToPractice">回到練習</button>
+                </div>
+            </div>
+
+            <div class="victory-modal" id="rankedTimeoutModal" style="display: none;" role="dialog" aria-labelledby="rankedTimeoutTitle">
+                <div class="result-badge danger"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg></div>
+                <h2 id="rankedTimeoutTitle">時間到</h2>
+                <div class="result-time danger" id="rankedTimeoutValue">時間用盡</div>
+                <p class="result-sub" id="rankedTimeoutSub">沒在時限內抵達終點</p>
+                <div class="result-actions">
+                    <button type="button" class="tool-btn btn-ranked" id="btnRankedTimeoutRetry"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>重試這張</button>
+                    <button type="button" class="tool-btn" id="btnRankedTimeoutNewMap"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張</button>
+                    <button type="button" class="tool-btn" id="btnRankedTimeoutLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
+                    <button type="button" class="tool-btn btn-ghost" id="btnRankedTimeoutBackPractice">回到練習</button>
                 </div>
             </div>
         </section>
@@ -740,6 +714,7 @@
             let currentGameMode = 'practice';
             let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25
             let currentRankedMapId = 'map_1';
+            let rankedHudLabel = '';
             let currentRankedLimitMs = 90 * 1000;
 
             // ============================================
@@ -787,7 +762,7 @@
                 } else {
                     const remainMs = Math.max(0, countdownLimitMs - timerElapsedMs);
                     displayMs = remainMs;
-                    if (timerIcon) timerIcon.textContent = '倒數';
+                    if (timerIcon) timerIcon.textContent = currentGameMode === 'ranked' ? rankedHudLabel : '倒數';
                     if (remainMs <= 10000 && timerRunning) {
                         if (timerDisplay) timerDisplay.className = 'timer-display countdown danger';
                         isDanger = true;
@@ -832,8 +807,8 @@
                             const rankedTimeoutValue = document.getElementById('rankedTimeoutValue');
                             const rankedTimeoutSub = document.getElementById('rankedTimeoutSub');
 
-                            if (rankedTimeoutValue) rankedTimeoutValue.textContent = `${(countdownLimitMs / 1000).toFixed(0)} 秒 時間用盡`;
-                            if (rankedTimeoutSub) rankedTimeoutSub.textContent = `在 ${currentRankedSize} 盲測排位中未能於限時內抵達終點`;
+                            if (rankedTimeoutValue) rankedTimeoutValue.textContent = formatTimeDisplay(countdownLimitMs);
+                            if (rankedTimeoutSub) rankedTimeoutSub.textContent = `沒在 ${currentRankedSize.replace('x', ' × ')} 的 ${countdownDesc} 內抵達終點`;
                             if (rankedTimeoutModal) rankedTimeoutModal.style.display = 'block';
                         } else {
                             const timeoutModal = document.getElementById('timeoutModal');
@@ -841,8 +816,8 @@
                             const timeoutTimeSub = document.getElementById('timeoutTimeSub');
                             const btnTimeoutRestart = document.getElementById('btnTimeoutRestart');
 
-                            if (timeoutTimeValue) timeoutTimeValue.textContent = `${(countdownLimitMs / 1000).toFixed(0)} 秒 時間用盡`;
-                            if (timeoutTimeSub) timeoutTimeSub.textContent = `未能於 ${countdownDesc} 內抵達終點`;
+                            if (timeoutTimeValue) timeoutTimeValue.textContent = formatTimeDisplay(countdownLimitMs);
+                            if (timeoutTimeSub) timeoutTimeSub.textContent = `沒在 ${countdownDesc} 內抵達終點`;
                             if (btnTimeoutRestart) btnTimeoutRestart.textContent = `🔄 重新挑戰 (${countdownDesc})`;
 
                             if (timeoutModal) timeoutModal.style.display = 'block';
@@ -1004,6 +979,7 @@
                     driveStatusBadge.className = 'drive-status-tag active';
                     driveStatusText.textContent = '操控中';
                     document.getElementById('simulatorPanel').classList.add('is-driving');
+                    document.body.classList.toggle('ranked-live', currentGameMode === 'ranked');
 
                     if (currentGameMode === 'ranked') {
                         // 排位賽模式：按下開始後強制切換並鎖定車子視角
@@ -1044,6 +1020,7 @@
                     driveStatusBadge.className = 'drive-status-tag';
                     driveStatusText.textContent = '按試跑後可用鍵盤操控';
                     document.getElementById('simulatorPanel').classList.remove('is-driving');
+                    document.body.classList.remove('ranked-live');
 
                     // 比賽開始前或停止遙控後：解除視角鎖定，允許自由切換俯瞰/車載視角
                     if (btnModeOrbit) {
@@ -1093,10 +1070,10 @@
                         const rankNumEl = document.getElementById('rankedVictoryRankNum');
                         const victoryMsgEl = document.getElementById('rankedVictoryMsg');
 
-                        if (timeValEl) timeValEl.textContent = `${totalSec} 秒`;
-                        if (timeSubEl) timeSubEl.innerHTML = `完賽耗時：<strong>${totalSec} 秒</strong> | 剩餘時間：<strong>${remainSec} 秒</strong>`;
-                        if (rankNumEl) rankNumEl.textContent = '結算中...';
-                        if (victoryMsgEl) victoryMsgEl.textContent = '正在驗證並登錄全服排位天梯排行榜...';
+                        if (timeValEl) timeValEl.textContent = formatTimeDisplay(timerElapsedMs);
+                        if (timeSubEl) timeSubEl.textContent = `耗時 ${totalSec} 秒・剩餘 ${remainSec} 秒`;
+                        if (rankNumEl) rankNumEl.textContent = '…';
+                        if (victoryMsgEl) victoryMsgEl.textContent = '正在登錄成績…';
 
                         if (rankedModal) rankedModal.style.display = 'block';
 
@@ -1113,15 +1090,15 @@
                         .then(res => res.json())
                         .then(res => {
                             if (res.success) {
+                                refreshLobbyScore(currentRankedSize);
                                 if (rankNumEl) rankNumEl.textContent = res.rank ? res.rank : '1';
                                 if (victoryMsgEl) {
                                     if (res.isBest) {
-                                        victoryMsgEl.innerHTML = `🔥 <strong>恭喜刷新個人最佳紀錄！</strong>目前榮登全服天梯 <strong>第 ${res.rank} 名</strong>！`;
-                                        showToast(`🏆 刷新個人最佳！天梯榮登第 ${res.rank} 名！`);
+                                        victoryMsgEl.textContent = '刷新個人最佳紀錄';
+                                        showToast(`刷新個人最佳，全服第 ${res.rank} 名`);
                                     } else {
                                         const bestSec = res.bestTimeMs ? (res.bestTimeMs / 1000).toFixed(2) : '-';
-                                        victoryMsgEl.innerHTML = `完賽！本次耗時 <strong>${totalSec} 秒</strong>（歷史最佳：<strong>${bestSec} 秒</strong>）。天梯榜已保留您的最佳紀錄，名列全服 <strong>第 ${res.rank} 名</strong>！`;
-                                        showToast(`🏁 完賽！天梯已保留個人最佳成績 (第 ${res.rank} 名)`);
+                                        victoryMsgEl.textContent = `你的最佳仍是 ${bestSec} 秒，排行榜保留最佳成績`;
                                     }
                                 }
                             } else {
@@ -1152,16 +1129,16 @@
                     const rows = (editor && editor.rows) || 10;
 
                     if (currentTimerMode === 'up') {
-                        timeLabel.textContent = '🏁 完賽成績';
+                        timeLabel.textContent = '完賽成績';
                         timeValue.textContent = formatted;
-                        timeSub.innerHTML = `總共花費：<strong>${totalSec} 秒</strong> 順利走出迷宮！`;
-                        victoryMsg.textContent = `🎉 恭喜順利抵達終點！已成功走出 ${cols}×${rows} 迷宮！`;
+                        timeSub.textContent = `走出 ${cols} × ${rows} 迷宮，共 ${totalSec} 秒`;
+                        victoryMsg.textContent = '';
                     } else {
                         const remainSec = Math.max(0, (countdownLimitMs - timerElapsedMs) / 1000).toFixed(1);
-                        timeLabel.textContent = `🏆 ${countdownLabel}成功！`;
+                        timeLabel.textContent = `${countdownLabel}成功`;
                         timeValue.textContent = formatted;
-                        timeSub.innerHTML = `耗時：<strong>${totalSec} 秒</strong> | 剩餘時間：<strong>${remainSec} 秒</strong>`;
-                        victoryMsg.textContent = `太厲害了！成功在 ${countdownDesc} 限時內走出 ${cols}×${rows} 迷宮！`;
+                        timeSub.textContent = `耗時 ${totalSec} 秒・剩餘 ${remainSec} 秒`;
+                        victoryMsg.textContent = `在 ${countdownDesc} 內走出 ${cols} × ${rows} 迷宮`;
                     }
 
                     modal.style.display = 'block';
@@ -2422,11 +2399,8 @@
             const btnModeRanked = document.getElementById('btnModeRanked');
             const btnOpenLeaderboard = document.getElementById('btnOpenLeaderboard');
             const practiceSpecBar = document.getElementById('practiceSpecBar');
-            const rankedSpecBar = document.getElementById('rankedSpecBar');
             const practiceToolsToolbar = document.getElementById('practiceToolsToolbar');
-            const rankedToolsBanner = document.getElementById('rankedToolsBanner');
             const practiceZoomBar = document.getElementById('practiceZoomBar');
-            const rankedBlindOverlay = document.getElementById('rankedBlindOverlay');
             const gridWrapper = document.getElementById('gridWrapper');
             const leaderboardModalBackdrop = document.getElementById('leaderboardModalBackdrop');
             const btnCloseLeaderboardModal = document.getElementById('btnCloseLeaderboardModal');
@@ -2448,13 +2422,10 @@
                     btnModePractice.classList.remove('active');
 
                     practiceSpecBar.style.display = 'none';
-                    rankedSpecBar.style.display = 'flex';
+                    document.body.classList.add('is-ranked');
                     practiceToolsToolbar.style.display = 'none';
                     document.getElementById('practiceToolRail').style.display = 'none';
-                    rankedToolsBanner.style.display = 'flex';
                     practiceZoomBar.style.display = 'none';
-                    rankedBlindOverlay.style.display = 'flex';
-                    gridWrapper.style.visibility = 'hidden';
 
                     // 排位賽時完全隱藏儲存與我的地圖庫按鈕，並顯示禁止儲存提示標籤
                     const btnSaveEl = document.getElementById('btnSave');
@@ -2490,13 +2461,10 @@
                     btnModeRanked.classList.remove('active');
 
                     practiceSpecBar.style.display = '';
-                    rankedSpecBar.style.display = 'none';
+                    document.body.classList.remove('is-ranked', 'ranked-live');
                     practiceToolsToolbar.style.display = 'flex';
                     document.getElementById('practiceToolRail').style.display = 'flex';
-                    rankedToolsBanner.style.display = 'none';
                     practiceZoomBar.style.display = 'flex';
-                    rankedBlindOverlay.style.display = 'none';
-                    gridWrapper.style.visibility = 'visible';
 
                     // 練習賽恢復顯示儲存與我的地圖庫按鈕
                     const btnSaveEl = document.getElementById('btnSave');
@@ -2592,15 +2560,12 @@
                             const tierTitle = tierNames[size] || size;
                             const mapNameEl = document.getElementById('rankedMapName');
                             const limitTextEl = document.getElementById('rankedLimitText');
-                            const blindTier = document.getElementById('blindTierLabel');
-                            const blindMap = document.getElementById('blindMapIdLabel');
-                            const blindLimit = document.getElementById('blindTimeLimitLabel');
 
-                            if (mapNameEl) mapNameEl.textContent = `${res.mapName} (${res.mapId})`;
+                            document.getElementById('rankedMapId').textContent = res.mapId;
+                            if (mapNameEl) mapNameEl.textContent = `${res.mapData.author || '官方'}出題・${size.replace('x', ' × ')}`;
                             if (limitTextEl) limitTextEl.textContent = res.timeLimitDesc;
-                            if (blindTier) blindTier.textContent = tierTitle;
-                            if (blindMap) blindMap.textContent = `官方隨機 (${res.mapId})`;
-                            if (blindLimit) blindLimit.textContent = res.timeLimitDesc;
+                            rankedHudLabel = `${tierTitle}・${res.mapId}`;
+                            refreshLobbyScore(size);
 
                             // 更新級別按鈕 active
                             document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
@@ -2619,7 +2584,7 @@
                             if (tagTotal) tagTotal.textContent = `總長寬：${dim * 30}×${dim * 30} cm`;
 
                             btnStartDrive.classList.add('pulse-prompt');
-                            showToast(`🎲 已隨機載入 ${tierTitle} 官方盲測迷宮！點擊【▶ 開始遙控】即刻啟動挑戰！`);
+                            showToast(`已換成 ${tierTitle} 的 ${res.mapId}`);
                         } else {
                             if (res.requireLogin) {
                                 openAuthModal(res.message, 'login');
@@ -2633,6 +2598,21 @@
                         showToast('無法連接排位伺服器', true);
                     });
             }
+
+            // 大廳：我的成績、開始比賽、看排行榜
+            function refreshLobbyScore(size) {
+                document.getElementById('lobbyScoreLabel').textContent = `我的 ${size.replace('x', ' × ')} 成績`;
+                fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
+                    .then(res => res.json())
+                    .then(res => {
+                        const best = res.userBest;
+                        document.getElementById('lobbyBest').textContent = best ? `${(best.bestMs / 1000).toFixed(2)} 秒` : '—';
+                        document.getElementById('lobbyRank').textContent = best ? `全服第 ${best.rank} 名` : '還沒有成績，完成一場就會登上排行榜';
+                    })
+                    .catch(() => {});
+            }
+            document.getElementById('btnLobbyStart').addEventListener('click', () => btnStartDrive.click());
+            document.getElementById('btnLobbyLeaderboard').addEventListener('click', () => openLeaderboardModal(currentRankedSize));
 
             // 排位賽級別選擇按鈕事件
             document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
