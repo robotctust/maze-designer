@@ -169,65 +169,99 @@
             </div>
         </section>
 
-        <!-- 排位賽大廳（排位賽模式取代 2D 編輯區） -->
+        <!-- 排位賽大廳（全螢幕；比賽開始後換成滿版 3D） -->
         <section class="ranked-lobby" id="rankedLobby" aria-label="排位賽大廳">
-            <div class="lobby-head">
+            <header class="lobby-head">
                 <div>
                     <p class="lobby-kicker">RANKED ARENA</p>
                     <h1 class="lobby-title">排位賽</h1>
                 </div>
-                <button type="button" class="tool-btn icon-btn sfx-toggle" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#volume"></use></svg></button>
-            </div>
-            <div class="lobby-hero">
-                <svg class="lobby-crest" aria-hidden="true"><use id="lobbyCrestUse" href="assets/icons.svg#crest-1"></use></svg>
-                <div class="lobby-hero-text">
-                    <p class="lobby-tier-en" id="lobbyTierEn">ELITE・TIER 1</p>
-                    <p class="lobby-tier-name" id="lobbyTierName">菁英級</p>
-                    <p class="lobby-tier-sub" id="lobbyTierSub">10 × 10 迷宮・限時 1 分鐘</p>
+                <div class="lobby-head-actions">
+                    <button type="button" class="tool-btn icon-btn sfx-toggle" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#volume"></use></svg></button>
+                    <button type="button" class="tool-btn" id="btnLobbyLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
+                    <button type="button" class="tool-btn btn-ghost" id="btnLobbyBackPractice"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-left"></use></svg>回到練習</button>
                 </div>
-            </div>
-            <div>
-                <p class="lobby-label">選擇段位</p>
-                <div class="tier-grid">
-                    <button type="button" class="ranked-tier-btn active" data-size="10x10"><svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-1"></use></svg><span class="tier-text"><span class="tier-name">菁英級</span><span class="tier-meta">10 × 10・1 分鐘</span></span></button>
-                    <button type="button" class="ranked-tier-btn" data-size="15x15"><svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-2"></use></svg><span class="tier-text"><span class="tier-name">戰將級</span><span class="tier-meta">15 × 15・3 分鐘</span></span></button>
-                    <button type="button" class="ranked-tier-btn" data-size="20x20"><svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-3"></use></svg><span class="tier-text"><span class="tier-name">大師級</span><span class="tier-meta">20 × 20・20 分鐘</span></span></button>
-                    <button type="button" class="ranked-tier-btn" data-size="25x25"><svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-4"></use></svg><span class="tier-text"><span class="tier-name">宗師級</span><span class="tier-meta">25 × 25・30 分鐘</span></span></button>
-                    <button type="button" class="ranked-tier-btn" data-size="30x30"><svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-5"></use></svg><span class="tier-text"><span class="tier-name">傳奇級</span><span class="tier-meta">30 × 30・40 分鐘</span></span></button>
-                </div>
-            </div>
-            <div>
-                <p class="lobby-label">本場地圖</p>
-                <div class="lobby-card">
-                    <div class="lobby-card-main">
-                        <div class="lobby-map-id" id="rankedMapId">—</div>
-                        <div class="lobby-card-sub" id="rankedMapName">載入中…</div>
+            </header>
+
+            <div class="lobby-body">
+                <nav class="tier-grid" aria-label="選擇段位">
+                    <p class="lobby-label">SELECT TIER</p>
+                    <button type="button" class="ranked-tier-btn active" data-size="10x10">
+                        <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-1"></use></svg>
+                        <span class="tier-text"><span class="tier-name">菁英級</span><span class="tier-en">ELITE</span></span>
+                        <span class="tier-spec"><span class="tier-size">10 × 10</span><span class="tier-meta">限時 1 分鐘</span></span>
+                    </button>
+                    <button type="button" class="ranked-tier-btn" data-size="15x15">
+                        <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-2"></use></svg>
+                        <span class="tier-text"><span class="tier-name">戰將級</span><span class="tier-en">WARLORD</span></span>
+                        <span class="tier-spec"><span class="tier-size">15 × 15</span><span class="tier-meta">限時 3 分鐘</span></span>
+                    </button>
+                    <button type="button" class="ranked-tier-btn" data-size="20x20">
+                        <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-3"></use></svg>
+                        <span class="tier-text"><span class="tier-name">大師級</span><span class="tier-en">MASTER</span></span>
+                        <span class="tier-spec"><span class="tier-size">20 × 20</span><span class="tier-meta">限時 20 分鐘</span></span>
+                    </button>
+                    <button type="button" class="ranked-tier-btn" data-size="25x25">
+                        <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-4"></use></svg>
+                        <span class="tier-text"><span class="tier-name">宗師級</span><span class="tier-en">GRANDMASTER</span></span>
+                        <span class="tier-spec"><span class="tier-size">25 × 25</span><span class="tier-meta">限時 30 分鐘</span></span>
+                    </button>
+                    <button type="button" class="ranked-tier-btn" data-size="30x30">
+                        <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-5"></use></svg>
+                        <span class="tier-text"><span class="tier-name">傳奇級</span><span class="tier-en">LEGEND</span></span>
+                        <span class="tier-spec"><span class="tier-size">30 × 30</span><span class="tier-meta">限時 40 分鐘</span></span>
+                    </button>
+                </nav>
+
+                <section class="lobby-stage" aria-label="段位資訊">
+                    <div class="lobby-hero">
+                        <div class="lobby-crest-wrap">
+                            <span class="lobby-crest-ring" aria-hidden="true"></span>
+                            <svg class="lobby-crest" aria-hidden="true"><use id="lobbyCrestUse" href="assets/icons.svg#crest-1"></use></svg>
+                        </div>
+                        <div class="lobby-hero-text">
+                            <p class="lobby-tier-en" id="lobbyTierEn">ELITE・TIER 1</p>
+                            <p class="lobby-tier-name" id="lobbyTierName">菁英級</p>
+                            <p class="lobby-tier-sub" id="lobbyTierSub">10 × 10 迷宮・限時 1 分鐘</p>
+                        </div>
                     </div>
-                    <button type="button" class="tool-btn" id="btnRepickMap" title="同級別換一張官方地圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張</button>
-                    <button type="button" class="tool-btn icon-btn" id="btnOpenRankedGallery" title="地圖總覽" aria-label="地圖總覽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg></button>
-                </div>
-            </div>
-            <div>
-                <p class="lobby-label" id="lobbyScoreLabel">我的 10 × 10 成績</p>
-                <div class="lobby-card">
-                    <div class="lobby-card-main">
-                        <div class="lobby-best" id="lobbyBest">—</div>
-                        <div class="lobby-card-sub" id="lobbyRank">還沒有成績</div>
+
+                    <div class="lobby-stats">
+                        <div class="lobby-stat">
+                            <p class="lobby-stat-label">限時</p>
+                            <p class="lobby-stat-value" id="lobbyLimitClock">01:00</p>
+                        </div>
+                        <div class="lobby-stat">
+                            <p class="lobby-stat-label" id="lobbyScoreLabel">我的最佳</p>
+                            <p class="lobby-stat-value lobby-best" id="lobbyBest">—</p>
+                            <p class="lobby-stat-sub" id="lobbyRank">還沒有成績</p>
+                        </div>
+                        <div class="lobby-stat">
+                            <p class="lobby-stat-label">全服第一</p>
+                            <p class="lobby-stat-value tier-color" id="lobbyTop">—</p>
+                            <p class="lobby-stat-sub" id="lobbyTopName">還沒有人完賽</p>
+                        </div>
                     </div>
-                    <button type="button" class="tool-btn btn-ghost" id="btnLobbyLeaderboard">看排行榜</button>
-                </div>
+
+                    <div class="lobby-foot">
+                        <div class="lobby-card">
+                            <div class="lobby-card-main">
+                                <p class="lobby-stat-label">本場地圖</p>
+                                <div class="lobby-map-id" id="rankedMapId">—</div>
+                                <div class="lobby-card-sub" id="rankedMapName">載入中…</div>
+                            </div>
+                            <button type="button" class="tool-btn" id="btnRepickMap" title="同級別換一張官方地圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張</button>
+                            <button type="button" class="tool-btn icon-btn" id="btnOpenRankedGallery" title="地圖總覽" aria-label="地圖總覽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg></button>
+                        </div>
+                        <div class="lobby-cta">
+                            <button type="button" class="lobby-start" id="btnLobbyStart"><svg class="icon" style="width:22px;height:22px" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>開始挑戰</button>
+                            <div class="lobby-stripes" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            <ul class="lobby-rules">
-                <li>開始後鎖定車子視角，並開始倒數</li>
-                <li>排位賽不顯示 2D 地圖，也不能編輯或存檔</li>
-                <li>每個級別只保留你的最佳成績</li>
-            </ul>
-            <div class="lobby-spacer"></div>
-            <div class="lobby-cta">
-                <button type="button" class="lobby-start" id="btnLobbyStart"><svg class="icon" style="width:20px;height:20px" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>開始挑戰</button>
-                <div class="lobby-stripes" aria-hidden="true"></div>
-                <p class="lobby-hint">WASD 或方向鍵操控・空白鍵跳躍・限時 <span id="rankedLimitText">1 分鐘</span></p>
-            </div>
+
+            <p class="lobby-hint">開始後鎖定車子視角・排位賽不顯示 2D 地圖・WASD 或方向鍵操控・空白鍵跳躍・每個段位只保留你的最佳成績・限時 <span id="rankedLimitText">1 分鐘</span></p>
         </section>
 
         <!-- 右側：3D 即時模擬視窗 -->
@@ -926,6 +960,7 @@
                             if (rankedTimeoutValue) rankedTimeoutValue.textContent = formatTimeDisplay(countdownLimitMs);
                             if (rankedTimeoutSub) rankedTimeoutSub.textContent = `沒在 ${currentRankedSize.replace('x', ' × ')} 的 ${countdownDesc} 內抵達終點`;
                             if (rankedTimeoutModal) rankedTimeoutModal.style.display = 'block';
+                            document.body.classList.add('ranked-live');
                             RankedFx.play('timeout');
                         } else {
                             const timeoutModal = document.getElementById('timeoutModal');
@@ -1190,6 +1225,7 @@
                         if (victoryMsgEl) victoryMsgEl.textContent = '正在登錄成績…';
 
                         if (rankedModal) rankedModal.style.display = 'block';
+                        document.body.classList.add('ranked-live'); // 結算維持全螢幕，背景是 3D 場景
                         RankedFx.play('finish');
                         RankedFx.celebrate(document.querySelector('.sim-stage'));
 
@@ -2662,11 +2698,11 @@
 
             // 段位資料：徽章等級、名稱與限時（顏色寫在 CSS 的 [data-tier]）
             const RANKED_TIERS = {
-                '10x10': { level: 1, name: '菁英級', en: 'ELITE', limit: '1 分鐘' },
-                '15x15': { level: 2, name: '戰將級', en: 'WARLORD', limit: '3 分鐘' },
-                '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘' },
-                '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘' },
-                '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘' }
+                '10x10': { level: 1, name: '菁英級', en: 'ELITE', limit: '1 分鐘', clock: '01:00' },
+                '15x15': { level: 2, name: '戰將級', en: 'WARLORD', limit: '3 分鐘', clock: '03:00' },
+                '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘', clock: '20:00' },
+                '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘', clock: '30:00' },
+                '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘', clock: '40:00' }
             };
 
             // 切換段位主題：主色、大廳徽章與段位名、按鈕選取狀態
@@ -2678,6 +2714,7 @@
                 document.getElementById('lobbyTierName').textContent = t.name;
                 document.getElementById('liveCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
                 document.getElementById('liveTierName').textContent = t.name;
+                document.getElementById('lobbyLimitClock').textContent = t.clock;
                 document.getElementById('lobbyTierSub').textContent = `${size.replace('x', ' × ')} 迷宮・限時 ${t.limit}`;
                 document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.getAttribute('data-size') === size);
@@ -2771,13 +2808,15 @@
 
             // 大廳：我的成績、開始比賽、看排行榜
             function refreshLobbyScore(size) {
-                document.getElementById('lobbyScoreLabel').textContent = `我的 ${size.replace('x', ' × ')} 成績`;
                 fetch('ranked_api.php?action=leaderboard&size=' + encodeURIComponent(size))
                     .then(res => res.json())
                     .then(res => {
                         const best = res.userBest;
-                        document.getElementById('lobbyBest').textContent = best ? `${(best.bestMs / 1000).toFixed(2)} 秒` : '—';
-                        document.getElementById('lobbyRank').textContent = best ? `全服第 ${best.rank} 名` : '還沒有成績，完成一場就會登上排行榜';
+                        const top = res.list && res.list[0];
+                        document.getElementById('lobbyBest').textContent = best ? formatTimeDisplay(best.bestMs) : '—';
+                        document.getElementById('lobbyRank').textContent = best ? `全服第 ${best.rank} 名` : '還沒有成績';
+                        document.getElementById('lobbyTop').textContent = top ? formatTimeDisplay(top.timeUsedMs) : '—';
+                        document.getElementById('lobbyTopName').textContent = top ? top.username : '還沒有人完賽';
                     })
                     .catch(() => {});
             }
@@ -2798,6 +2837,7 @@
                 );
             });
             document.getElementById('btnLobbyLeaderboard').addEventListener('click', () => openLeaderboardModal(currentRankedSize));
+            document.getElementById('btnLobbyBackPractice').addEventListener('click', () => switchGameMode('practice'));
 
             // 排位賽級別選擇按鈕事件
             document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
@@ -2822,6 +2862,7 @@
 
             document.getElementById('btnRankedViewLeaderboard')?.addEventListener('click', () => {
                 document.getElementById('rankedVictoryModal').style.display = 'none';
+                document.body.classList.remove('ranked-live');
                 openLeaderboardModal(currentRankedSize);
             });
 
@@ -2833,12 +2874,13 @@
             // 排位賽超時彈窗按鈕事件
             document.getElementById('btnRankedTimeoutRetry')?.addEventListener('click', () => {
                 document.getElementById('rankedTimeoutModal').style.display = 'none';
+                document.body.classList.remove('ranked-live');
                 maze3D.stopDriving();
                 maze3D.placePlayerAtStart();
                 resetTimer();
                 if (editor) editor.clearCarTrail();
                 btnStartDrive.classList.add('pulse-prompt');
-                showToast('已回到起點，請點擊【▶ 開始遙控】重新挑戰！');
+                showToast('已回到起點，按「開始挑戰」重新挑戰！');
             });
 
             document.getElementById('btnRankedTimeoutNewMap')?.addEventListener('click', () => {
@@ -2848,6 +2890,7 @@
 
             document.getElementById('btnRankedTimeoutLeaderboard')?.addEventListener('click', () => {
                 document.getElementById('rankedTimeoutModal').style.display = 'none';
+                document.body.classList.remove('ranked-live');
                 openLeaderboardModal(currentRankedSize);
             });
 
