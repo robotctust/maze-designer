@@ -323,6 +323,9 @@
                 <div class="ranked-live-chip"><svg class="live-crest" aria-hidden="true"><use id="liveCrestUse" href="assets/icons.svg#crest-1"></use></svg><strong id="liveTierName">菁英級</strong><span class="live-map" id="liveMapId">—</span><span class="sep"></span><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>視角已鎖定</div>
                 <div class="ranked-live-keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵操控<span class="sep"></span><kbd>空白鍵</kbd>跳躍</div>
 
+                <!-- 排位賽小地圖：只顯示車子周圍，邊緣霧化 -->
+                <div class="ranked-minimap" aria-hidden="true"><canvas id="rankedMinimap"></canvas></div>
+
                 <!-- 右下：即時座標 -->
                 <div class="sim-pos-hud" id="posHud">
                     <span id="posCm">X: 15 cm, Y: 285 cm</span> · <span id="posCell">格 (0, 9)</span>
@@ -1192,6 +1195,7 @@
             // 2D 編輯器實例 (預先宣告供 3D 即時回報同步)
             // 快取經常用到的 HUD DOM 節點，避免每幀重複檢索
             const posCmEl = document.getElementById('posCm');
+            const rankedMinimap = document.getElementById('rankedMinimap');
             const posCellEl = document.getElementById('posCell');
 
             // 1. 初始化 3D 模擬場景
@@ -1308,6 +1312,17 @@
                     if (posCellEl) posCellEl.textContent = `格 (${pos.cellX}, ${pos.cellY})`;
                     if (editor) {
                         editor.updateCarPosition(pos);
+                    }
+                    // 排位賽小地圖：只看得到車子周圍幾格（範圍依段位）
+                    if (document.body.classList.contains('ranked-live')) {
+                        RankedFx.drawMinimap(
+                            rankedMinimap,
+                            { ...maze3D.mazeData, cols: maze3D.cols, rows: maze3D.rows },
+                            (pos.rawX + maze3D.widthSize / 2) / maze3D.cellSize,
+                            (pos.rawZ + maze3D.heightSize / 2) / maze3D.cellSize,
+                            pos.yaw,
+                            RANKED_TIERS[currentRankedSize].view
+                        );
                     }
                 },
                 onDrivingChange: (isDriving) => {
@@ -2694,11 +2709,11 @@
 
             // 段位資料：徽章等級、名稱與限時（顏色寫在 CSS 的 [data-tier]）
             const RANKED_TIERS = {
-                '10x10': { level: 1, name: '菁英級', en: 'ELITE', limit: '1 分鐘', clock: '01:00' },
-                '15x15': { level: 2, name: '戰將級', en: 'WARLORD', limit: '3 分鐘', clock: '03:00' },
-                '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘', clock: '20:00' },
-                '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘', clock: '30:00' },
-                '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘', clock: '40:00' }
+                '10x10': { level: 1, name: '菁英級', en: 'ELITE', limit: '1 分鐘', clock: '01:00', view: 3 },
+                '15x15': { level: 2, name: '戰將級', en: 'WARLORD', limit: '3 分鐘', clock: '03:00', view: 3.5 },
+                '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘', clock: '20:00', view: 4 },
+                '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘', clock: '30:00', view: 4.5 },
+                '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘', clock: '40:00', view: 5 }
             };
 
             // 切換段位主題：主色、大廳徽章與段位名、按鈕選取狀態

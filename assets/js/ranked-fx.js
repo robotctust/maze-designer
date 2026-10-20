@@ -122,6 +122,85 @@ const RankedFx = (() => {
         introTimer = setTimeout(next, 1800);
     }
 
+    /**
+     * 比賽小地圖：只畫車子周圍 radius 格內的牆，北方朝上，邊緣霧化交給 CSS 遮罩。
+     * px、pz：車子位置（以格為單位）；yaw：車頭朝向（弧度，0 = 朝北）
+     */
+    function drawMinimap(canvas, maze, px, pz, yaw, radius) {
+        const size = canvas.clientWidth;
+        if (!size || !maze) return;
+        const dpr = window.devicePixelRatio || 1;
+        if (canvas.width !== size * dpr) {
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+        }
+        const ctx = canvas.getContext('2d');
+        const k = size / 2 / radius; // 每格幾像素
+        const css = getComputedStyle(canvas);
+        const tier = css.getPropertyValue('--tier').trim() || '#FBBF24';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, size, size);
+        ctx.fillStyle = 'rgba(8, 12, 26, 0.85)';
+        ctx.fillRect(0, 0, size, size);
+
+        // 以車子為中心：格座標 (x, z) → 畫布座標
+        ctx.translate(size / 2 - px * k, size / 2 - pz * k);
+        const c0 = Math.max(0, Math.floor(px - radius - 1));
+        const c1 = Math.min(maze.cols, Math.ceil(px + radius + 1));
+        const r0 = Math.max(0, Math.floor(pz - radius - 1));
+        const r1 = Math.min(maze.rows, Math.ceil(pz + radius + 1));
+
+        // 格線
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let c = c0; c <= c1; c++) { ctx.moveTo(c * k, r0 * k); ctx.lineTo(c * k, r1 * k); }
+        for (let r = r0; r <= r1; r++) { ctx.moveTo(c0 * k, r * k); ctx.lineTo(c1 * k, r * k); }
+        ctx.stroke();
+
+        // 終點（在範圍內才看得到）
+        if (maze.goal) {
+            ctx.fillStyle = '#F87171';
+            ctx.beginPath();
+            ctx.arc((maze.goal.x + 0.5) * k, (maze.goal.y + 0.5) * k, k * 0.28, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 牆
+        ctx.strokeStyle = '#E6EAF2';
+        ctx.lineWidth = Math.max(2, k * 0.08);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (let r = r0; r <= r1; r++) {
+            for (let c = c0; c < c1; c++) {
+                if (maze.hWalls?.[r]?.[c]) { ctx.moveTo(c * k, r * k); ctx.lineTo((c + 1) * k, r * k); }
+            }
+        }
+        for (let r = r0; r < r1; r++) {
+            for (let c = c0; c <= c1; c++) {
+                if (maze.vWalls?.[r]?.[c]) { ctx.moveTo(c * k, r * k); ctx.lineTo(c * k, (r + 1) * k); }
+            }
+        }
+        ctx.stroke();
+
+        // 車子：段位色箭頭，指向車頭方向
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.translate(size / 2, size / 2);
+        ctx.rotate(-yaw);
+        ctx.fillStyle = tier;
+        ctx.shadowColor = tier;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.moveTo(0, -9);
+        ctx.lineTo(7, 7);
+        ctx.lineTo(0, 3);
+        ctx.lineTo(-7, 7);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
     const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // 完賽慶祝：評級蓋章音效＋彩帶（減少動態效果時不撒彩帶）
@@ -168,5 +247,5 @@ const RankedFx = (() => {
     });
     document.addEventListener('DOMContentLoaded', syncButtons);
 
-    return { play, intro, cancelIntro, celebrate, countRank, isMuted: () => muted };
+    return { play, intro, cancelIntro, celebrate, countRank, drawMinimap, isMuted: () => muted };
 })();
