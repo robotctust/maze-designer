@@ -875,12 +875,17 @@ class Maze3D {
     }
 
     updateDriverCamera() {
-        // 相機設在玩家視線高 (8cm)
-        this.camera.position.set(this.player.x, this.player.y, this.player.z);
+        // 相機設在玩家視線高 (8cm)，並往車頭前移 5.5cm：廣角時不會拍到自己的車身，
+        // 又留在 7cm 碰撞半徑內，貼牆時不會穿進牆裡
+        const fx = -Math.sin(this.player.yaw);
+        const fz = -Math.cos(this.player.yaw);
+        const camX = this.player.x + fx * 5.5;
+        const camZ = this.player.z + fz * 5.5;
+        this.camera.position.set(camX, this.player.y, camZ);
 
         // 朝向
-        const lookX = this.player.x - Math.sin(this.player.yaw) * 60;
-        const lookZ = this.player.z - Math.cos(this.player.yaw) * 60;
+        const lookX = this.player.x + fx * 60;
+        const lookZ = this.player.z + fz * 60;
         this.camera.lookAt(lookX, this.player.y, lookZ);
 
         // 車燈跟隨
