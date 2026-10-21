@@ -109,8 +109,8 @@ const RANKED_TIERS = {
     '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘', clock: '20:00', view: 4 },
     '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘', clock: '30:00', view: 4.5 },
     '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘', clock: '40:00', view: 5 },
-    'special': { level: 6, name: '特殊賽', en: 'SPECIAL', limit: '40 分鐘', clock: '40:00', view: 5 },
-    'apex': { level: 7, name: '巔峰賽', en: 'APEX', limit: '60 分鐘', clock: '60:00', view: 5 }
+    'apex': { level: 7, name: '巔峰賽', en: 'APEX', limit: '60 分鐘', clock: '60:00', view: 5 },
+    'special': { level: 6, name: '特殊賽', en: 'SPECIAL', limit: '40 分鐘', clock: '40:00', view: 5 }
 };
 
 // 切換段位主題：主色、大廳徽章與段位名、按鈕選取狀態

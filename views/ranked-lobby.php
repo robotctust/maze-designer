@@ -40,15 +40,15 @@
                 <span class="tier-text"><span class="tier-name">傳奇級</span><span class="tier-en">LEGEND</span></span>
                 <span class="tier-spec"><span class="tier-size">30 × 30</span><span class="tier-meta">限時 40 分鐘</span></span>
             </button>
-            <button type="button" class="ranked-tier-btn" data-size="special">
-                <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-6"></use></svg>
-                <span class="tier-text"><span class="tier-name">特殊賽</span><span class="tier-en">SPECIAL</span></span>
-                <span class="tier-spec"><span class="tier-size">長方形</span><span class="tier-meta">限時 40 分鐘</span></span>
-            </button>
             <button type="button" class="ranked-tier-btn" data-size="apex">
                 <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-7"></use></svg>
                 <span class="tier-text"><span class="tier-name">巔峰賽</span><span class="tier-en">APEX</span></span>
                 <span class="tier-spec"><span class="tier-size">35 ~ 50</span><span class="tier-meta">限時 60 分鐘</span></span>
+            </button>
+            <button type="button" class="ranked-tier-btn" data-size="special">
+                <svg class="tier-crest" aria-hidden="true"><use href="assets/icons.svg#crest-6"></use></svg>
+                <span class="tier-text"><span class="tier-name">特殊賽</span><span class="tier-en">SPECIAL</span></span>
+                <span class="tier-spec"><span class="tier-size">長方形</span><span class="tier-meta">限時 40 分鐘</span></span>
             </button>
         </nav>
 
