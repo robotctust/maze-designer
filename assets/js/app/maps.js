@@ -18,11 +18,9 @@ const loadMazeConfig = () => {
                 )) {
                     showToast('訪客模式：已自動限縮為 10×10 迷宮地圖', true);
                     editor.setGridSize(10, 10);
-                    editor.clearHistory();
                     return;
                 }
                 editor.loadData(res.data);
-                editor.clearHistory();
                 if (res.count !== undefined && res.max) {
                     const headerMapCountBadge = document.getElementById('headerMapCountBadge');
                     if (headerMapCountBadge && currentUser) {
@@ -35,7 +33,9 @@ const loadMazeConfig = () => {
             console.error('載入失敗:', err);
             // 若無伺服器連線仍可正常使用預設配置
             editor.notifyUpdate();
-        });
+        })
+        // 載入後的地圖作為復原與未存檔判斷的起點
+        .finally(() => editor.clearHistory());
 };
 
 // 儲存迷宮彈窗相關 DOM 節點
@@ -244,6 +244,7 @@ btnConfirmSaveMap?.addEventListener('click', () => {
 
         if (res.success) {
             closeSaveMapModal();
+            editor.markSaved();
             showToast(res.message || '已儲存');
             refreshMapLibraryBadge();
         } else {
@@ -259,6 +260,14 @@ btnConfirmSaveMap?.addEventListener('click', () => {
         btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
         showToast('無法連接伺服器進行儲存', true);
     });
+});
+
+// 有未存的修改時，關閉或重新整理頁面前先提醒（重新開啟會載入雲端最後儲存的版本）
+window.addEventListener('beforeunload', (e) => {
+    if (editor.isDirty()) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
 });
 
 // 儲存按鈕點擊
@@ -387,6 +396,7 @@ function loadUserMapById(id, name) {
         .then(res => {
             if (res.success && res.data) {
                 editor.loadData(res.data);
+                editor.markSaved();
                 maze3D.resetOrbitCamera();
                 closeMapLibraryModal();
                 showToast(`已成功載入個人迷宮【${name || res.name}】！`);

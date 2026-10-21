@@ -110,6 +110,23 @@ body {
     color: var(--on-accent);
 }
 
+/* 有未存的修改：儲存按鈕右上角顯示小圓點 */
+.tool-btn.btn-save.has-unsaved {
+    position: relative;
+}
+
+.tool-btn.btn-save.has-unsaved::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--ranked);
+}
+
 .tool-btn.btn-save:hover {
     background: var(--accent-fill-hover);
     border-color: var(--accent-fill-hover);

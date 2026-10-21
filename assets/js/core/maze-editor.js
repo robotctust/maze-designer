@@ -40,6 +40,7 @@ class MazeEditor {
         this.history = [];
         this.historyIndex = -1;
         this.isRestoring = false;
+        this.savedSnap = null; // 最後一次儲存或載入時的快照，用來判斷有沒有未存的修改
 
         this.initData();
         this.render();
@@ -225,6 +226,16 @@ class MazeEditor {
         this.history = [];
         this.historyIndex = -1;
         this.recordHistory(this.getData());
+        this.markSaved();
+    }
+
+    markSaved() {
+        this.savedSnap = this.history[this.historyIndex];
+        this.onHistoryChange(this);
+    }
+
+    isDirty() {
+        return this.savedSnap !== null && this.history[this.historyIndex] !== this.savedSnap;
     }
 
     canUndo() {

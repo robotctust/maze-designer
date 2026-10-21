@@ -146,6 +146,7 @@ editor = new MazeEditor(svgElement, {
     onHistoryChange: (ed) => {
         document.getElementById('btnUndo').disabled = !ed.canUndo();
         document.getElementById('btnRedo').disabled = !ed.canRedo();
+        document.getElementById('btnSave').classList.toggle('has-unsaved', ed.isDirty());
     },
     onUpdate: (data) => {
         // 同步到 3D
