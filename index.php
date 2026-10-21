@@ -34,6 +34,8 @@
 
     <?php include __DIR__ . '/views/dialogs/admin.php'; ?>
 
+    <?php include __DIR__ . '/views/dialogs/confirm.php'; ?>
+
     <!-- 腳本引入 -->
     <script src="assets/js/lib/three.min.js"></script>
     <script src="assets/js/lib/OrbitControls.js"></script>

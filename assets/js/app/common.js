@@ -29,6 +29,45 @@ function showToast(msg, isError = false, action = null) {
     toastTimer = setTimeout(() => toast.classList.remove('show'), action ? 5000 : 2800);
 }
 
+// 共用確認框：回傳 Promise，按確定為 true；danger 時確定鈕為紅色。按 Esc、點背景或取消為 false
+function showConfirm({ title, message = '', confirmLabel = '確定', danger = false }) {
+    const backdrop = document.getElementById('confirmModalBackdrop');
+    const okBtn = document.getElementById('btnConfirmOk');
+    const cancelBtn = document.getElementById('btnConfirmCancel');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    okBtn.textContent = confirmLabel;
+    okBtn.classList.toggle('btn-danger', danger);
+    okBtn.classList.toggle('btn-save', !danger);
+    backdrop.classList.add('show');
+    // 危險操作預設停在「取消」，避免按 Enter 誤刪
+    (danger ? cancelBtn : okBtn).focus();
+
+    return new Promise(resolve => {
+        const finish = (result) => {
+            backdrop.classList.remove('show');
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            backdrop.removeEventListener('click', onBackdrop);
+            document.removeEventListener('keydown', onKey, true);
+            resolve(result);
+        };
+        const onOk = () => finish(true);
+        const onCancel = () => finish(false);
+        const onBackdrop = (e) => { if (e.target === backdrop) finish(false); };
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                e.stopPropagation();
+                finish(false);
+            }
+        };
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        backdrop.addEventListener('click', onBackdrop);
+        document.addEventListener('keydown', onKey, true);
+    });
+}
+
 const btnStartDrive = document.getElementById('btnStartDrive');
 const btnStopDrive = document.getElementById('btnStopDrive');
 const btnResetCar = document.getElementById('btnResetCar');

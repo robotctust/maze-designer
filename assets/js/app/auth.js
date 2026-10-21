@@ -316,7 +316,7 @@ document.getElementById('btnSubmitLogin')?.addEventListener('click', () => {
         return;
     }
 
-    showAuthAlert('⏳ 驗證登入中，請稍候...', 'warning');
+    showAuthAlert('驗證登入中，請稍候…', 'warning');
 
     fetch('api/auth.php?action=login', {
         method: 'POST',
@@ -371,7 +371,7 @@ document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {
         return;
     }
 
-    showAuthAlert('⏳ 帳號建立中，請稍候...', 'warning');
+    showAuthAlert('帳號建立中，請稍候…', 'warning');
 
     fetch('api/auth.php?action=register', {
         method: 'POST',
@@ -418,8 +418,16 @@ function loadMapAfterSignIn(message) {
 }
 
 // 登出
-btnLogout?.addEventListener('click', () => {
-    if (editor.isDirty() && !confirm('地圖還有沒儲存的修改，登出後就不能存到雲端了。\n確定要登出嗎？')) return;
+btnLogout?.addEventListener('click', async () => {
+    if (editor.isDirty()) {
+        const ok = await showConfirm({
+            title: '還有沒儲存的修改',
+            message: '登出後就不能把這張地圖存到雲端了。確定要登出嗎？',
+            confirmLabel: '仍要登出',
+            danger: true
+        });
+        if (!ok) return;
+    }
     fetch('api/auth.php?action=logout', { method: 'POST' })
         .then(res => res.json())
         .then(res => {

@@ -95,6 +95,27 @@
     border-top: 1px solid var(--border);
 }
 
+/* 共用確認框 */
+.confirm-message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-2);
+    white-space: pre-line;
+}
+
+.tool-btn.btn-danger,
+.tool-btn.btn-danger:hover {
+    background: var(--danger-fill);
+    border-color: var(--danger-fill);
+    color: var(--on-danger);
+}
+
+.tool-btn.btn-danger:hover {
+    background: var(--danger-fill-hover);
+    border-color: var(--danger-fill-hover);
+}
+
 .dlg-foot .dlg-note {
     margin-right: auto;
 }

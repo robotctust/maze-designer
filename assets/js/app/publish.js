@@ -69,11 +69,11 @@ let pendingPublishData = null;
 
 function openPublishModal() {
     if (!currentUser) {
-        openAuthModal('訪客限制：【發布至官方排位賽圖庫】需要登入會員帳號！請先登入或免費註冊。', 'login');
+        openAuthModal('訪客限制：「發布到排位賽」需要登入會員帳號！請先登入或免費註冊。', 'login');
         return;
     }
     if (currentUser.role === 'junior') {
-        showToast('🔒 權限限制：初級使用者不能上傳排位賽地圖！需由高級使用者提升為中級或高級使用者。', true);
+        showToast('權限限制：初級使用者不能上傳排位賽地圖！需由高級使用者提升為中級或高級使用者。', true);
         return;
     }
 
@@ -87,11 +87,11 @@ function openPublishModal() {
     if (cols !== rows) {
         // 長方形地圖：歸類於「特殊排位賽」
         if (Math.max(cols, rows) > 30) {
-            showToast(`⚠️ 特殊排位賽規格限制：長方形地圖最大邊不能超過 30 格！目前為 ${cols}×${rows}。`, true);
+            showToast(`特殊排位賽規格限制：長方形地圖最大邊不能超過 30 格！目前為 ${cols}×${rows}。`, true);
             return;
         }
         if (Math.min(cols, rows) < 2) {
-            showToast(`⚠️ 地圖尺寸過小，最小邊至少需 2 格！目前為 ${cols}×${rows}。`, true);
+            showToast(`地圖尺寸過小，最小邊至少需 2 格！目前為 ${cols}×${rows}。`, true);
             return;
         }
         targetTier = 'special';
@@ -100,12 +100,12 @@ function openPublishModal() {
             if ([35, 40, 45, 50].includes(cols)) {
                 targetTier = 'apex';
             } else {
-                showToast(`⚠️ 巔峰排位賽規格限制：正方形超大地圖僅支援 35×35、40×40、45×45、50×50 四種規格！目前為 ${cols}×${rows}。`, true);
+                showToast(`巔峰排位賽規格限制：正方形超大地圖僅支援 35×35、40×40、45×45、50×50 四種規格！目前為 ${cols}×${rows}。`, true);
                 return;
             }
         } else {
             if (!squareAllowed.includes(size)) {
-                showToast(`⚠️ 標準正方形排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 ${cols}×${rows}。`, true);
+                showToast(`標準正方形排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 ${cols}×${rows}。`, true);
                 return;
             }
         }

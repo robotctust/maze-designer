@@ -208,7 +208,7 @@ if (selectCountdownDuration) {
             maze3D.stopDriving();
         }
         resetTimer();
-        showToast(`⏳ 已設定為【${countdownLabel}】模式！`);
+        showToast(`已設定為「${countdownLabel}」模式`);
     });
 }
 
@@ -253,7 +253,7 @@ function applyCustomDuration() {
         maze3D.stopDriving();
     }
     resetTimer();
-    showToast(`⏳ 已套用自訂挑戰時間：${countdownDesc}！`);
+    showToast(`已套用自訂挑戰時間：${countdownDesc}`);
 }
 
 if (btnApplyCustomTimer) {
