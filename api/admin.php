@@ -239,7 +239,8 @@ if ($action === 'review_submission') {
     $newMapId = "map_{$nextIndex}";
 
     $mazeData = json_decode($sub['maze_data'], true);
-    $finalOfficialName = "{$size} 官方排位賽地圖 #{$nextIndex} (由 {$sub['author_name']} 提供)";
+    $offPrefix = ($size === 'special') ? "特殊排位賽官方地圖 ({$sub['grid_cols']}×{$sub['grid_rows']})" : "{$size} 官方排位賽地圖";
+    $finalOfficialName = "{$offPrefix} #{$nextIndex} (由 {$sub['author_name']} 提供)";
 
     $fileData = [
         'mapId' => $newMapId,
@@ -301,7 +302,7 @@ if ($action === 'delete_ranked_map') {
 
     // 情況 A：刪除已存在官方題庫的檔案 (例如 map_3.json)
     if (!empty($size) && !empty($mapId)) {
-        $allowedSizes = ['10x10', '15x15', '20x20', '25x25', '30x30'];
+        $allowedSizes = ['10x10', '15x15', '20x20', '25x25', '30x30', 'special'];
         if (!in_array($size, $allowedSizes)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => '無效的地圖規格']);
