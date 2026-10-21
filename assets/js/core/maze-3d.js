@@ -82,7 +82,7 @@ class Maze3D {
         this.scene.fog = new THREE.FogExp2(0x0a0f1d, 0.002);
 
         // 相機
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 2500);
+        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 6000);
         this.resetOrbitCamera();
 
         // 渲染器 (開啟高能效與抗鋸齒)
@@ -199,11 +199,16 @@ class Maze3D {
         const maxDim = Math.max(wSize, hSize);
         const d = maxDim / 2 + 40;
         if (this.sunLight && this.sunLight.shadow) {
+            this.sunLight.position.set(maxDim * 0.45, Math.max(260, maxDim * 0.85), maxDim * 0.5);
+            this.sunLight.shadow.camera.far = Math.max(1000, maxDim * 2.5);
             this.sunLight.shadow.camera.left = -d;
             this.sunLight.shadow.camera.right = d;
             this.sunLight.shadow.camera.top = d;
             this.sunLight.shadow.camera.bottom = -d;
             this.sunLight.shadow.camera.updateProjectionMatrix();
+        }
+        if (this.scene && this.scene.fog) {
+            this.scene.fog.density = Math.min(0.002, 1.2 / Math.max(wSize, hSize, 600));
         }
     }
 

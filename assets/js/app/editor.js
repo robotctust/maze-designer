@@ -118,8 +118,8 @@ function applyGridSizeDirect(c, r) {
 }
 
 function requestApplyGridSize(c, r) {
-    if (isNaN(c) || c < 2 || c > 30 || isNaN(r) || r < 2 || r > 30) {
-        showToast('規格數值請輸入 2 ~ 30 之間的整數！', true);
+    if (isNaN(c) || c < 2 || c > 50 || isNaN(r) || r < 2 || r > 50) {
+        showToast('規格數值請輸入 2 ~ 50 之間的整數！', true);
         return false;
     }
 
