@@ -117,7 +117,7 @@ function applyGridSizeDirect(c, r) {
     }
     editor.setGridSize(c, r);
     maze3D.resetOrbitCamera();
-    showToast(`已成功切換規格為 ${c}×${r} 格！`);
+    showToast(`已成功切換規格為 ${c}×${r} 格！`, false, UNDO_TOAST_ACTION);
 }
 
 function requestApplyGridSize(c, r) {
@@ -181,6 +181,31 @@ toolButtons.forEach(btnObj => {
     });
 });
 
+// 3-1. 復原／重做（排位賽時編輯器隱藏，不作用）
+function undoMapEdit() {
+    if (currentGameMode === 'practice') editor.undo();
+}
+function redoMapEdit() {
+    if (currentGameMode === 'practice') editor.redo();
+}
+const UNDO_TOAST_ACTION = { label: '復原', onClick: undoMapEdit };
+
+document.getElementById('btnUndo').addEventListener('click', undoMapEdit);
+document.getElementById('btnRedo').addEventListener('click', redoMapEdit);
+
+window.addEventListener('keydown', (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+    const key = e.key.toLowerCase();
+    if (key !== 'z' && key !== 'y') return;
+    // 輸入框保留瀏覽器原本的復原；有彈窗開著時不動到背後的地圖
+    const el = document.activeElement;
+    if (el && (['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) || el.isContentEditable)) return;
+    if (document.querySelector('.auth-modal-backdrop.show')) return;
+    e.preventDefault();
+    if (key === 'y' || e.shiftKey) redoMapEdit();
+    else undoMapEdit();
+});
+
 // 4. 輔助操作與匯出入按鈕
 document.getElementById('btnOuterWalls').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
@@ -190,17 +215,17 @@ document.getElementById('btnOuterWalls').addEventListener('click', () => {
 document.getElementById('btnClearInner').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.clearInnerWalls();
-    showToast('已清空內部牆壁 (保留四周圍牆)');
+    showToast('已清空內部牆壁 (保留四周圍牆)', false, UNDO_TOAST_ACTION);
 });
 document.getElementById('btnClearAll').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.clearAllWalls();
-    showToast('已清空所有牆壁 (包含四周圍牆)');
+    showToast('已清空所有牆壁 (包含四周圍牆)', false, UNDO_TOAST_ACTION);
 });
 document.getElementById('btnRandom').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.generateRandomMaze();
-    showToast('已隨機生成迷宮！');
+    showToast('已隨機生成迷宮！', false, UNDO_TOAST_ACTION);
 });
 
 // 匯出 2D 地圖 (高解析 PNG 圖片)

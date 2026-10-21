@@ -18,9 +18,11 @@ const loadMazeConfig = () => {
                 )) {
                     showToast('訪客模式：已自動限縮為 10×10 迷宮地圖', true);
                     editor.setGridSize(10, 10);
+                    editor.clearHistory();
                     return;
                 }
                 editor.loadData(res.data);
+                editor.clearHistory();
                 if (res.count !== undefined && res.max) {
                     const headerMapCountBadge = document.getElementById('headerMapCountBadge');
                     if (headerMapCountBadge && currentUser) {

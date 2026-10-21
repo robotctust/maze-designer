@@ -6,11 +6,16 @@
             <button type="button" class="tool" id="toolStart" data-tool="start" title="起點：點格子設定"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#map-pin"></use></svg>起點</button>
             <button type="button" class="tool" id="toolGoal" data-tool="goal" title="終點：點格子設定"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#flag"></use></svg>終點</button>
             <button type="button" class="tool" id="toolPan" data-tool="pan" title="平移（也可按住空白鍵或右鍵拖曳）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-move"></use></svg>平移</button>
+            <div class="tool-rail-sep"></div>
+            <button type="button" class="tool" id="btnUndo" title="復原（Ctrl／⌘ + Z）" disabled><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-back-up"></use></svg>復原</button>
+            <button type="button" class="tool" id="btnRedo" title="重做（Ctrl／⌘ + Shift + Z）" disabled><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-forward-up"></use></svg>重做</button>
             <div class="tool-rail-spacer"></div>
             <div class="menu-wrap">
                 <button type="button" class="tool" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#keyboard"></use></svg>快捷鍵</button>
                 <div class="menu menu-side" id="shortcutsMenu" hidden>
                     <p class="menu-heading">2D 編輯</p>
+                    <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Z</kbd><span>復原</span></div>
+                    <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Shift</kbd><kbd>Z</kbd><span>重做</span></div>
                     <div class="kbd-row"><kbd>滾輪</kbd><span>縮放</span></div>
                     <div class="kbd-row"><kbd>Ctrl</kbd><kbd>+</kbd><kbd>−</kbd><span>放大／縮小</span></div>
                     <div class="kbd-row"><kbd>Ctrl</kbd><kbd>0</kbd><span>重設為 100%</span></div>

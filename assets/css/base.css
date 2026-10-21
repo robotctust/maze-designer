@@ -363,6 +363,31 @@ body {
     transform: translate(-50%, 0);
 }
 
+.toast.has-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast.has-action.show {
+    pointer-events: auto;
+}
+
+.toast-action {
+    padding: 4px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.toast-action:hover {
+    background: var(--accent-tint);
+}
+
 /* 2D Map Live Car Marker & Trail */
 .car-2d-marker {
     pointer-events: none;

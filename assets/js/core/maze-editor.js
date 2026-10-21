@@ -35,8 +35,15 @@ class MazeEditor {
         this.viewport = null;
         this.wrapper = null;
 
+        // 復原／重做：每次地圖變更存一份快照（最多 100 步）
+        this.onHistoryChange = options.onHistoryChange || function() {};
+        this.history = [];
+        this.historyIndex = -1;
+        this.isRestoring = false;
+
         this.initData();
         this.render();
+        this.recordHistory(this.getData());
     }
 
     setCanvasBaseSize(newBaseSize) {
@@ -198,7 +205,54 @@ class MazeEditor {
     }
 
     notifyUpdate() {
-        this.onUpdate(this.getData());
+        const data = this.getData();
+        if (!this.isRestoring) this.recordHistory(data);
+        this.onUpdate(data);
+    }
+
+    recordHistory(data) {
+        const snap = JSON.stringify({ gridSize: data.gridSize, start: data.start, goal: data.goal, hWalls: data.hWalls, vWalls: data.vWalls });
+        if (snap === this.history[this.historyIndex]) return;
+        this.history.length = this.historyIndex + 1;
+        this.history.push(snap);
+        if (this.history.length > 100) this.history.shift();
+        this.historyIndex = this.history.length - 1;
+        this.onHistoryChange(this);
+    }
+
+    // 載入另一張地圖後，以目前狀態作為新的起點
+    clearHistory() {
+        this.history = [];
+        this.historyIndex = -1;
+        this.recordHistory(this.getData());
+    }
+
+    canUndo() {
+        return this.historyIndex > 0;
+    }
+
+    canRedo() {
+        return this.historyIndex < this.history.length - 1;
+    }
+
+    undo() {
+        if (!this.canUndo()) return false;
+        this.restoreHistory(this.historyIndex - 1);
+        return true;
+    }
+
+    redo() {
+        if (!this.canRedo()) return false;
+        this.restoreHistory(this.historyIndex + 1);
+        return true;
+    }
+
+    restoreHistory(index) {
+        this.historyIndex = index;
+        this.isRestoring = true;
+        this.loadData(JSON.parse(this.history[index]));
+        this.isRestoring = false;
+        this.onHistoryChange(this);
     }
 
     toggleHWall(r, c) {

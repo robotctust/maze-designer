@@ -5,14 +5,28 @@
 const svgElement = document.getElementById('mazeSvg');
 const canvasContainer = document.getElementById('canvasContainer');
 
-// Toast 訊息提示
-function showToast(msg, isError = false) {
+// Toast 訊息提示；action = { label, onClick } 時附一個按鈕，顯示時間較長
+let toastTimer = null;
+function showToast(msg, isError = false, action = null) {
     const toast = document.getElementById('toastMsg');
     if (!toast) return;
     toast.textContent = msg;
+    if (action) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'toast-action';
+        btn.textContent = action.label;
+        btn.addEventListener('click', () => {
+            toast.classList.remove('show');
+            action.onClick();
+        });
+        toast.appendChild(btn);
+    }
     toast.classList.toggle('error', isError);
+    toast.classList.toggle('has-action', !!action);
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2800);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), action ? 5000 : 2800);
 }
 
 const btnStartDrive = document.getElementById('btnStartDrive');

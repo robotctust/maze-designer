@@ -100,6 +100,21 @@
     color: var(--accent);
 }
 
+.tool:disabled {
+    background: transparent;
+    color: var(--text-muted);
+    opacity: 0.4;
+    cursor: default;
+}
+
+.tool-rail-sep {
+    width: 32px;
+    height: 1px;
+    margin: 4px 0;
+    flex: none;
+    background: var(--border);
+}
+
 /* 規格選單 */
 .spec-menu {
     width: 300px;
