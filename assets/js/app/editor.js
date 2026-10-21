@@ -26,11 +26,14 @@ const editorPanel = document.querySelector('.editor-panel');
 const btnToggleMapSize = document.getElementById('btnToggleMapSize');
 let currentMapMode = 'large'; // 'large' (設計時 50% 一半版面) 或 'compact' (遙控時恢復正常大小)
 
+// 上方懸浮工具列佔用的高度（上下各留一份，地圖置中時不會被工具列蓋住）
+const MAP_OVERLAY_INSET = 56;
+
 function getOptimalDesignCanvasSize() {
     // 設計時 50% 版面下的最佳畫布像素尺寸 (兼顧寬度與高度)
     const viewport = document.getElementById('mapViewport');
     const maxW = viewport ? viewport.clientWidth - 32 : 560;
-    const maxH = viewport ? viewport.clientHeight - 32 : 560;
+    const maxH = viewport ? viewport.clientHeight - MAP_OVERLAY_INSET * 2 : 560;
     return Math.max(320, Math.min(720, maxW, maxH));
 }
 
