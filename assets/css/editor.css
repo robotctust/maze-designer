@@ -364,20 +364,53 @@ kbd {
     font-family: var(--font-mono);
 }
 
-/* 平板直向：2D 在上、3D 在下 */
+/* 「設計／試跑」分頁只在平板直向出現 */
+.view-switch {
+    display: none;
+}
+
+.editbar .view-switch .hud-pill-btn {
+    height: 34px;
+    padding: 0 16px;
+    font-size: 14px;
+}
+
+.editbar .view-switch .hud-pill-btn.active {
+    background: var(--accent-tint);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+/* 平板直向：練習時一次只顯示 2D 或 3D 其中一個，佔滿編輯列以下的空間，不用捲動 */
 @media (max-width: 1023px) {
     .app-container {
         flex-direction: column;
-        overflow-y: auto;
+    }
+
+    .view-switch {
+        display: inline-flex;
+        flex: none;
+        margin-right: 4px;
     }
 
     .editor-panel,
-    .editor-panel.mode-compact {
-        flex: none;
-        height: 520px;
+    .editor-panel.mode-compact,
+    .simulator-panel {
+        flex: 1 1 0;
+        min-height: 0;
     }
 
-    .simulator-panel {
+    body:not(.is-ranked) .app-container.view-drive .editor-panel,
+    body:not(.is-ranked) .app-container:not(.view-drive) .simulator-panel {
+        display: none;
+    }
+
+    /* 排位賽：大廳在上、3D 在下，整頁可捲動 */
+    .is-ranked .app-container {
+        overflow-y: auto;
+    }
+
+    .is-ranked .simulator-panel {
         flex: none;
         height: 480px;
     }

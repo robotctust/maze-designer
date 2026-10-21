@@ -100,11 +100,32 @@ if (window.ResizeObserver && canvasContainer) {
 const mapViewportEl = document.getElementById('mapViewport');
 if (window.ResizeObserver && mapViewportEl) {
     new ResizeObserver(() => {
-        if (currentMapMode === 'large' && editor) {
+        // 平板直向切到「試跑」分頁時 2D 被隱藏（寬度 0），不必重算
+        if (currentMapMode === 'large' && editor && mapViewportEl.clientWidth) {
             editor.setCanvasBaseSize(getOptimalDesignCanvasSize());
         }
     }).observe(mapViewportEl);
 }
+
+// 平板直向的「設計／試跑」分頁：一次只顯示 2D 或 3D
+const appContainer = document.querySelector('.app-container');
+const btnViewDesign = document.getElementById('btnViewDesign');
+const btnViewDrive = document.getElementById('btnViewDrive');
+
+function setPortraitView(view) {
+    const drive = view === 'drive';
+    // 回到設計時先停下試跑，避免看不到 3D 時車子還在跑、計時還在走
+    if (!drive && maze3D.isDriving) btnStopDrive.click();
+    appContainer.classList.toggle('view-drive', drive);
+    btnViewDesign.classList.toggle('active', !drive);
+    btnViewDrive.classList.toggle('active', drive);
+    btnViewDesign.setAttribute('aria-selected', String(!drive));
+    btnViewDrive.setAttribute('aria-selected', String(drive));
+    if (!drive && currentMapMode === 'compact') set2DMapMode('large', false);
+}
+
+btnViewDesign.addEventListener('click', () => setPortraitView('design'));
+btnViewDrive.addEventListener('click', () => setPortraitView('drive'));
 
 // 2-1. 規格調整與登入權限檢查 (未登入僅限使用 10×10 含以下地圖)
 function applyGridSizeDirect(c, r) {
