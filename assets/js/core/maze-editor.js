@@ -43,6 +43,7 @@ class MazeEditor {
         this.isRestoring = false;
         this.savedSnap = null; // 最後一次儲存或載入時的快照，用來判斷有沒有未存的修改
 
+        this.svg.dataset.tool = this.currentTool;
         this.initData();
         this.render();
         this.recordHistory(this.getData());
@@ -122,6 +123,7 @@ class MazeEditor {
 
     setTool(tool) {
         this.currentTool = tool;
+        this.svg.dataset.tool = tool;
         if (this.viewport) {
             if (tool === 'pan') {
                 this.viewport.classList.add('tool-pan');
@@ -482,47 +484,23 @@ class MazeEditor {
             this.wrapper = wrapper;
             wrapper.style.width = widthPx + 'px';
             wrapper.style.height = heightPx + 'px';
-            if (this.cols === 10 && this.rows === 10) {
-                wrapper.style.backgroundImage = 'url("assets/img/map_10x10.jpg?v=' + Date.now() + '")';
-            } else {
-                wrapper.style.backgroundImage = 'none';
-            }
             this.applyTransform(false);
         }
 
-        // 若非 10x10 底圖模式，繪製 SVG 背景白色底與格線
-        if (this.cols !== 10 || this.rows !== 10) {
-            const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            bgRect.setAttribute('x', 0);
-            bgRect.setAttribute('y', 0);
-            bgRect.setAttribute('width', widthPx);
-            bgRect.setAttribute('height', heightPx);
-            bgRect.setAttribute('fill', '#ffffff');
-            svg.appendChild(bgRect);
+        // 純色底與淡格線（配色見 base.css 的 .map-bg / .map-grid-line）
+        const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bgRect.setAttribute('width', widthPx);
+        bgRect.setAttribute('height', heightPx);
+        bgRect.setAttribute('class', 'map-bg');
+        svg.appendChild(bgRect);
 
-            // 水平底格線
-            for (let r = 0; r <= this.rows; r++) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', 0);
-                line.setAttribute('y1', r * step);
-                line.setAttribute('x2', widthPx);
-                line.setAttribute('y2', r * step);
-                line.setAttribute('stroke', '#cbd5e1');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-            }
-            // 垂直底格線
-            for (let c = 0; c <= this.cols; c++) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', c * step);
-                line.setAttribute('y1', 0);
-                line.setAttribute('x2', c * step);
-                line.setAttribute('y2', heightPx);
-                line.setAttribute('stroke', '#cbd5e1');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-            }
-        }
+        const gridPath = [];
+        for (let r = 1; r < this.rows; r++) gridPath.push(`M0 ${r * step}H${widthPx}`);
+        for (let c = 1; c < this.cols; c++) gridPath.push(`M${c * step} 0V${heightPx}`);
+        const grid = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        grid.setAttribute('d', gridPath.join(''));
+        grid.setAttribute('class', 'map-grid-line');
+        svg.appendChild(grid);
 
         // 1. 格子背景與點選層 (處理 Start, Goal 設定)
         for (let r = 0; r < this.rows; r++) {
@@ -599,9 +577,7 @@ class MazeEditor {
         // 3. 牆壁可視化繪製
         // 3-1 水平牆壁
         for (let r = 0; r <= this.rows; r++) {
-            let y = r * step;
-            if (r === 0) y = 3;
-            else if (r === this.rows) y = heightPx - 3;
+            const y = r * step;
 
             for (let c = 0; c < this.cols; c++) {
                 if (this.hWalls[r] && this.hWalls[r][c]) {
@@ -619,9 +595,7 @@ class MazeEditor {
         // 3-2 垂直牆壁
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c <= this.cols; c++) {
-                let x = c * step;
-                if (c === 0) x = 3;
-                else if (c === this.cols) x = widthPx - 3;
+                const x = c * step;
 
                 if (this.vWalls[r] && this.vWalls[r][c]) {
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -636,6 +610,26 @@ class MazeEditor {
         }
 
         // 4. 點擊偵測熱區 (透明寬線條，方便滑鼠點擊)
+        const hoverLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        hoverLine.setAttribute('class', 'wall-hover-preview');
+        hoverLine.style.display = 'none';
+        svg.appendChild(hoverLine);
+        const bindHover = (hitLine, hasWall, x1, y1, x2, y2) => {
+            if (hasWall) hitLine.classList.add('has-wall');
+            hitLine.addEventListener('mouseenter', () => {
+                if (this.currentTool !== 'wall') return;
+                hoverLine.setAttribute('x1', x1);
+                hoverLine.setAttribute('y1', y1);
+                hoverLine.setAttribute('x2', x2);
+                hoverLine.setAttribute('y2', y2);
+                hoverLine.classList.toggle('is-remove', hasWall);
+                hoverLine.style.display = '';
+            });
+            hitLine.addEventListener('mouseleave', () => {
+                hoverLine.style.display = 'none';
+            });
+        };
+
         const hitWidth = Math.max(12, Math.min(22, step * 0.4));
         for (let r = 0; r <= this.rows; r++) {
             let yHit = r * step;
@@ -654,6 +648,7 @@ class MazeEditor {
                 hitLine.setAttribute('y2', yHit);
                 hitLine.setAttribute('stroke-width', strokeW);
                 hitLine.setAttribute('class', `wall-hit-line ${r === 0 || r === this.rows ? 'outer-hit' : ''}`);
+                bindHover(hitLine, !!(this.hWalls[r] && this.hWalls[r][c]), c * step, r * step, (c + 1) * step, r * step);
 
                 hitLine.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -685,6 +680,7 @@ class MazeEditor {
                 hitLine.setAttribute('y2', (r + 1) * step - 2);
                 hitLine.setAttribute('stroke-width', strokeW);
                 hitLine.setAttribute('class', `wall-hit-line ${c === 0 || c === this.cols ? 'outer-hit' : ''}`);
+                bindHover(hitLine, !!(this.vWalls[r] && this.vWalls[r][c]), c * step, r * step, c * step, (r + 1) * step);
 
                 hitLine.addEventListener('click', (e) => {
                     e.stopPropagation();
