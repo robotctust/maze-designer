@@ -5,7 +5,7 @@
 // ============================================
 // 8. 帳號認證與權限管理系統 (Auth & Permission System)
 // ============================================
-let currentUser = null; // null: 訪客 (限 10x10), { id, username }: 已登入會員 (解鎖至 30x30)
+let currentUser = null; // null: 訪客 (限 10x10), { id, username }: 已登入會員 (解鎖至 50x50)
 let pendingTargetGrid = null; // 暫存使用者嘗試套用但受限的規格 { cols, rows }
 
 const authBadge = document.getElementById('authBadge');
@@ -197,8 +197,8 @@ function updateAuthUI(user) {
 
         const inputCols = document.getElementById('inputCols');
         const inputRows = document.getElementById('inputRows');
-        if (inputCols) inputCols.title = '會員特權：已解鎖支援 2 ~ 30 格';
-        if (inputRows) inputRows.title = '會員特權：已解鎖支援 2 ~ 30 格';
+        if (inputCols) inputCols.title = '會員特權：已解鎖支援 2 ~ 50 格';
+        if (inputRows) inputRows.title = '會員特權：已解鎖支援 2 ~ 50 格';
 
         // 會員解鎖儲存與個人地圖庫
         if (btnSave) {
@@ -258,8 +258,8 @@ function updateAuthUI(user) {
 
         const inputCols = document.getElementById('inputCols');
         const inputRows = document.getElementById('inputRows');
-        if (inputCols) inputCols.title = '訪客限制：最高 10 格 (登入可解鎖至 30 格)';
-        if (inputRows) inputRows.title = '訪客限制：最高 10 格 (登入可解鎖至 30 格)';
+        if (inputCols) inputCols.title = '訪客限制：最高 10 格 (登入可解鎖至 50 格)';
+        if (inputRows) inputRows.title = '訪客限制：最高 10 格 (登入可解鎖至 50 格)';
 
         // 訪客限制：儲存、個人地圖庫與發布按鈕顯示鎖定狀態
         if (btnSave) {

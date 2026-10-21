@@ -62,8 +62,8 @@ class MazeEditor {
     }
 
     setGridSize(cols, rows) {
-        cols = Math.max(2, Math.min(30, parseInt(cols, 10) || 10));
-        rows = Math.max(2, Math.min(30, parseInt(rows, 10) || 10));
+        cols = Math.max(2, Math.min(50, parseInt(cols, 10) || 10));
+        rows = Math.max(2, Math.min(50, parseInt(rows, 10) || 10));
 
         this.cols = cols;
         this.rows = rows;
@@ -147,8 +147,8 @@ class MazeEditor {
             rows = data.hWalls.length - 1;
             cols = data.hWalls[0].length;
         }
-        this.cols = Math.max(2, Math.min(30, cols));
-        this.rows = Math.max(2, Math.min(30, rows));
+        this.cols = Math.max(2, Math.min(50, cols));
+        this.rows = Math.max(2, Math.min(50, rows));
         this.step = this.baseSize / Math.max(this.cols, this.rows);
         this.sizeW = this.cols * this.step;
         this.sizeH = this.rows * this.step;

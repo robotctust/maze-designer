@@ -7,10 +7,10 @@
                 <p class="menu-heading">迷宮規格</p>
                 <div class="spec-inputs-row">
                     <label for="inputCols">寬</label>
-                    <input type="number" id="inputCols" min="2" max="30" value="10" class="spec-input">
+                    <input type="number" id="inputCols" min="2" max="50" value="10" class="spec-input">
                     <span class="spec-times">×</span>
                     <label for="inputRows">高</label>
-                    <input type="number" id="inputRows" min="2" max="30" value="10" class="spec-input">
+                    <input type="number" id="inputRows" min="2" max="50" value="10" class="spec-input">
                     <button type="button" class="tool-btn btn-save btn-sm" id="btnApplyGridSize" title="套用輸入的迷宮規格">套用</button>
                 </div>
                 <div class="spec-presets-row">
@@ -26,7 +26,7 @@
                     <dt>牆高</dt><dd>15 cm</dd>
                     <dt>總尺寸</dt><dd id="specDimensionsCm">300 × 300 cm</dd>
                 </dl>
-                <p class="menu-note">可設定 2～30 格，訪客最多 10 × 10</p>
+                <p class="menu-note">可設定 2～50 格，訪客最多 10 × 10</p>
             </div>
         </div>
     </div>

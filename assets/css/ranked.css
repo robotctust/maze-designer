@@ -18,6 +18,12 @@
 [data-tier="30x30"],
 .ranked-tier-btn[data-size="30x30"],
 .leaderboard-tab-btn[data-size="30x30"] { --tier: #FF6B57; }
+[data-tier="special"],
+.ranked-tier-btn[data-size="special"],
+.leaderboard-tab-btn[data-size="special"] { --tier: #00E5FF; }
+[data-tier="apex"],
+.ranked-tier-btn[data-size="apex"],
+.leaderboard-tab-btn[data-size="apex"] { --tier: #F43F5E; }
 
 :root,
 [data-tier],

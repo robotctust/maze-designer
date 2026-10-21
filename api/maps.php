@@ -51,7 +51,7 @@ function isValidMazeData($data) {
     }
     $rows = isset($data['gridSize']['rows']) ? intval($data['gridSize']['rows']) : (count($data['hWalls']) - 1);
     $cols = isset($data['gridSize']['cols']) ? intval($data['gridSize']['cols']) : count($data['hWalls'][0]);
-    if ($rows < 2 || $cols < 2 || $rows > 30 || $cols > 30) return false;
+    if ($rows < 2 || $cols < 2 || $rows > 50 || $cols > 50) return false;
     if (count($data['hWalls']) !== ($rows + 1)) return false;
     if (count($data['vWalls']) !== $rows) return false;
     if (!isset($data['hWalls'][0]) || count($data['hWalls'][0]) !== $cols) return false;
