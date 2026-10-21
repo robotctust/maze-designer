@@ -12,15 +12,17 @@
 
     <?php include __DIR__ . '/views/topbar.php'; ?>
 
-    <?php include __DIR__ . '/views/editbar.php'; ?>
+    <!-- 設計窗口：上方編輯列，下方左側 2D 編輯器、右側 3D 模擬視窗，以分割線隔開 -->
+    <div class="workspace">
+        <?php include __DIR__ . '/views/editbar.php'; ?>
 
-    <!-- 主操作區域：左側 2D 編輯器，右側 3D 模擬視窗 -->
-    <div class="app-container">
-        <?php include __DIR__ . '/views/editor-panel.php'; ?>
+        <div class="app-container">
+            <?php include __DIR__ . '/views/editor-panel.php'; ?>
 
-        <?php include __DIR__ . '/views/ranked-lobby.php'; ?>
+            <?php include __DIR__ . '/views/ranked-lobby.php'; ?>
 
-        <?php include __DIR__ . '/views/simulator-panel.php'; ?>
+            <?php include __DIR__ . '/views/simulator-panel.php'; ?>
+        </div>
     </div>
 
     <!-- 提示訊息 -->

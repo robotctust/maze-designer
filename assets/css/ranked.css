@@ -484,11 +484,8 @@
     display: none;
 }
 
-.ranked-live .app-container {
-    padding: 0;
-}
-
-.ranked-live .simulator-panel {
+.ranked-live .workspace {
+    margin: 0;
     border: 0;
     border-radius: 0;
 }
