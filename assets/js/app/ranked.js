@@ -109,7 +109,8 @@ const RANKED_TIERS = {
     '20x20': { level: 3, name: '大師級', en: 'MASTER', limit: '20 分鐘', clock: '20:00', view: 4 },
     '25x25': { level: 4, name: '宗師級', en: 'GRANDMASTER', limit: '30 分鐘', clock: '30:00', view: 4.5 },
     '30x30': { level: 5, name: '傳奇級', en: 'LEGEND', limit: '40 分鐘', clock: '40:00', view: 5 },
-    'special': { level: 6, name: '特殊賽', en: 'SPECIAL', limit: '40 分鐘', clock: '40:00', view: 5 }
+    'special': { level: 6, name: '特殊賽', en: 'SPECIAL', limit: '40 分鐘', clock: '40:00', view: 5 },
+    'apex': { level: 7, name: '巔峰賽', en: 'APEX', limit: '60 分鐘', clock: '60:00', view: 5 }
 };
 
 // 切換段位主題：主色、大廳徽章與段位名、按鈕選取狀態
@@ -117,12 +118,12 @@ function applyTierTheme(size) {
     const t = RANKED_TIERS[size];
     document.body.dataset.tier = size;
     document.getElementById('lobbyCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
-    document.getElementById('lobbyTierEn').textContent = (size === 'special') ? 'SPECIAL ARENA' : `${t.en}・TIER ${t.level}`;
+    document.getElementById('lobbyTierEn').textContent = (size === 'special') ? 'SPECIAL ARENA' : ((size === 'apex') ? 'APEX ARENA' : `${t.en}・TIER ${t.level}`);
     document.getElementById('lobbyTierName').textContent = t.name;
     document.getElementById('liveCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
     document.getElementById('liveTierName').textContent = t.name;
     document.getElementById('lobbyLimitClock').textContent = t.clock;
-    document.getElementById('lobbyTierSub').textContent = (size === 'special') ? `長方形特殊迷宮・限時 ${t.limit}` : `${size.replace('x', ' × ')} 迷宮・限時 ${t.limit}`;
+    document.getElementById('lobbyTierSub').textContent = (size === 'special') ? `長方形特殊迷宮・限時 ${t.limit}` : ((size === 'apex') ? `35×35～50×50 超大迷宮・限時 ${t.limit}` : `${size.replace('x', ' × ')} 迷宮・限時 ${t.limit}`);
     document.querySelectorAll('.ranked-tier-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-size') === size);
     });
@@ -182,14 +183,14 @@ function loadRankedMatch(size = '10x10') {
                 // 更新排位賽提示資訊
                 const mapCols = res.mapData.gridSize?.cols || (res.mapData.hWalls ? res.mapData.hWalls[0].length : 10);
                 const mapRows = res.mapData.gridSize?.rows || (res.mapData.hWalls ? res.mapData.hWalls.length - 1 : 10);
-                const tierTitle = (size === 'special') ? `特殊賽 (${mapCols}×${mapRows})` : `${size.replace('x', '×')} ${RANKED_TIERS[size].name}`;
+                const tierTitle = (size === 'special') ? `特殊賽 (${mapCols}×${mapRows})` : ((size === 'apex') ? `巔峰賽 (${mapCols}×${mapRows})` : `${size.replace('x', '×')} ${RANKED_TIERS[size].name}`);
                 const mapNameEl = document.getElementById('rankedMapName');
                 const limitTextEl = document.getElementById('rankedLimitText');
 
                 document.getElementById('rankedMapId').textContent = res.mapId;
                 if (mapNameEl) mapNameEl.textContent = (size === 'special')
                     ? `${res.mapData.author || '官方'}出題・長方形 ${mapCols} × ${mapRows}`
-                    : `${res.mapData.author || '官方'}出題・${size.replace('x', ' × ')}`;
+                    : ((size === 'apex') ? `${res.mapData.author || '官方'}出題・超大型 ${mapCols} × ${mapRows}` : `${res.mapData.author || '官方'}出題・${size.replace('x', ' × ')}`);
                 if (limitTextEl) limitTextEl.textContent = res.timeLimitDesc;
                 document.getElementById('liveMapId').textContent = res.mapId;
                 refreshLobbyScore(size);
@@ -197,7 +198,7 @@ function loadRankedMatch(size = '10x10') {
                 // 更新 header 標籤
                 const tagGrid = document.getElementById('headerTagGrid');
                 const tagTotal = document.getElementById('headerTagTotal');
-                if (tagGrid) tagGrid.textContent = (size === 'special') ? `排位規格：特殊賽 (${mapCols}×${mapRows})` : `排位規格：${size}`;
+                if (tagGrid) tagGrid.textContent = (size === 'special') ? `排位規格：特殊賽 (${mapCols}×${mapRows})` : ((size === 'apex') ? `排位規格：巔峰賽 (${mapCols}×${mapRows})` : `排位規格：${size}`);
                 if (tagTotal) tagTotal.textContent = `總長寬：${mapCols * 30}×${mapRows * 30} cm`;
 
                 btnStartDrive.classList.add('pulse-prompt');
@@ -465,7 +466,7 @@ function openRankedGallery() {
             }
             let html = '';
             Object.entries(res.maps).forEach(([size, maps]) => {
-                html += `<h4 class="ranked-gallery-tier">${size === 'special' ? '特殊排位賽（長方形）' : size.replace('x', '×')}（${maps.length} 張）</h4><div class="ranked-gallery-grid">`;
+                html += `<h4 class="ranked-gallery-tier">${size === 'special' ? '特殊排位賽（長方形）' : (size === 'apex' ? '巔峰排位賽（35×35～50×50）' : size.replace('x', '×'))}（${maps.length} 張）</h4><div class="ranked-gallery-grid">`;
                 maps.forEach(m => {
                     const isCurrent = size === currentRankedSize && m.mapId === currentRankedMapId;
                     html += `

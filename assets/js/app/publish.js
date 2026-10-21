@@ -96,9 +96,18 @@ function openPublishModal() {
         }
         targetTier = 'special';
     } else {
-        if (!squareAllowed.includes(size)) {
-            showToast(`⚠️ 正方形排位賽目前僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 ${cols}×${rows}。`, true);
-            return;
+        if (cols > 30) {
+            if ([35, 40, 45, 50].includes(cols)) {
+                targetTier = 'apex';
+            } else {
+                showToast(`⚠️ 巔峰排位賽規格限制：正方形超大地圖僅支援 35×35、40×40、45×45、50×50 四種規格！目前為 ${cols}×${rows}。`, true);
+                return;
+            }
+        } else {
+            if (!squareAllowed.includes(size)) {
+                showToast(`⚠️ 標準正方形排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 ${cols}×${rows}。`, true);
+                return;
+            }
         }
     }
 
@@ -117,7 +126,8 @@ function openPublishModal() {
         '20x20': '20×20 大師級',
         '25x25': '25×25 宗師級',
         '30x30': '30×30 傳奇級',
-        'special': `特殊排位賽（長方形 ${cols}×${rows}）`
+        'special': `特殊排位賽（長方形 ${cols}×${rows}）`,
+        'apex': `巔峰排位賽（超大型 ${cols}×${rows}）`
     };
 
     if (publishModalSpec) publishModalSpec.textContent = tierLabels[targetTier] || size;

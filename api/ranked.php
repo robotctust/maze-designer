@@ -10,7 +10,8 @@ $allowedSizes = [
     '20x20' => ['dim' => 20, 'limitMs' => 20 * 60 * 1000, 'desc' => '20 分鐘 (1200秒)'],
     '25x25' => ['dim' => 25, 'limitMs' => 30 * 60 * 1000, 'desc' => '30 分鐘 (1800秒)'],
     '30x30' => ['dim' => 30, 'limitMs' => 40 * 60 * 1000, 'desc' => '40 分鐘 (2400秒)'],
-    'special' => ['dim' => 30, 'limitMs' => 40 * 60 * 1000, 'desc' => '40 分鐘 (2400秒)']
+    'special' => ['dim' => 30, 'limitMs' => 40 * 60 * 1000, 'desc' => '40 分鐘 (2400秒)'],
+    'apex' => ['dim' => 50, 'limitMs' => 60 * 60 * 1000, 'desc' => '60 分鐘 (3600秒)']
 ];
 
 $db = connectDbOrExit();
@@ -20,7 +21,7 @@ if ($action === 'get_map') {
     $size = $_GET['size'] ?? '10x10';
     if (!isset($allowedSizes[$size])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => '無效的排位賽規格，僅支援 10x10, 15x15, 20x20, 25x25, 30x30 以及 special 特殊賽']);
+        echo json_encode(['success' => false, 'message' => '無效的排位賽規格，僅支援 10x10, 15x15, 20x20, 25x25, 30x30, special 特殊賽以及 apex 巔峰賽']);
         exit;
     }
 
@@ -58,7 +59,7 @@ if ($action === 'get_map') {
         'success' => true,
         'size' => $size,
         'mapId' => $mapData['mapId'] ?? basename($chosenFile, '.json'),
-        'mapName' => $mapData['name'] ?? (($size === 'special') ? "特殊排位賽官方地圖" : "{$size} 官方排位賽地圖"),
+        'mapName' => $mapData['name'] ?? (($size === 'special') ? "特殊排位賽官方地圖" : (($size === 'apex') ? "巔峰排位賽官方地圖" : "{$size} 官方排位賽地圖")),
         'timeLimitMs' => $allowedSizes[$size]['limitMs'],
         'timeLimitDesc' => $allowedSizes[$size]['desc'],
         'mapData' => $mapData
@@ -326,14 +327,27 @@ if ($action === 'publish_map') {
         $size = 'special';
     } else {
         // 正方形地圖
-        $size = "{$cols}x{$rows}";
-        if (!isset($allowedSizes[$size])) {
-            http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => "⚠️ 規格不符：正方形官方排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 {$size}。"
-            ]);
-            exit;
+        if ($cols > 30) {
+            if (in_array($cols, [35, 40, 45, 50])) {
+                $size = 'apex';
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'success' => false,
+                    'message' => "⚠️ 巔峰排位賽規格限制：正方形超大地圖僅支援 35×35、40×40、45×45、50×50 四種規格！目前為 {$cols}×{$rows}。"
+                ]);
+                exit;
+            }
+        } else {
+            $size = "{$cols}x{$rows}";
+            if (!isset($allowedSizes[$size])) {
+                http_response_code(400);
+                echo json_encode([
+                    'success' => false,
+                    'message' => "⚠️ 規格不符：標準正方形官方排位賽僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 {$size}。"
+                ]);
+                exit;
+            }
         }
     }
 
@@ -355,7 +369,7 @@ if ($action === 'publish_map') {
 
         if ($totalMySizeMaps >= 3) {
             http_response_code(400);
-$sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : $size;
+$sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : (($size === 'apex') ? '巔峰排位賽（35~50）' : $size);
             echo json_encode([
                 'success' => false,
                 'message' => "⚠️ 達到上傳上限：中級使用者在每一類規格（{$sizeLabel}）最多只能上傳 3 張排位賽地圖！您目前已有 {$totalMySizeMaps} 張（含審核中與已通過）。"
@@ -431,7 +445,7 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : $size;
 
     // 中級使用者：進入審核隊列，需由高級使用者審核通過後才正式生效
     if ($role === ROLE_INTERMEDIATE) {
-        $subPrefix = ($size === 'special') ? "特殊排位賽投稿 ({$cols}×{$rows})" : "{$size} 排位賽投稿";
+        $subPrefix = ($size === 'special') ? "特殊排位賽投稿 ({$cols}×{$rows})" : (($size === 'apex') ? "巔峰排位賽投稿 ({$cols}×{$rows})" : "{$size} 排位賽投稿");
         $finalName = !empty($customName) 
             ? "{$subPrefix} ({$customName})" 
             : "{$subPrefix} (由 {$username} 發布)";
@@ -489,7 +503,7 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : $size;
     $nextIndex = $maxIndex + 1;
     $newMapId = "map_{$nextIndex}";
 
-    $offPrefix = ($size === 'special') ? "特殊排位賽官方地圖 ({$cols}×{$rows})" : "{$size} 官方排位賽地圖";
+    $offPrefix = ($size === 'special') ? "特殊排位賽官方地圖 ({$cols}×{$rows})" : (($size === 'apex') ? "巔峰排位賽官方地圖 ({$cols}×{$rows})" : "{$size} 官方排位賽地圖");
     $finalName = !empty($customName) 
         ? "{$offPrefix} #{$nextIndex} ({$customName})" 
         : "{$offPrefix} #{$nextIndex} (由 {$username} 發布)";

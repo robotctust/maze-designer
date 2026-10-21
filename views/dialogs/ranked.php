@@ -18,6 +18,7 @@
                 <button type="button" class="leaderboard-tab-btn" data-size="25x25" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-4"></use></svg><span>宗師級<small>25 × 25</small></span></button>
                 <button type="button" class="leaderboard-tab-btn" data-size="30x30" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-5"></use></svg><span>傳奇級<small>30 × 30</small></span></button>
                 <button type="button" class="leaderboard-tab-btn" data-size="special" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-6"></use></svg><span>特殊賽<small>長方形</small></span></button>
+                <button type="button" class="leaderboard-tab-btn" data-size="apex" role="tab"><svg class="board-tab-crest" aria-hidden="true"><use href="assets/icons.svg#crest-7"></use></svg><span>巔峰賽<small>35 ~ 50</small></span></button>
             </div>
             <div class="user-best-banner" id="userBestBanner"></div>
             <div class="leaderboard-table-wrap">
