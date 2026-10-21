@@ -94,8 +94,9 @@ function switchGameMode(mode) {
         resetTimer();
         maze3D.arenaColor = null;
 
-        // 重新載入練習賽迷宮
-        loadMazeConfig();
+        // 回到排位賽前正在編輯的練習地圖（排位賽只改 3D 場景，不會動到編輯器，未存的修改也會保留）
+        set2DMapMode('large', false);
+        editor.loadData(editor.getData());
         showToast('已切換為【練習賽】模式！');
     }
 }

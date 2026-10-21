@@ -328,10 +328,7 @@ document.getElementById('btnSubmitLogin')?.addEventListener('click', () => {
         if (res.success) {
             updateAuthUI(res.user);
             closeAuthModal();
-            showToast(res.message);
-
-            // 登入後載入該使用者的個人迷宮存檔
-            loadMazeConfig();
+            loadMapAfterSignIn(res.message);
 
             // 若之前有嘗試套用受限規格，登入後自動執行！
             if (pendingTargetGrid) {
@@ -390,10 +387,7 @@ document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {
         if (res.success) {
             updateAuthUI(res.user);
             closeAuthModal();
-            showToast(res.message);
-
-            // 註冊成功後重新載入
-            loadMazeConfig();
+            loadMapAfterSignIn(res.message);
 
             if (pendingTargetGrid) {
                 const { cols, rows } = pendingTargetGrid;
@@ -412,8 +406,20 @@ document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {
     });
 });
 
+// 登入或註冊後：有未存的修改就保留目前的地圖，否則載入該使用者雲端最後儲存的地圖
+function loadMapAfterSignIn(message) {
+    if (editor.isDirty()) {
+        refreshMapLibraryBadge();
+        showToast(`${message}　已保留你正在編輯的地圖，記得按「儲存」`);
+        return;
+    }
+    showToast(message);
+    loadMazeConfig();
+}
+
 // 登出
 btnLogout?.addEventListener('click', () => {
+    if (editor.isDirty() && !confirm('地圖還有沒儲存的修改，登出後就不能存到雲端了。\n確定要登出嗎？')) return;
     fetch('api/auth.php?action=logout', { method: 'POST' })
         .then(res => res.json())
         .then(res => {
@@ -422,7 +428,8 @@ btnLogout?.addEventListener('click', () => {
 
             if (currentGameMode === 'ranked') {
                 switchGameMode('practice');
-            } else if (editor.cols > 10 || editor.rows > 10) {
+            }
+            if (editor.cols > 10 || editor.rows > 10) {
                 applyGridSizeDirect(10, 10);
                 showToast('已切換回訪客模式，迷宮規格已自動重設為 10×10！');
             }
