@@ -26,7 +26,7 @@
         <!-- 2D 畫布底圖容器 -->
         <div class="map-canvas-container">
         <div class="map-viewport" id="mapViewport">
-            <div class="grid-wrapper" id="gridWrapper" style="background-image: url('assets/img/map_10x10.jpg?v=<?= time() ?>');">
+            <div class="grid-wrapper" id="gridWrapper" style="background-image: url('assets/img/map_10x10.jpg?v=<?= filemtime(dirname(__DIR__) . "/assets/img/map_10x10.jpg") ?>');">
                 <!-- SVG 覆蓋層：負責處理格線熱區、牆壁繪製與起終點顯示 -->
                 <svg id="mazeSvg" class="grid-svg" viewBox="0 0 560 560"></svg>
             </div>

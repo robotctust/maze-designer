@@ -326,6 +326,23 @@ kbd {
     overflow: hidden;
 }
 
+/* 空間不足時，先讓操作提示以「…」縮短，再收起總長寬，數據不被切掉 */
+.editor-status-bar {
+    container-type: inline-size;
+}
+
+#toolTip {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@container (max-width: 560px) {
+    #headerTagTotal {
+        display: none;
+    }
+}
+
 .editor-status-bar strong {
     color: var(--text);
     font-weight: 500;

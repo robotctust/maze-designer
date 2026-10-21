@@ -96,12 +96,15 @@ if (window.ResizeObserver && canvasContainer) {
     ro.observe(canvasContainer);
 }
 
-// 視窗縮放時自適應設計大圖
-window.addEventListener('resize', () => {
-    if (currentMapMode === 'large' && editor) {
-        editor.setCanvasBaseSize(getOptimalDesignCanvasSize());
-    }
-});
+// 2D 編輯區大小改變時（含首次載入、平板轉向）自適應設計大圖
+const mapViewportEl = document.getElementById('mapViewport');
+if (window.ResizeObserver && mapViewportEl) {
+    new ResizeObserver(() => {
+        if (currentMapMode === 'large' && editor) {
+            editor.setCanvasBaseSize(getOptimalDesignCanvasSize());
+        }
+    }).observe(mapViewportEl);
+}
 
 // 2-1. 規格調整與登入權限檢查 (未登入僅限使用 10×10 含以下地圖)
 function applyGridSizeDirect(c, r) {

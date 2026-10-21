@@ -515,10 +515,6 @@
     order: 2;
 }
 
-.ranked-live .drive-bar-spacer {
-    display: none;
-}
-
 .ranked-live .toast {
     bottom: 76px;
 }
