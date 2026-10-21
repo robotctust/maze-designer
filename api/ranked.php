@@ -586,7 +586,14 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : (($size 
     $inSub = $db->prepare("INSERT INTO `ranked_submissions` (size, name, author_id, author_name, grid_rows, grid_cols, maze_data, status, reviewer_id, reviewed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'approved', ?, NOW(), NOW())");
     $inSub->bind_param('ssisiisi', $size, $finalName, $userId, $username, $rows, $cols, $subJson, $userId);
     @$inSub->execute();
+    $subId = $inSub->insert_id;
     @$inSub->close();
+
+    // 將產生的 submissionId 補充寫入官方地圖檔案
+    if ($subId > 0) {
+        $fileData['submissionId'] = $subId;
+        @file_put_contents($filePath, json_encode($fileData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
 
     $totalMaps = count(glob("{$mapDir}/map_*.json"));
 

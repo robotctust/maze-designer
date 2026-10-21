@@ -255,6 +255,7 @@ if ($action === 'review_submission') {
 
     $fileData = [
         'mapId' => $newMapId,
+        'submissionId' => $subId,
         'name' => $finalOfficialName,
         'customName' => $customName,
         'author' => $sub['author_name'],
@@ -279,9 +280,11 @@ if ($action === 'review_submission') {
         exit;
     }
 
-    // 更新資料庫狀態為 approved
-    $up = $db->prepare("UPDATE `ranked_submissions` SET status = 'approved', reviewer_id = ?, reviewed_at = NOW() WHERE id = ?");
-    $up->bind_param('ii', $userId, $subId);
+    // 更新資料庫狀態為 approved，並同步將 mapId 與官方名稱更新進 maze_data 與 name
+    $mazeData['mapId'] = $newMapId;
+    $updatedMazeJson = json_encode($mazeData, JSON_UNESCAPED_UNICODE);
+    $up = $db->prepare("UPDATE `ranked_submissions` SET status = 'approved', name = ?, maze_data = ?, reviewer_id = ?, reviewed_at = NOW() WHERE id = ?");
+    $up->bind_param('ssii', $finalOfficialName, $updatedMazeJson, $userId, $subId);
     $up->execute();
     $up->close();
 
@@ -336,10 +339,66 @@ if ($action === 'delete_ranked_map') {
             exit;
         }
 
+        // 讀取該地圖資料，以便同步清理資料庫 ranked_submissions 紀錄並釋出額度
+        $mapContent = @file_get_contents($filePath);
+        $mapData = json_decode($mapContent, true) ?: [];
+        $subId = intval($mapData['submissionId'] ?? 0);
+        $authorId = intval($mapData['authorId'] ?? 0);
+        $mapName = trim($mapData['name'] ?? '');
+        $customName = trim($mapData['customName'] ?? '');
+
         if (!@unlink($filePath)) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => '刪除實體檔案失敗，請檢查檔案系統權限！']);
             exit;
+        }
+
+        // 同步直接清除 ranked_submissions 中的對應紀錄，釋出上傳額度
+        if ($subId > 0) {
+            $delStmt = $db->prepare("DELETE FROM `ranked_submissions` WHERE id = ?");
+            if ($delStmt) {
+                $delStmt->bind_param('i', $subId);
+                $delStmt->execute();
+                $delStmt->close();
+            }
+        } else if ($authorId > 0) {
+            // 若為舊地圖未存 submissionId，透過 author_id、size、mapId 或 name/牆面數據查找並清除
+            $chk = $db->prepare("SELECT id, name, maze_data FROM `ranked_submissions` WHERE author_id = ? AND size = ?");
+            if ($chk) {
+                $chk->bind_param('is', $authorId, $size);
+                $chk->execute();
+                $res = $chk->get_result();
+                $deleteSubId = null;
+                while ($r = $res->fetch_assoc()) {
+                    $mObj = json_decode($r['maze_data'], true) ?: [];
+                    if (($mObj['mapId'] ?? '') === $mapId) {
+                        $deleteSubId = intval($r['id']);
+                        break;
+                    }
+                    if (!empty($mapName) && $r['name'] === $mapName) {
+                        $deleteSubId = intval($r['id']);
+                        break;
+                    }
+                    if (!empty($customName) && !empty($mObj['customName']) && $mObj['customName'] === $customName) {
+                        $deleteSubId = intval($r['id']);
+                        break;
+                    }
+                    if (isset($mapData['hWalls']) && isset($mObj['hWalls']) && json_encode($mObj['hWalls']) === json_encode($mapData['hWalls'])) {
+                        $deleteSubId = intval($r['id']);
+                        break;
+                    }
+                }
+                $chk->close();
+
+                if ($deleteSubId) {
+                    $delStmt = $db->prepare("DELETE FROM `ranked_submissions` WHERE id = ?");
+                    if ($delStmt) {
+                        $delStmt->bind_param('i', $deleteSubId);
+                        $delStmt->execute();
+                        $delStmt->close();
+                    }
+                }
+            }
         }
 
         $remainingCount = count(glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json"));
@@ -356,6 +415,25 @@ if ($action === 'delete_ranked_map') {
 
     // 情況 B：刪除投稿紀錄
     if ($submissionId > 0) {
+        // 若該投稿已收錄官方題庫，同步刪除磁碟實體檔案
+        $chk = $db->prepare("SELECT size, maze_data, status FROM `ranked_submissions` WHERE id = ? LIMIT 1");
+        if ($chk) {
+            $chk->bind_param('i', $submissionId);
+            $chk->execute();
+            $subInfo = $chk->get_result()->fetch_assoc();
+            $chk->close();
+            if ($subInfo && $subInfo['status'] === 'approved') {
+                $mObj = json_decode($subInfo['maze_data'], true) ?: [];
+                $subMapId = $mObj['mapId'] ?? '';
+                if (!empty($subMapId)) {
+                    $targetFile = dirname(__DIR__) . "/data/ranked_maps/{$subInfo['size']}/{$subMapId}.json";
+                    if (file_exists($targetFile)) {
+                        @unlink($targetFile);
+                    }
+                }
+            }
+        }
+
         $del = $db->prepare("DELETE FROM `ranked_submissions` WHERE id = ?");
         $del->bind_param('i', $submissionId);
         $del->execute();
