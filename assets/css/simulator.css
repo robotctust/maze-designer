@@ -168,10 +168,6 @@
     background: var(--surface);
 }
 
-.drive-bar-spacer {
-    flex: 1;
-}
-
 .drive-status-tag {
     display: inline-flex;
     align-items: center;
@@ -197,19 +193,30 @@
     background: var(--go-fill);
 }
 
+/* 計時器佔用按鈕與狀態之間的空間並置中，空間不足時不會蓋住按鈕 */
 .drive-bar .timer-display {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: baseline;
+    justify-content: center;
     gap: 8px;
     white-space: nowrap;
-    z-index: 2;
 }
 
-@media (max-width: 768px) {
+/* 依操控列本身的寬度決定要藏哪些次要資訊 */
+.drive-bar {
+    container-type: inline-size;
+}
+
+@container (max-width: 680px) {
     .drive-status-tag {
+        display: none;
+    }
+}
+
+@container (max-width: 520px) {
+    .drive-bar .timer-label {
         display: none;
     }
 }

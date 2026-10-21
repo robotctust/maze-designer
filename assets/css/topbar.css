@@ -8,8 +8,8 @@
     align-items: center;
     gap: 16px;
     padding: 0 16px;
-    background: var(--surface-sunken);
-    border-bottom: 1px solid var(--border);
+    /* 和頁面背景同一層，不加下邊框；下方的設計窗口自成一塊 */
+    background: var(--bg);
     z-index: 20;
 }
 

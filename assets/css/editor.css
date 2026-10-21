@@ -12,8 +12,7 @@
 }
 
 .editbar-spacer,
-.status-spacer,
-.tool-rail-spacer {
+.status-spacer {
     flex: 1;
 }
 
@@ -23,12 +22,24 @@
     font-size: 13px;
 }
 
+/* 設計窗口：編輯列、2D、3D 合成一個窗口，彼此用和外框相同的分割線隔開 */
+.workspace {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    /* 上方不留邊距：頂部列內容剛好在頁面頂端與窗口上緣之間置中 */
+    margin: 0 12px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+}
+
 .app-container {
     flex: 1;
     min-height: 0;
     display: flex;
-    gap: 12px;
-    padding: 12px;
     position: relative;
 }
 
@@ -40,9 +51,11 @@
     display: flex;
     flex-direction: column;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
     overflow: hidden;
+}
+
+.editor-panel {
+    border-right: 1px solid var(--border);
 }
 
 .simulator-panel {
@@ -61,45 +74,6 @@
 }
 
 /* 左側工具欄 */
-.tool-rail {
-    width: 60px;
-    flex: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 0;
-    border-right: 1px solid var(--border);
-}
-
-.tool {
-    width: 48px;
-    height: 54px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--text-muted);
-    font: inherit;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.tool:hover,
-.tool[aria-expanded="true"] {
-    background: var(--surface-2);
-    color: var(--text);
-}
-
-.tool.active {
-    background: var(--accent-tint);
-    color: var(--accent);
-}
-
 /* 規格選單 */
 .spec-menu {
     width: 300px;
@@ -208,11 +182,8 @@
     margin: 0;
 }
 
-/* 快捷鍵說明（從工具欄往右展開） */
-.menu.menu-side {
-    top: auto;
-    bottom: 0;
-    left: calc(100% + 10px);
+/* 快捷鍵說明（從右上角按鈕往下展開） */
+.menu.shortcuts-menu {
     width: 300px;
     padding: 10px 6px;
 }
@@ -251,6 +222,14 @@ kbd {
     min-width: 0;
     position: relative;
     display: flex;
+    container-type: inline-size;
+}
+
+/* 2D 懸浮工具：沿用 3D 視窗的 .sim-overlay / .seg / .float-btn；畫布窄時只顯示圖示 */
+@container (max-width: 480px) {
+    .editor-overlay .tool-label {
+        display: none;
+    }
 }
 
 .map-viewport {
@@ -326,26 +305,81 @@ kbd {
     overflow: hidden;
 }
 
+/* 空間不足時，先讓操作提示以「…」縮短，再收起總長寬，數據不被切掉 */
+.editor-status-bar {
+    container-type: inline-size;
+}
+
+#toolTip {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@container (max-width: 560px) {
+    #headerTagTotal {
+        display: none;
+    }
+}
+
 .editor-status-bar strong {
     color: var(--text);
     font-weight: 500;
     font-family: var(--font-mono);
 }
 
-/* 平板直向：2D 在上、3D 在下 */
+/* 「設計／試跑」分頁只在平板直向出現 */
+.view-switch {
+    display: none;
+}
+
+.editbar .view-switch .hud-pill-btn {
+    height: 34px;
+    padding: 0 16px;
+    font-size: 14px;
+}
+
+.editbar .view-switch .hud-pill-btn.active {
+    background: var(--accent-tint);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+/* 平板直向：練習時一次只顯示 2D 或 3D 其中一個，佔滿編輯列以下的空間，不用捲動 */
 @media (max-width: 1023px) {
     .app-container {
         flex-direction: column;
-        overflow-y: auto;
+    }
+
+    .view-switch {
+        display: inline-flex;
+        flex: none;
+        margin-right: 4px;
     }
 
     .editor-panel,
-    .editor-panel.mode-compact {
-        flex: none;
-        height: 520px;
+    .editor-panel.mode-compact,
+    .simulator-panel {
+        flex: 1 1 0;
+        min-height: 0;
     }
 
-    .simulator-panel {
+    /* 直向一次只顯示一個畫面，不需要中間的分割線 */
+    .editor-panel {
+        border-right: 0;
+    }
+
+    body:not(.is-ranked) .app-container.view-drive .editor-panel,
+    body:not(.is-ranked) .app-container:not(.view-drive) .simulator-panel {
+        display: none;
+    }
+
+    /* 排位賽：大廳在上、3D 在下，整頁可捲動 */
+    .is-ranked .app-container {
+        overflow-y: auto;
+    }
+
+    .is-ranked .simulator-panel {
         flex: none;
         height: 480px;
     }

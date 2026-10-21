@@ -15,6 +15,7 @@ class MazeEditor {
 
         this.currentTool = 'wall'; // 'wall', 'start', 'goal'
         this.onUpdate = options.onUpdate || function() {};
+        this.onNotice = options.onNotice || ((msg) => alert(msg)); // 操作不被允許時的提示
 
         // 資料結構
         this.start = { x: 0, y: 9 };
@@ -35,8 +36,17 @@ class MazeEditor {
         this.viewport = null;
         this.wrapper = null;
 
+        // 復原／重做：每次地圖變更存一份快照（最多 100 步）
+        this.onHistoryChange = options.onHistoryChange || function() {};
+        this.history = [];
+        this.historyIndex = -1;
+        this.isRestoring = false;
+        this.savedSnap = null; // 最後一次儲存或載入時的快照，用來判斷有沒有未存的修改
+
+        this.svg.dataset.tool = this.currentTool;
         this.initData();
         this.render();
+        this.recordHistory(this.getData());
     }
 
     setCanvasBaseSize(newBaseSize) {
@@ -113,6 +123,7 @@ class MazeEditor {
 
     setTool(tool) {
         this.currentTool = tool;
+        this.svg.dataset.tool = tool;
         if (this.viewport) {
             if (tool === 'pan') {
                 this.viewport.classList.add('tool-pan');
@@ -198,7 +209,64 @@ class MazeEditor {
     }
 
     notifyUpdate() {
-        this.onUpdate(this.getData());
+        const data = this.getData();
+        if (!this.isRestoring) this.recordHistory(data);
+        this.onUpdate(data);
+    }
+
+    recordHistory(data) {
+        const snap = JSON.stringify({ gridSize: data.gridSize, start: data.start, goal: data.goal, hWalls: data.hWalls, vWalls: data.vWalls });
+        if (snap === this.history[this.historyIndex]) return;
+        this.history.length = this.historyIndex + 1;
+        this.history.push(snap);
+        if (this.history.length > 100) this.history.shift();
+        this.historyIndex = this.history.length - 1;
+        this.onHistoryChange(this);
+    }
+
+    // 載入另一張地圖後，以目前狀態作為新的起點
+    clearHistory() {
+        this.history = [];
+        this.historyIndex = -1;
+        this.recordHistory(this.getData());
+        this.markSaved();
+    }
+
+    markSaved() {
+        this.savedSnap = this.history[this.historyIndex];
+        this.onHistoryChange(this);
+    }
+
+    isDirty() {
+        return this.savedSnap !== null && this.history[this.historyIndex] !== this.savedSnap;
+    }
+
+    canUndo() {
+        return this.historyIndex > 0;
+    }
+
+    canRedo() {
+        return this.historyIndex < this.history.length - 1;
+    }
+
+    undo() {
+        if (!this.canUndo()) return false;
+        this.restoreHistory(this.historyIndex - 1);
+        return true;
+    }
+
+    redo() {
+        if (!this.canRedo()) return false;
+        this.restoreHistory(this.historyIndex + 1);
+        return true;
+    }
+
+    restoreHistory(index) {
+        this.historyIndex = index;
+        this.isRestoring = true;
+        this.loadData(JSON.parse(this.history[index]));
+        this.isRestoring = false;
+        this.onHistoryChange(this);
     }
 
     toggleHWall(r, c) {
@@ -217,7 +285,7 @@ class MazeEditor {
 
     setStartCell(x, y) {
         if (x === this.goal.x && y === this.goal.y) {
-            alert('起點不能與終點重疊！');
+            this.onNotice('起點不能與終點重疊！');
             return;
         }
         this.start = { x, y };
@@ -236,7 +304,7 @@ class MazeEditor {
 
     setGoalCell(x, y) {
         if (x === this.start.x && y === this.start.y) {
-            alert('終點不能與起點重疊！');
+            this.onNotice('終點不能與起點重疊！');
             return;
         }
         this.goal = { x, y };
@@ -416,47 +484,23 @@ class MazeEditor {
             this.wrapper = wrapper;
             wrapper.style.width = widthPx + 'px';
             wrapper.style.height = heightPx + 'px';
-            if (this.cols === 10 && this.rows === 10) {
-                wrapper.style.backgroundImage = 'url("assets/img/map_10x10.jpg?v=' + Date.now() + '")';
-            } else {
-                wrapper.style.backgroundImage = 'none';
-            }
             this.applyTransform(false);
         }
 
-        // 若非 10x10 底圖模式，繪製 SVG 背景白色底與格線
-        if (this.cols !== 10 || this.rows !== 10) {
-            const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            bgRect.setAttribute('x', 0);
-            bgRect.setAttribute('y', 0);
-            bgRect.setAttribute('width', widthPx);
-            bgRect.setAttribute('height', heightPx);
-            bgRect.setAttribute('fill', '#ffffff');
-            svg.appendChild(bgRect);
+        // 純色底與淡格線（配色見 base.css 的 .map-bg / .map-grid-line）
+        const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bgRect.setAttribute('width', widthPx);
+        bgRect.setAttribute('height', heightPx);
+        bgRect.setAttribute('class', 'map-bg');
+        svg.appendChild(bgRect);
 
-            // 水平底格線
-            for (let r = 0; r <= this.rows; r++) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', 0);
-                line.setAttribute('y1', r * step);
-                line.setAttribute('x2', widthPx);
-                line.setAttribute('y2', r * step);
-                line.setAttribute('stroke', '#cbd5e1');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-            }
-            // 垂直底格線
-            for (let c = 0; c <= this.cols; c++) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', c * step);
-                line.setAttribute('y1', 0);
-                line.setAttribute('x2', c * step);
-                line.setAttribute('y2', heightPx);
-                line.setAttribute('stroke', '#cbd5e1');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-            }
-        }
+        const gridPath = [];
+        for (let r = 1; r < this.rows; r++) gridPath.push(`M0 ${r * step}H${widthPx}`);
+        for (let c = 1; c < this.cols; c++) gridPath.push(`M${c * step} 0V${heightPx}`);
+        const grid = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        grid.setAttribute('d', gridPath.join(''));
+        grid.setAttribute('class', 'map-grid-line');
+        svg.appendChild(grid);
 
         // 1. 格子背景與點選層 (處理 Start, Goal 設定)
         for (let r = 0; r < this.rows; r++) {
@@ -488,30 +532,43 @@ class MazeEditor {
             }
         }
 
-        // 2. 起點與終點圖示與文字
+        // 2. 起點與終點圖示
         const renderBadge = (pt, type) => {
             const cx = (pt.x + 0.5) * step;
             const cy = (pt.y + 0.5) * step;
+            const fillColor = type === 'S' ? '#22c55e' : '#ef4444';
 
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute('cx', cx);
             circle.setAttribute('cy', cy);
             circle.setAttribute('r', Math.max(12, Math.min(step * 0.35, 22)));
-            circle.setAttribute('fill', type === 'S' ? '#22c55e' : '#ef4444');
+            circle.setAttribute('fill', fillColor);
             circle.setAttribute('stroke', '#ffffff');
             circle.setAttribute('stroke-width', '2');
             circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))');
             circle.style.pointerEvents = 'none';
             svg.appendChild(circle);
 
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', cx);
-            text.setAttribute('y', cy + 1);
-            text.setAttribute('class', 'marker-text');
-            text.setAttribute('fill', '#ffffff');
-            text.textContent = type === 'S' ? '起點' : '終點';
-            text.setAttribute('font-size', Math.max(10, Math.min(15, step * 0.26)) + 'px');
-            svg.appendChild(text);
+            // 白色圖示，與工具列的起點（圖釘）、終點（旗子）圖示相同；[路徑, 填色]
+            const iconPaths = type === 'S'
+                ? [['M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z', '#ffffff'], ['M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0', fillColor]]
+                : [['M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z', '#ffffff'], ['M5 21v-7', 'none']];
+            const r = parseFloat(circle.getAttribute('r'));
+            const size = r * 1.15;
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            icon.setAttribute('transform', `translate(${cx - size / 2}, ${cy - size / 2}) scale(${size / 24})`);
+            icon.setAttribute('stroke', '#ffffff');
+            icon.setAttribute('stroke-width', '2.25');
+            icon.setAttribute('stroke-linecap', 'round');
+            icon.setAttribute('stroke-linejoin', 'round');
+            icon.style.pointerEvents = 'none';
+            iconPaths.forEach(([d, fill]) => {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', d);
+                path.setAttribute('fill', fill);
+                icon.appendChild(path);
+            });
+            svg.appendChild(icon);
         };
 
         renderBadge(this.start, 'S');
@@ -520,9 +577,7 @@ class MazeEditor {
         // 3. 牆壁可視化繪製
         // 3-1 水平牆壁
         for (let r = 0; r <= this.rows; r++) {
-            let y = r * step;
-            if (r === 0) y = 3;
-            else if (r === this.rows) y = heightPx - 3;
+            const y = r * step;
 
             for (let c = 0; c < this.cols; c++) {
                 if (this.hWalls[r] && this.hWalls[r][c]) {
@@ -540,9 +595,7 @@ class MazeEditor {
         // 3-2 垂直牆壁
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c <= this.cols; c++) {
-                let x = c * step;
-                if (c === 0) x = 3;
-                else if (c === this.cols) x = widthPx - 3;
+                const x = c * step;
 
                 if (this.vWalls[r] && this.vWalls[r][c]) {
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -557,6 +610,26 @@ class MazeEditor {
         }
 
         // 4. 點擊偵測熱區 (透明寬線條，方便滑鼠點擊)
+        const hoverLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        hoverLine.setAttribute('class', 'wall-hover-preview');
+        hoverLine.style.display = 'none';
+        svg.appendChild(hoverLine);
+        const bindHover = (hitLine, hasWall, x1, y1, x2, y2) => {
+            if (hasWall) hitLine.classList.add('has-wall');
+            hitLine.addEventListener('mouseenter', () => {
+                if (this.currentTool !== 'wall') return;
+                hoverLine.setAttribute('x1', x1);
+                hoverLine.setAttribute('y1', y1);
+                hoverLine.setAttribute('x2', x2);
+                hoverLine.setAttribute('y2', y2);
+                hoverLine.classList.toggle('is-remove', hasWall);
+                hoverLine.style.display = '';
+            });
+            hitLine.addEventListener('mouseleave', () => {
+                hoverLine.style.display = 'none';
+            });
+        };
+
         const hitWidth = Math.max(12, Math.min(22, step * 0.4));
         for (let r = 0; r <= this.rows; r++) {
             let yHit = r * step;
@@ -575,6 +648,7 @@ class MazeEditor {
                 hitLine.setAttribute('y2', yHit);
                 hitLine.setAttribute('stroke-width', strokeW);
                 hitLine.setAttribute('class', `wall-hit-line ${r === 0 || r === this.rows ? 'outer-hit' : ''}`);
+                bindHover(hitLine, !!(this.hWalls[r] && this.hWalls[r][c]), c * step, r * step, (c + 1) * step, r * step);
 
                 hitLine.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -606,6 +680,7 @@ class MazeEditor {
                 hitLine.setAttribute('y2', (r + 1) * step - 2);
                 hitLine.setAttribute('stroke-width', strokeW);
                 hitLine.setAttribute('class', `wall-hit-line ${c === 0 || c === this.cols ? 'outer-hit' : ''}`);
+                bindHover(hitLine, !!(this.vWalls[r] && this.vWalls[r][c]), c * step, r * step, c * step, (r + 1) * step);
 
                 hitLine.addEventListener('click', (e) => {
                     e.stopPropagation();

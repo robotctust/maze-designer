@@ -1,5 +1,10 @@
 <!-- 練習模式編輯列：規格、地圖、檔案選單與儲存 -->
 <div class="editbar" id="practiceToolsToolbar">
+    <!-- 平板直向：一次只顯示一個大畫面，用這組分頁切換（寬螢幕時隱藏） -->
+    <div class="seg view-switch" role="tablist" aria-label="畫面">
+        <button type="button" class="hud-pill-btn active" id="btnViewDesign" role="tab" aria-selected="true">設計</button>
+        <button type="button" class="hud-pill-btn" id="btnViewDrive" role="tab" aria-selected="false">試跑</button>
+    </div>
     <div class="menu-wrap">
         <button type="button" class="tool-btn" id="btnSpecMenu" aria-haspopup="menu" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#ruler"></use></svg><span id="specMenuLabel">10 × 10</span><svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
         <div class="menu spec-menu" id="specMenu" hidden>

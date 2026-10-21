@@ -30,7 +30,7 @@
                 <button type="button" class="menu-item" id="btnOpenMyRankedMaps" role="menuitem" title="查看我發布的排位賽地圖規格與2D影像"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>我發布的排位地圖<span class="menu-end" id="myRankedMapCount">—</span></button>
                 <div class="menu-sep" id="adminMenuSep" style="display: none;"></div>
                 <button type="button" class="menu-item" id="btnAdminUsers" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#users"></use></svg>帳號管理<span class="menu-end">初／中級</span></button>
-                <button type="button" class="menu-item" id="btnAdminReview" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#shield-check"></use></svg>牌位地圖審核<span class="menu-end" id="adminPendingCountBadge">0</span></button>
+                <button type="button" class="menu-item" id="btnAdminReview" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#shield-check"></use></svg>排位地圖審核<span class="menu-end" id="adminPendingCountBadge">0</span></button>
                 <div class="menu-sep"></div>
                 <button type="button" class="menu-item" id="btnLogout" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#logout"></use></svg>登出</button>
             </div>

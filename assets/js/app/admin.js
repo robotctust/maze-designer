@@ -12,7 +12,7 @@ const adminUsersTableBody = document.getElementById('adminUsersTableBody');
 
 function openAdminUsersModal() {
     if (!currentUser || currentUser.role !== 'senior') {
-        showToast('🔒 權限不足：僅高級使用者可管理帳號！', true);
+        showToast('權限不足：僅高級使用者可管理帳號', true);
         return;
     }
     adminUsersModalBackdrop?.classList.add('show');
@@ -122,7 +122,7 @@ let currentAdminReviewTab = 'pending'; // 'pending' | 'official'
 
 function openAdminReviewModal() {
     if (!currentUser || currentUser.role !== 'senior') {
-        showToast('🔒 權限不足：僅高級使用者可審核地圖！', true);
+        showToast('權限不足：僅高級使用者可審核地圖', true);
         return;
     }
     adminReviewModalBackdrop?.classList.add('show');
@@ -217,9 +217,14 @@ function loadAdminSubmissionsList() {
             });
 
             adminSubmissionsTableBody.querySelectorAll('.btn-approve-sub').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', async () => {
                     const subId = parseInt(btn.getAttribute('data-sub-id'), 10);
-                    if (!confirm('確定核准通過此地圖？核准後將正式加入官方排位賽題庫！')) return;
+                    const ok = await showConfirm({
+                        title: '核准這張地圖？',
+                        message: '核准後會正式加入官方排位賽題庫。',
+                        confirmLabel: '核准'
+                    });
+                    if (!ok) return;
                     btn.disabled = true;
 
                     fetch('api/admin.php?action=review_submission', {
@@ -245,9 +250,14 @@ function loadAdminSubmissionsList() {
             });
 
             adminSubmissionsTableBody.querySelectorAll('.btn-reject-sub').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', async () => {
                     const subId = parseInt(btn.getAttribute('data-sub-id'), 10);
-                    if (!confirm('確定退回此地圖投稿？')) return;
+                    const ok = await showConfirm({
+                        title: '退回這張地圖投稿？',
+                        confirmLabel: '退回',
+                        danger: true
+                    });
+                    if (!ok) return;
                     btn.disabled = true;
 
                     fetch('api/admin.php?action=review_submission', {
@@ -336,10 +346,16 @@ function loadAdminOfficialMapsList() {
 
             // 綁定刪除排位賽地圖
             adminOfficialMapsTableBody.querySelectorAll('.btn-delete-official').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', async () => {
                     const size = btn.getAttribute('data-size');
                     const mapId = btn.getAttribute('data-map-id');
-                    if (!confirm(`⚠️ 確定要刪除官方排位賽地圖【${size}/${mapId}】嗎？\n刪除後此地圖將不再出現在排位賽題庫中！`)) return;
+                    const ok = await showConfirm({
+                        title: `刪除官方排位地圖 ${size}/${mapId}？`,
+                        message: '刪除後這張地圖不會再出現在排位賽題庫中，這個動作無法復原。',
+                        confirmLabel: '刪除',
+                        danger: true
+                    });
+                    if (!ok) return;
 
                     btn.disabled = true;
                     fetch('api/admin.php?action=delete_ranked_map', {

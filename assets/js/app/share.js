@@ -36,7 +36,7 @@ function openCreateShareModal() {
         return;
     }
     if (currentUser.role === 'junior') {
-        showToast('🔒 權限限制：初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖！', true);
+        showToast('權限限制：初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖！', true);
         return;
     }
 
@@ -103,7 +103,7 @@ function pollShareStatus() {
                 if (res.isFull) {
                     clearShareTimers();
                     if (shareStatusNote) {
-                        shareStatusNote.textContent = '🎉 此分享碼已達 3 人使用上限！';
+                        shareStatusNote.textContent = '此分享碼已達 3 人使用上限';
                         shareStatusNote.className = 'dlg-note text-go';
                     }
                     if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';

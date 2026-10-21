@@ -94,9 +94,10 @@ function switchGameMode(mode) {
         resetTimer();
         maze3D.arenaColor = null;
 
-        // 重新載入練習賽迷宮
-        loadMazeConfig();
-        showToast('已切換為【練習賽】模式！');
+        // 回到排位賽前正在編輯的練習地圖（排位賽只改 3D 場景，不會動到編輯器，未存的修改也會保留）
+        set2DMapMode('large', false);
+        editor.loadData(editor.getData());
+        showToast('已回到練習模式');
     }
 }
 
@@ -562,7 +563,7 @@ function loadMyRankedMapsData() {
                 myRankedMapsList.innerHTML = `
                     <div class="list-note">
                         您目前尚未發布任何排位賽地圖。<br>
-                        可在【練習賽】完成迷宮設計後，點擊工具列的「發布到排位賽」投稿您的專屬地圖！
+                        可在練習模式完成迷宮設計後，點擊工具列的「發布到排位賽」投稿您的專屬地圖！
                     </div>
                 `;
                 return;
@@ -668,7 +669,7 @@ function loadMyRankedMapsData() {
 
 function loadRankedMapToEditor(m) {
     if (currentGameMode === 'ranked') {
-        showToast('排位賽進行中禁止載入外部地圖！請切換至【練習賽】進行載入。', true);
+        showToast('排位賽進行中禁止載入外部地圖！請先回到練習模式再載入。', true);
         return;
     }
     closeMyRankedMapsModal();

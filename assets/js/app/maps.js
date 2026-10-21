@@ -33,7 +33,9 @@ const loadMazeConfig = () => {
             console.error('載入失敗:', err);
             // 若無伺服器連線仍可正常使用預設配置
             editor.notifyUpdate();
-        });
+        })
+        // 載入後的地圖作為復原與未存檔判斷的起點
+        .finally(() => editor.clearHistory());
 };
 
 // 儲存迷宮彈窗相關 DOM 節點
@@ -57,11 +59,11 @@ let userSavedMapsCache = [];
 
 function openSaveMapModal() {
     if (!currentUser) {
-        openAuthModal('訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     if (currentGameMode === 'ranked') {
-        showToast('排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
+        showToast('排位賽官方地圖禁止儲存至個人資料庫！請先回到練習模式再儲存。', true);
         return;
     }
 
@@ -242,6 +244,7 @@ btnConfirmSaveMap?.addEventListener('click', () => {
 
         if (res.success) {
             closeSaveMapModal();
+            editor.markSaved();
             showToast(res.message || '已儲存');
             refreshMapLibraryBadge();
         } else {
@@ -259,14 +262,22 @@ btnConfirmSaveMap?.addEventListener('click', () => {
     });
 });
 
+// 有未存的修改時，關閉或重新整理頁面前先提醒（重新開啟會載入雲端最後儲存的版本）
+window.addEventListener('beforeunload', (e) => {
+    if (editor.isDirty()) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+
 // 儲存按鈕點擊
 document.getElementById('btnSave').addEventListener('click', () => {
     if (currentGameMode === 'ranked') {
-        showToast('排位賽官方地圖禁止儲存至個人資料庫！請切換至【練習賽】進行迷宮儲存。', true);
+        showToast('排位賽官方地圖禁止儲存至個人資料庫！請先回到練習模式再儲存。', true);
         return;
     }
     if (!currentUser) {
-        openAuthModal('訪客限制：【儲存迷宮設定至雲端資料庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     openSaveMapModal();
@@ -282,7 +293,7 @@ const mapLibraryList = document.getElementById('mapLibraryList');
 
 function openMapLibraryModal() {
     if (!currentUser) {
-        openAuthModal('訪客限制：【我的個人地圖庫】僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「我的地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     if (currentGameMode === 'ranked') {
@@ -385,6 +396,7 @@ function loadUserMapById(id, name) {
         .then(res => {
             if (res.success && res.data) {
                 editor.loadData(res.data);
+                editor.markSaved();
                 maze3D.resetOrbitCamera();
                 closeMapLibraryModal();
                 showToast(`已成功載入個人迷宮【${name || res.name}】！`);
@@ -397,10 +409,14 @@ function loadUserMapById(id, name) {
         });
 }
 
-function deleteUserMapById(id, name) {
-    if (!confirm(`確定要刪除迷宮【${name}】嗎？\n刪除後將釋放 1 個雲端儲存槽位，此動作無法復原！`)) {
-        return;
-    }
+async function deleteUserMapById(id, name) {
+    const ok = await showConfirm({
+        title: `刪除「${name}」？`,
+        message: '刪除後會空出 1 個雲端儲存格，這個動作無法復原。',
+        confirmLabel: '刪除',
+        danger: true
+    });
+    if (!ok) return;
 
     fetch(`api/maps.php?action=delete&id=${id}`, { method: 'POST' })
         .then(res => res.json())
@@ -428,11 +444,11 @@ setupMenu(document.getElementById('btnShortcuts'), document.getElementById('shor
 
 document.getElementById('btnMapLibrary')?.addEventListener('click', () => {
     if (currentGameMode === 'ranked') {
-        showToast('排位賽官方盲測模式禁止存取個人圖庫！請切換至【練習賽】進行管理。', true);
+        showToast('排位賽官方盲測模式禁止存取個人圖庫！請先回到練習模式。', true);
         return;
     }
     if (!currentUser) {
-        openAuthModal('訪客限制：【我的個人地圖庫】功能僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「我的地圖庫」功能僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     openMapLibraryModal();

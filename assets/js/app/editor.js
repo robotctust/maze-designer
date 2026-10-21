@@ -26,11 +26,14 @@ const editorPanel = document.querySelector('.editor-panel');
 const btnToggleMapSize = document.getElementById('btnToggleMapSize');
 let currentMapMode = 'large'; // 'large' (設計時 50% 一半版面) 或 'compact' (遙控時恢復正常大小)
 
+// 上方懸浮工具列佔用的高度（上下各留一份，地圖置中時不會被工具列蓋住）
+const MAP_OVERLAY_INSET = 56;
+
 function getOptimalDesignCanvasSize() {
     // 設計時 50% 版面下的最佳畫布像素尺寸 (兼顧寬度與高度)
     const viewport = document.getElementById('mapViewport');
     const maxW = viewport ? viewport.clientWidth - 32 : 560;
-    const maxH = viewport ? viewport.clientHeight - 32 : 560;
+    const maxH = viewport ? viewport.clientHeight - MAP_OVERLAY_INSET * 2 : 560;
     return Math.max(320, Math.min(720, maxW, maxH));
 }
 
@@ -96,12 +99,36 @@ if (window.ResizeObserver && canvasContainer) {
     ro.observe(canvasContainer);
 }
 
-// 視窗縮放時自適應設計大圖
-window.addEventListener('resize', () => {
-    if (currentMapMode === 'large' && editor) {
-        editor.setCanvasBaseSize(getOptimalDesignCanvasSize());
-    }
-});
+// 2D 編輯區大小改變時（含首次載入、平板轉向）自適應設計大圖
+const mapViewportEl = document.getElementById('mapViewport');
+if (window.ResizeObserver && mapViewportEl) {
+    new ResizeObserver(() => {
+        // 平板直向切到「試跑」分頁時 2D 被隱藏（寬度 0），不必重算
+        if (currentMapMode === 'large' && editor && mapViewportEl.clientWidth) {
+            editor.setCanvasBaseSize(getOptimalDesignCanvasSize());
+        }
+    }).observe(mapViewportEl);
+}
+
+// 平板直向的「設計／試跑」分頁：一次只顯示 2D 或 3D
+const appContainer = document.querySelector('.app-container');
+const btnViewDesign = document.getElementById('btnViewDesign');
+const btnViewDrive = document.getElementById('btnViewDrive');
+
+function setPortraitView(view) {
+    const drive = view === 'drive';
+    // 回到設計時先停下試跑，避免看不到 3D 時車子還在跑、計時還在走
+    if (!drive && maze3D.isDriving) btnStopDrive.click();
+    appContainer.classList.toggle('view-drive', drive);
+    btnViewDesign.classList.toggle('active', !drive);
+    btnViewDrive.classList.toggle('active', drive);
+    btnViewDesign.setAttribute('aria-selected', String(!drive));
+    btnViewDrive.setAttribute('aria-selected', String(drive));
+    if (!drive && currentMapMode === 'compact') set2DMapMode('large', false);
+}
+
+btnViewDesign.addEventListener('click', () => setPortraitView('design'));
+btnViewDrive.addEventListener('click', () => setPortraitView('drive'));
 
 // 2-1. 規格調整與登入權限檢查 (未登入僅限使用 10×10 含以下地圖)
 function applyGridSizeDirect(c, r) {
@@ -114,7 +141,7 @@ function applyGridSizeDirect(c, r) {
     }
     editor.setGridSize(c, r);
     maze3D.resetOrbitCamera();
-    showToast(`已成功切換規格為 ${c}×${r} 格！`);
+    showToast(`已成功切換規格為 ${c}×${r} 格！`, false, UNDO_TOAST_ACTION);
 }
 
 function requestApplyGridSize(c, r) {
@@ -178,6 +205,31 @@ toolButtons.forEach(btnObj => {
     });
 });
 
+// 3-1. 復原／重做（排位賽時編輯器隱藏，不作用）
+function undoMapEdit() {
+    if (currentGameMode === 'practice') editor.undo();
+}
+function redoMapEdit() {
+    if (currentGameMode === 'practice') editor.redo();
+}
+const UNDO_TOAST_ACTION = { label: '復原', onClick: undoMapEdit };
+
+document.getElementById('btnUndo').addEventListener('click', undoMapEdit);
+document.getElementById('btnRedo').addEventListener('click', redoMapEdit);
+
+window.addEventListener('keydown', (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+    const key = e.key.toLowerCase();
+    if (key !== 'z' && key !== 'y') return;
+    // 輸入框保留瀏覽器原本的復原；有彈窗開著時不動到背後的地圖
+    const el = document.activeElement;
+    if (el && (['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) || el.isContentEditable)) return;
+    if (document.querySelector('.auth-modal-backdrop.show')) return;
+    e.preventDefault();
+    if (key === 'y' || e.shiftKey) redoMapEdit();
+    else undoMapEdit();
+});
+
 // 4. 輔助操作與匯出入按鈕
 document.getElementById('btnOuterWalls').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
@@ -187,17 +239,17 @@ document.getElementById('btnOuterWalls').addEventListener('click', () => {
 document.getElementById('btnClearInner').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.clearInnerWalls();
-    showToast('已清空內部牆壁 (保留四周圍牆)');
+    showToast('已清空內部牆壁 (保留四周圍牆)', false, UNDO_TOAST_ACTION);
 });
 document.getElementById('btnClearAll').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.clearAllWalls();
-    showToast('已清空所有牆壁 (包含四周圍牆)');
+    showToast('已清空所有牆壁 (包含四周圍牆)', false, UNDO_TOAST_ACTION);
 });
 document.getElementById('btnRandom').addEventListener('click', () => {
     if (currentMapMode === 'compact') set2DMapMode('large', false);
     editor.generateRandomMaze();
-    showToast('已隨機生成迷宮！');
+    showToast('已隨機生成迷宮！', false, UNDO_TOAST_ACTION);
 });
 
 // 匯出 2D 地圖 (高解析 PNG 圖片)

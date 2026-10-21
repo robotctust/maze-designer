@@ -89,7 +89,6 @@
             <span class="timer-bar" aria-hidden="true"><span id="timerBarFill"></span></span>
         </div>
 
-        <span class="drive-bar-spacer"></span>
         <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
     </div>
 

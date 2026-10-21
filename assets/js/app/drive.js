@@ -58,7 +58,7 @@ btnResetCar.addEventListener('click', () => {
     if (currentGameMode === 'practice') {
         set2DMapMode('large', false);
     }
-    showToast('自走車已回到起點，請點擊【▶ 開始遙控】開始計時！');
+    showToast('自走車已回到起點，按「試跑」開始計時');
 });
 
 btnResetCam.addEventListener('click', () => {
@@ -83,7 +83,7 @@ btnResetCam.addEventListener('click', () => {
     });
 });
 
-// 7. 過關與超時視窗重設 (重設回起點並重設計時，需點擊「開始遙控」才開始計時)
+// 7. 過關與超時視窗重設 (重設回起點並重設計時，需點擊「試跑」才開始計時)
 document.getElementById('btnVictoryRestart').addEventListener('click', () => {
     document.getElementById('victoryModal').style.display = 'none';
     maze3D.stopDriving();
@@ -92,7 +92,7 @@ document.getElementById('btnVictoryRestart').addEventListener('click', () => {
     if (editor) editor.clearCarTrail();
     btnStartDrive.classList.add('pulse-prompt');
     set2DMapMode('large', false);
-    showToast('自走車已重設回起點，請點擊【▶ 開始遙控】開始計時！');
+    showToast('自走車已回到起點，按「試跑」開始計時');
 });
 
 document.getElementById('btnTimeoutRestart').addEventListener('click', () => {
@@ -103,5 +103,5 @@ document.getElementById('btnTimeoutRestart').addEventListener('click', () => {
     if (editor) editor.clearCarTrail();
     btnStartDrive.classList.add('pulse-prompt');
     set2DMapMode('large', false);
-    showToast('自走車已重設回起點，請點擊【▶ 開始遙控】開始計時！');
+    showToast('自走車已回到起點，按「試跑」開始計時');
 });

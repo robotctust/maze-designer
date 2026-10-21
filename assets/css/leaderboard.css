@@ -68,13 +68,15 @@
     gap: 8px;
 }
 
+/* 7 個段位並排時每格很窄，徽章放上方、文字置中，避免擠成多行 */
 .board-tabs .leaderboard-tab-btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
     min-height: 52px;
-    padding: 6px 8px;
+    padding: 8px 4px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: rgba(18, 24, 41, 0.8);
@@ -82,7 +84,7 @@
     font: inherit;
     font-size: 14px;
     font-weight: 700;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
 }
 
@@ -100,7 +102,9 @@
 .board-tabs .leaderboard-tab-btn span {
     display: flex;
     flex-direction: column;
+    align-items: center;
     line-height: 1.2;
+    white-space: nowrap;
 }
 
 .board-tabs .leaderboard-tab-btn small {
@@ -109,8 +113,8 @@
 }
 
 .board-tab-crest {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     flex: none;
     color: var(--tier);
 }
