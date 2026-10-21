@@ -28,7 +28,8 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    margin: 12px;
+    /* 上方不留邊距：頂部列內容剛好在頁面頂端與窗口上緣之間置中 */
+    margin: 0 12px 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface);
