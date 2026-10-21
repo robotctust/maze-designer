@@ -4,7 +4,7 @@
         <div class="dlg-head">
             <div class="dlg-titles">
                 <h2 class="dlg-title" id="authTitle">登入</h2>
-                <p class="dlg-sub">登入後可用到 30 × 30、存地圖、參加排位賽</p>
+                <p class="dlg-sub">登入後可用到 50 × 50、存地圖、參加排位賽</p>
             </div>
             <button type="button" class="dlg-close auth-modal-close" id="btnCloseAuthModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
         </div>
@@ -48,7 +48,7 @@
 
             <dl class="auth-rule-box">
                 <dt>訪客</dt><dd>最多 10 × 10，不能存檔</dd>
-                <dt class="member">會員</dt><dd>2～30 格、雲端存 8 張、參加排位賽</dd>
+                <dt class="member">會員</dt><dd>2～50 格、雲端存 8 張、參加排位賽</dd>
             </dl>
         </div>
     </div>

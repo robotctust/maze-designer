@@ -12,7 +12,7 @@
     </button>
     <div class="topbar-side end" id="userAuthBar">
         <button type="button" class="tool-btn btn-ghost" id="btnOpenLeaderboard"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trophy"></use></svg>排行榜</button>
-        <button type="button" class="tool-btn btn-ghost" id="btnOpenAuthModal" title="登入後可用到 30 × 30、存地圖、參加排位賽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#user"></use></svg>登入</button>
+        <button type="button" class="tool-btn btn-ghost" id="btnOpenAuthModal" title="登入後可用到 50 × 50、存地圖、參加排位賽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#user"></use></svg>登入</button>
         <div class="menu-wrap">
             <button type="button" class="tool-btn btn-ghost account-trigger" id="btnAccountMenu" aria-haspopup="menu" aria-expanded="false" style="display: none;">
                 <span class="avatar" id="accountAvatar"></span><span id="accountName"></span><svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg>

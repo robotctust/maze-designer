@@ -164,7 +164,7 @@ function updateAuthUI(user) {
         // 已登入
         const role = user.role || 'junior';
         const roleTitle = user.roleTitle || (role === 'senior' ? '高級使用者' : (role === 'intermediate' ? '中級使用者' : '初級使用者'));
-        authBadge.innerHTML = `<span class="role-badge ${role}">${roleTitle}</span>・可用 2～30 格`;
+        authBadge.innerHTML = `<span class="role-badge ${role}">${roleTitle}</span>・可用 2～50 格`;
         btnOpenAuthModal.style.display = 'none';
         btnLogout.style.display = 'flex';
         btnAccountMenu.style.display = 'inline-flex';
