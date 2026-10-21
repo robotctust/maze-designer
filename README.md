@@ -64,8 +64,7 @@ schema.sql             資料表結構參考
 ### macOS（Homebrew）
 
 1. 安裝 PHP 與 MySQL：`brew install php mysql`
-2. 啟動 MySQL：`mysql.server start`
-3. 在專案資料夾執行 `php -S localhost:8000`，打開 `http://localhost:8000/`
+2. 在 Finder 雙擊專案資料夾裡的 `start.command`（或在終端機執行 `./start.command`），會自動啟動 MySQL 與網站並打開 `http://localhost:8000/`。要停止時在該視窗按 Ctrl+C。
 
 ---
 
@@ -87,6 +86,7 @@ schema.sql             資料表結構參考
 ## 版本歷程
 
 ### v2.6（目前版本）
+- 新增 macOS 一鍵啟動：雙擊 `start.command` 就能啟動本地伺服器並自動打開瀏覽器。
 - 官方排位地圖刪除同步清理：最高權限者刪除官方排位地圖時，直接同步清除投稿資料庫紀錄，即時釋出使用者的上傳額度，個人發布列表不再殘留已刪除地圖。
 - 排位賽地圖顯示自訂名稱：排位大廳、3D 競速儀表板與地圖總覽全面優先顯示創作者自訂的地圖名稱。
 - 全新「我發布的排位地圖」彈窗：點擊右上角帳號選單「我發布的排位地圖」或大廳快捷鍵，即可檢視所有已投稿地圖。
