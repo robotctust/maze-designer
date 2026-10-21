@@ -143,6 +143,7 @@ const maze3D = new Maze3D(canvasContainer, {
 // 2. 初始化 2D 編輯器 (設計時預設為較大尺寸 560px)
 editor = new MazeEditor(svgElement, {
     baseSize: 560,
+    onNotice: (msg) => showToast(msg, true),
     onHistoryChange: (ed) => {
         document.getElementById('btnUndo').disabled = !ed.canUndo();
         document.getElementById('btnRedo').disabled = !ed.canRedo();

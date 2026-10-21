@@ -15,6 +15,7 @@ class MazeEditor {
 
         this.currentTool = 'wall'; // 'wall', 'start', 'goal'
         this.onUpdate = options.onUpdate || function() {};
+        this.onNotice = options.onNotice || ((msg) => alert(msg)); // 操作不被允許時的提示
 
         // 資料結構
         this.start = { x: 0, y: 9 };
@@ -282,7 +283,7 @@ class MazeEditor {
 
     setStartCell(x, y) {
         if (x === this.goal.x && y === this.goal.y) {
-            alert('起點不能與終點重疊！');
+            this.onNotice('起點不能與終點重疊！');
             return;
         }
         this.start = { x, y };
@@ -301,7 +302,7 @@ class MazeEditor {
 
     setGoalCell(x, y) {
         if (x === this.start.x && y === this.start.y) {
-            alert('終點不能與起點重疊！');
+            this.onNotice('終點不能與起點重疊！');
             return;
         }
         this.goal = { x, y };
@@ -569,12 +570,34 @@ class MazeEditor {
             circle.style.pointerEvents = 'none';
             svg.appendChild(circle);
 
+            if (type === 'G') {
+                // 終點：白色旗子圖示（與工具列的終點圖示相同）
+                const r = parseFloat(circle.getAttribute('r'));
+                const size = r * 1.15;
+                const flag = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                flag.setAttribute('transform', `translate(${cx - size / 2}, ${cy - size / 2}) scale(${size / 24})`);
+                flag.setAttribute('fill', 'none');
+                flag.setAttribute('stroke', '#ffffff');
+                flag.setAttribute('stroke-width', '2.25');
+                flag.setAttribute('stroke-linecap', 'round');
+                flag.setAttribute('stroke-linejoin', 'round');
+                flag.style.pointerEvents = 'none';
+                [['M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z', '#ffffff'], ['M5 21v-7', 'none']].forEach(([d, fill]) => {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', d);
+                    path.setAttribute('fill', fill);
+                    flag.appendChild(path);
+                });
+                svg.appendChild(flag);
+                return;
+            }
+
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', cx);
             text.setAttribute('y', cy + 1);
             text.setAttribute('class', 'marker-text');
             text.setAttribute('fill', '#ffffff');
-            text.textContent = type === 'S' ? '起點' : '終點';
+            text.textContent = '起點';
             text.setAttribute('font-size', Math.max(10, Math.min(15, step * 0.26)) + 'px');
             svg.appendChild(text);
         };
