@@ -48,7 +48,7 @@
 
             <dl class="auth-rule-box">
                 <dt>訪客</dt><dd>最多 10 × 10，不能存檔</dd>
-                <dt class="member">會員</dt><dd>2～30 格、雲端存 5 張、參加排位賽</dd>
+                <dt class="member">會員</dt><dd>2～30 格、雲端存 8 張、參加排位賽</dd>
             </dl>
         </div>
     </div>

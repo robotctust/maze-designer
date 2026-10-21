@@ -60,5 +60,5 @@
     </div>
     <div class="editbar-spacer"></div>
     <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽</button>
-    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（最多 5 張）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
+    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（最多 8 張）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
 </div>

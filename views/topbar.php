@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="menu-sep"></div>
-                <button type="button" class="menu-item" id="btnMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫<span class="menu-end" id="headerMapCountBadge">0 / 5</span></button>
+                <button type="button" class="menu-item" id="btnMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫<span class="menu-end" id="headerMapCountBadge">0 / 8</span></button>
                 <button type="button" class="menu-item" id="btnOpenMyRankedMaps" role="menuitem" title="查看我發布的排位賽地圖規格與2D影像"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>我發布的排位地圖<span class="menu-end" id="myRankedMapCount">—</span></button>
                 <div class="menu-sep" id="adminMenuSep" style="display: none;"></div>
                 <button type="button" class="menu-item" id="btnAdminUsers" role="menuitem" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#users"></use></svg>帳號管理<span class="menu-end">初／中級</span></button>
