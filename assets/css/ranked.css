@@ -18,6 +18,9 @@
 [data-tier="30x30"],
 .ranked-tier-btn[data-size="30x30"],
 .leaderboard-tab-btn[data-size="30x30"] { --tier: #FF6B57; }
+[data-tier="special"],
+.ranked-tier-btn[data-size="special"],
+.leaderboard-tab-btn[data-size="special"] { --tier: #00E5FF; }
 
 :root,
 [data-tier],

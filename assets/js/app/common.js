@@ -27,7 +27,7 @@ const driveStatusDot = document.getElementById('driveStatusDot');
 
 // 賽事模式：'practice' (練習賽) | 'ranked' (排位賽)
 let currentGameMode = 'practice';
-let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25, 30x30
+let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25, 30x30, special
 let currentRankedMapId = 'map_1';
 let currentRankedLimitMs = 90 * 1000;
 

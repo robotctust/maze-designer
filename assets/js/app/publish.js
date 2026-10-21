@@ -81,11 +81,25 @@ function openPublishModal() {
     const cols = editor.cols;
     const rows = editor.rows;
     const size = `${cols}x${rows}`;
-    const allowed = ['10x10', '15x15', '20x20', '25x25', '30x30'];
+    const squareAllowed = ['10x10', '15x15', '20x20', '25x25', '30x30'];
+    let targetTier = size;
 
-    if (!allowed.includes(size)) {
-        showToast(`規格不符：排位賽僅支援 10×10、15×15、20×20、25×25、30×30！目前為 ${cols}×${rows}。`, true);
-        return;
+    if (cols !== rows) {
+        // 長方形地圖：歸類於「特殊排位賽」
+        if (Math.max(cols, rows) > 30) {
+            showToast(`⚠️ 特殊排位賽規格限制：長方形地圖最大邊不能超過 30 格！目前為 ${cols}×${rows}。`, true);
+            return;
+        }
+        if (Math.min(cols, rows) < 2) {
+            showToast(`⚠️ 地圖尺寸過小，最小邊至少需 2 格！目前為 ${cols}×${rows}。`, true);
+            return;
+        }
+        targetTier = 'special';
+    } else {
+        if (!squareAllowed.includes(size)) {
+            showToast(`⚠️ 正方形排位賽目前僅支援 10×10、15×15、20×20、25×25、30×30 五種規格！目前為 ${cols}×${rows}。`, true);
+            return;
+        }
     }
 
     // 檢查連通性
@@ -102,10 +116,11 @@ function openPublishModal() {
         '15x15': '15×15 戰將級',
         '20x20': '20×20 大師級',
         '25x25': '25×25 宗師級',
-        '30x30': '30×30 傳奇級'
+        '30x30': '30×30 傳奇級',
+        'special': `特殊排位賽（長方形 ${cols}×${rows}）`
     };
 
-    if (publishModalSpec) publishModalSpec.textContent = tierLabels[size] || size;
+    if (publishModalSpec) publishModalSpec.textContent = tierLabels[targetTier] || size;
     if (publishModalPathCheck) publishModalPathCheck.innerHTML = '走得通<svg class="icon" style="color:var(--go)" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>';
 
     // 計算牆壁數量
