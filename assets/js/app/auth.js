@@ -19,7 +19,14 @@ setupMenu(btnAccountMenu, accountMenu, () => {
     const el = document.getElementById('myRankedMapCount');
     fetch('api/ranked.php?action=leaderboard&size=10x10')
         .then(res => res.json())
-        .then(res => { if (res.myMapCount) el.textContent = `共 ${res.myMapCount.total} 張`; })
+        .then(res => {
+            if (res.myMapCount && el) {
+                el.textContent = `共 ${res.myMapCount.total} 張`;
+                if (res.myMapCount.pending > 0) {
+                    el.textContent += ` (${res.myMapCount.pending} 待審)`;
+                }
+            }
+        })
         .catch(() => {});
 });
 const authModalBackdrop = document.getElementById('authModalBackdrop');
@@ -204,11 +211,11 @@ function updateAuthUI(user) {
         if (btnSave) {
             btnSave.classList.remove('guest-locked');
             btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
-            btnSave.title = '將目前迷宮儲存至您的個人雲端資料庫 (最多 5 張)';
+            btnSave.title = '將目前迷宮儲存至您的個人雲端資料庫 (最多 8 張)';
         }
         if (btnMapLibrary) {
             btnMapLibrary.classList.remove('guest-locked');
-            btnMapLibrary.title = '開啟我的迷宮圖庫 (管理與載入已存地圖，最多 5 張)';
+            btnMapLibrary.title = '開啟我的迷宮圖庫 (管理與載入已存地圖，最多 8 張)';
         }
 
         // 排位賽地圖發布權限控管 (初級使用者不能上傳排位賽地圖)

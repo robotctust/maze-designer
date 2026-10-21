@@ -142,7 +142,10 @@ function openPublishModal() {
 
     if (publishModalStats) publishModalStats.textContent = `${wallTotal} 段・${cols * 30} × ${rows * 30} cm`;
     if (publishModalAuthor) publishModalAuthor.textContent = currentUser ? currentUser.username : '訪客';
-    if (publishCustomName) publishCustomName.value = '';
+    if (publishCustomName) {
+        const curName = document.getElementById('saveMapNameInput')?.value.trim() || '';
+        publishCustomName.value = curName;
+    }
 
     publishModalBackdrop.classList.add('show');
 }
@@ -182,6 +185,19 @@ btnConfirmPublish?.addEventListener('click', () => {
         if (res.success) {
             closePublishModal();
             showToast(res.message);
+            // 刷新頂部選單發布統計
+            fetch('api/ranked.php?action=leaderboard&size=10x10')
+                .then(r => r.json())
+                .then(data => {
+                    const el = document.getElementById('myRankedMapCount');
+                    if (el && data.myMapCount) {
+                        el.textContent = `共 ${data.myMapCount.total} 張`;
+                        if (data.myMapCount.pending > 0) {
+                            el.textContent += ` (${data.myMapCount.pending} 待審)`;
+                        }
+                    }
+                })
+                .catch(() => {});
         } else {
             showToast(res.message || '發布失敗', true);
         }

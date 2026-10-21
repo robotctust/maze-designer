@@ -1,4 +1,4 @@
-<!-- 儲存迷宮（新地圖或覆蓋舊地圖，最多 5 張） -->
+<!-- 儲存迷宮（新地圖或覆蓋舊地圖，最多 8 張） -->
 <div class="auth-modal-backdrop" id="saveMapModalBackdrop">
     <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="saveTitle">
         <div class="dlg-head">
@@ -10,7 +10,7 @@
         </div>
         <div class="dlg-body">
             <div class="quota">
-                <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="saveQuotaCount">0 / 5</span></div>
+                <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="saveQuotaCount">0 / 8</span></div>
                 <div class="quota-progress-bar"><div class="quota-progress-fill" id="saveQuotaProgressFill" style="width: 0%;"></div></div>
             </div>
             <div class="field">
@@ -24,7 +24,7 @@
                     <span class="slot-option-label">存成新地圖</span>
                     <span class="slot-option-desc" id="slotNewDesc">使用新的儲存格</span>
                 </label>
-                <div class="map-full-warning" id="mapFullWarning" style="display: none;">已經存滿 5 張。請選一張覆蓋，或到「我的地圖庫」刪掉不要的。</div>
+                <div class="map-full-warning" id="mapFullWarning" style="display: none;">已經存滿 8 張。請選一張覆蓋，或到「我的地圖庫」刪掉不要的。</div>
                 <div class="save-overwrite-group" id="saveOverwriteGroup">
                     <div class="save-existing-list" id="saveExistingMapsList"></div>
                 </div>
@@ -49,11 +49,11 @@
         </div>
         <div class="dlg-body">
             <div class="quota">
-                <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="libraryQuotaCount">0 / 5</span></div>
+                <div class="quota-info"><span>雲端空間</span><span class="quota-count" id="libraryQuotaCount">0 / 8</span></div>
                 <div class="quota-progress-bar"><div class="quota-progress-fill" id="libraryQuotaProgressFill" style="width: 0%;"></div></div>
             </div>
             <div class="map-library-list" id="mapLibraryList"></div>
-            <p class="dlg-note">在練習模式按「儲存」，地圖就會出現在這裡。</p>
+            <p class="dlg-note">在練習模式按「儲存」，地圖就會出現在這裡（每個帳號最多可存 8 張）。</p>
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>

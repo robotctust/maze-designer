@@ -3,7 +3,7 @@
  * 與 assets/js/app/ 其他檔案共用同一個全域範圍，載入順序見 index.php。
  */
 // ============================================
-// 9. 儲存與讀取 (PHP + MySQL API - 支援每位使用者儲存最多 5 張迷宮)
+// 9. 儲存與讀取 (PHP + MySQL API - 支援每位使用者儲存最多 8 張迷宮)
 // ============================================
 
 const loadMazeConfig = () => {
@@ -97,7 +97,7 @@ function openSaveMapModal() {
 
             userSavedMapsCache = res.list || [];
             const count = res.count || 0;
-            const max = res.max || 5;
+            const max = res.max || 8;
             const remaining = res.remaining !== undefined ? res.remaining : Math.max(0, max - count);
 
             // 更新配額進度條
@@ -107,7 +107,7 @@ function openSaveMapModal() {
             if (saveQuotaProgressFill) {
                 const pct = Math.min(100, (count / max) * 100);
                 saveQuotaProgressFill.style.width = `${pct}%`;
-                saveQuotaProgressFill.className = 'quota-progress-fill' + (count >= max ? ' danger' : (count >= 4 ? ' warn' : ''));
+                saveQuotaProgressFill.className = 'quota-progress-fill' + (count >= max ? ' danger' : (count >= Math.max(1, max - 1) ? ' warn' : ''));
             }
 
             const headerMapCountBadge = document.getElementById('headerMapCountBadge');
@@ -318,7 +318,7 @@ function loadMapLibraryList() {
 
             const list = res.list || [];
             const count = res.count || 0;
-            const max = res.max || 5;
+            const max = res.max || 8;
             const remaining = res.remaining !== undefined ? res.remaining : Math.max(0, max - count);
 
             // 更新容量進度條
@@ -328,7 +328,7 @@ function loadMapLibraryList() {
             if (libraryQuotaProgressFill) {
                 const pct = Math.min(100, (count / max) * 100);
                 libraryQuotaProgressFill.style.width = `${pct}%`;
-                libraryQuotaProgressFill.className = 'quota-progress-fill' + (count >= max ? ' danger' : (count >= 4 ? ' warn' : ''));
+                libraryQuotaProgressFill.className = 'quota-progress-fill' + (count >= max ? ' danger' : (count >= Math.max(1, max - 1) ? ' warn' : ''));
             }
 
             const headerMapCountBadge = document.getElementById('headerMapCountBadge');
@@ -336,7 +336,7 @@ function loadMapLibraryList() {
 
             if (list.length === 0) {
                 mapLibraryList.innerHTML = `
-                    <div class="list-note">還沒有存任何地圖。每個帳號最多可以存 5 張。</div>
+                    <div class="list-note">還沒有存任何地圖。每個帳號最多可以存 8 張。</div>
                 `;
                 return;
             }

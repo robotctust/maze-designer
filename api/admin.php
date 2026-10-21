@@ -238,13 +238,25 @@ if ($action === 'review_submission') {
     $nextIndex = $maxIndex + 1;
     $newMapId = "map_{$nextIndex}";
 
-    $mazeData = json_decode($sub['maze_data'], true);
+        $mazeData = json_decode($sub['maze_data'], true) ?: [];
+    $customName = trim($mazeData['customName'] ?? '');
+    if (empty($customName)) {
+        if (preg_match('/\(([^)]+)\)$/', $sub['name'], $m)) {
+            $cand = trim($m[1]);
+            if (!str_starts_with($cand, '由 ') && !str_ends_with($cand, '發布') && !str_ends_with($cand, '提供')) {
+                $customName = $cand;
+            }
+        }
+    }
     $offPrefix = ($size === 'special') ? "特殊排位賽官方地圖 ({$sub['grid_cols']}×{$sub['grid_rows']})" : (($size === 'apex') ? "巔峰排位賽官方地圖 ({$sub['grid_cols']}×{$sub['grid_rows']})" : "{$size} 官方排位賽地圖");
-    $finalOfficialName = "{$offPrefix} #{$nextIndex} (由 {$sub['author_name']} 提供)";
+    $finalOfficialName = !empty($customName) 
+        ? "{$offPrefix} #{$nextIndex} ({$customName})" 
+        : "{$offPrefix} #{$nextIndex} (由 {$sub['author_name']} 提供)";
 
     $fileData = [
         'mapId' => $newMapId,
         'name' => $finalOfficialName,
+        'customName' => $customName,
         'author' => $sub['author_name'],
         'authorId' => intval($sub['author_id']),
         'gridSize' => $mazeData['gridSize'] ?? ['rows' => intval($sub['grid_rows']), 'cols' => intval($sub['grid_cols'])],

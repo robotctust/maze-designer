@@ -1,11 +1,11 @@
 <?php
 /**
- * 迷宮配置儲存與讀取 API (支援每位使用者獨立儲存最多 5 張地圖)
+ * 迷宮配置儲存與讀取 API (支援每位使用者獨立儲存最多 8 張地圖)
  */
 require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
 $dataFile = dirname(__DIR__) . '/data/maze_config.json';
-const MAX_USER_MAPS = 5;
+const MAX_USER_MAPS = 8;
 
 // 預設 10x10 迷宮配置
 function getDefaultConfig() {
@@ -64,7 +64,7 @@ $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;
 
 // ============================================================
-// 1. 查詢使用者個人地圖庫清單 (最多 5 張)
+// 1. 查詢使用者個人地圖庫清單 (最多 8 張)
 // ============================================================
 if ($action === 'list') {
     if (!$isLoggedIn) {
@@ -285,7 +285,7 @@ if ($method === 'GET') {
 }
 
 // ============================================================
-// 5. POST 儲存迷宮 (每隻帳號上限 5 張，支援新增與覆蓋現有地圖)
+// 5. POST 儲存迷宮 (每隻帳號上限 8 張，支援新增與覆蓋現有地圖)
 // ============================================================
 if ($method === 'POST') {
     $rawInput = file_get_contents('php://input');
@@ -378,7 +378,7 @@ if ($method === 'POST') {
             $savedMapId = $targetMapId;
             $isOverwrite = true;
         } else {
-            // 模式 B：存為全新地圖 (檢查 5 張地圖上限)
+            // 模式 B：存為全新地圖 (檢查 8 張地圖上限)
             if ($currentCount >= MAX_USER_MAPS) {
                 http_response_code(400);
                 echo json_encode([
