@@ -554,52 +554,43 @@ class MazeEditor {
             }
         }
 
-        // 2. 起點與終點圖示與文字
+        // 2. 起點與終點圖示
         const renderBadge = (pt, type) => {
             const cx = (pt.x + 0.5) * step;
             const cy = (pt.y + 0.5) * step;
+            const fillColor = type === 'S' ? '#22c55e' : '#ef4444';
 
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute('cx', cx);
             circle.setAttribute('cy', cy);
             circle.setAttribute('r', Math.max(12, Math.min(step * 0.35, 22)));
-            circle.setAttribute('fill', type === 'S' ? '#22c55e' : '#ef4444');
+            circle.setAttribute('fill', fillColor);
             circle.setAttribute('stroke', '#ffffff');
             circle.setAttribute('stroke-width', '2');
             circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))');
             circle.style.pointerEvents = 'none';
             svg.appendChild(circle);
 
-            if (type === 'G') {
-                // 終點：白色旗子圖示（與工具列的終點圖示相同）
-                const r = parseFloat(circle.getAttribute('r'));
-                const size = r * 1.15;
-                const flag = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                flag.setAttribute('transform', `translate(${cx - size / 2}, ${cy - size / 2}) scale(${size / 24})`);
-                flag.setAttribute('fill', 'none');
-                flag.setAttribute('stroke', '#ffffff');
-                flag.setAttribute('stroke-width', '2.25');
-                flag.setAttribute('stroke-linecap', 'round');
-                flag.setAttribute('stroke-linejoin', 'round');
-                flag.style.pointerEvents = 'none';
-                [['M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z', '#ffffff'], ['M5 21v-7', 'none']].forEach(([d, fill]) => {
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('d', d);
-                    path.setAttribute('fill', fill);
-                    flag.appendChild(path);
-                });
-                svg.appendChild(flag);
-                return;
-            }
-
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', cx);
-            text.setAttribute('y', cy + 1);
-            text.setAttribute('class', 'marker-text');
-            text.setAttribute('fill', '#ffffff');
-            text.textContent = '起點';
-            text.setAttribute('font-size', Math.max(10, Math.min(15, step * 0.26)) + 'px');
-            svg.appendChild(text);
+            // 白色圖示，與工具列的起點（圖釘）、終點（旗子）圖示相同；[路徑, 填色]
+            const iconPaths = type === 'S'
+                ? [['M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z', '#ffffff'], ['M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0', fillColor]]
+                : [['M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z', '#ffffff'], ['M5 21v-7', 'none']];
+            const r = parseFloat(circle.getAttribute('r'));
+            const size = r * 1.15;
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            icon.setAttribute('transform', `translate(${cx - size / 2}, ${cy - size / 2}) scale(${size / 24})`);
+            icon.setAttribute('stroke', '#ffffff');
+            icon.setAttribute('stroke-width', '2.25');
+            icon.setAttribute('stroke-linecap', 'round');
+            icon.setAttribute('stroke-linejoin', 'round');
+            icon.style.pointerEvents = 'none';
+            iconPaths.forEach(([d, fill]) => {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', d);
+                path.setAttribute('fill', fill);
+                icon.appendChild(path);
+            });
+            svg.appendChild(icon);
         };
 
         renderBadge(this.start, 'S');
