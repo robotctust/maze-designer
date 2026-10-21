@@ -55,6 +55,29 @@
     </div>
 </div>
 
+<!-- 我發布的排位賽地圖 -->
+<div class="auth-modal-backdrop" id="myRankedMapsModalBackdrop">
+    <div class="auth-modal-card dlg-lg" role="dialog" aria-modal="true" aria-labelledby="myRankedMapsTitle">
+        <div class="dlg-head">
+            <div class="dlg-titles">
+                <h2 class="dlg-title" id="myRankedMapsTitle">我發布的排位賽地圖</h2>
+                <p class="dlg-sub">檢視您投稿審核中與已收錄至官方題庫的排位地圖規格與 2D 影像</p>
+            </div>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseMyRankedMapsModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+        </div>
+        <div class="dlg-body">
+            <div class="my-ranked-maps-stats" id="myRankedMapsStats"></div>
+            <div class="my-ranked-maps-list" id="myRankedMapsList">
+                <div class="list-note">載入中…</div>
+            </div>
+        </div>
+        <div class="dlg-foot">
+            <span class="dlg-note">提示：點擊「載入至編輯器」可將地圖匯入練習賽進行檢視或修改</span>
+            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMyRankedMaps"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+        </div>
+    </div>
+</div>
+
 <!-- 發布到排位賽 -->
 <div class="auth-modal-backdrop" id="publishModalBackdrop">
     <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
@@ -74,8 +97,8 @@
             </div>
             <p class="dlg-note">只接受 10、15、20、25 格的正方形地圖</p>
             <div class="field">
-                <label for="publishCustomName">地圖別名（選填）</label>
-                <input class="dlg-input" type="text" id="publishCustomName" placeholder="雙龍出海" maxlength="30">
+                <label for="publishCustomName">自訂地圖名稱（推薦填寫，排位賽出題將顯示）</label>
+                <input class="dlg-input" type="text" id="publishCustomName" placeholder="例如：雙龍出海、迴旋迷陣" maxlength="30">
             </div>
         </div>
         <div class="dlg-foot">

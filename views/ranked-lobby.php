@@ -91,6 +91,7 @@
                     </div>
                     <button type="button" class="tool-btn" id="btnRepickMap" title="同級別換一張官方地圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>換一張</button>
                     <button type="button" class="tool-btn icon-btn" id="btnOpenRankedGallery" title="地圖總覽" aria-label="地圖總覽"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg></button>
+                    <button type="button" class="tool-btn icon-btn" id="btnLobbyMyRankedMaps" title="我發布的排位地圖" aria-label="我發布的排位地圖"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg></button>
                 </div>
                 <div class="lobby-cta">
                     <button type="button" class="lobby-start" id="btnLobbyStart"><svg class="icon" style="width:22px;height:22px" aria-hidden="true"><use href="assets/icons.svg#player-play"></use></svg>開始挑戰</button>

@@ -187,12 +187,29 @@ function loadRankedMatch(size = '10x10') {
                 const mapNameEl = document.getElementById('rankedMapName');
                 const limitTextEl = document.getElementById('rankedLimitText');
 
-                document.getElementById('rankedMapId').textContent = res.mapId;
+                const customName = res.customName || (res.mapData && res.mapData.customName) || '';
+                const mapLabel = customName ? `${customName} (${res.mapId})` : res.mapId;
+                const authorName = res.mapData.author || '官方';
+
+                const rankedMapIdEl = document.getElementById('rankedMapId');
+                if (rankedMapIdEl) {
+                    if (customName) {
+                        rankedMapIdEl.innerHTML = `<span class="ranked-custom-name">${escapeHtml(customName)}</span> <span class="ranked-map-subid">(${escapeHtml(res.mapId)})</span>`;
+                        rankedMapIdEl.title = `地圖：${customName} (${res.mapId})・出題：${authorName}`;
+                    } else {
+                        rankedMapIdEl.textContent = res.mapId;
+                        rankedMapIdEl.title = `地圖：${res.mapId}・出題：${authorName}`;
+                    }
+                }
                 if (mapNameEl) mapNameEl.textContent = (size === 'special')
                     ? `${res.mapData.author || '官方'}出題・長方形 ${mapCols} × ${mapRows}`
                     : ((size === 'apex') ? `${res.mapData.author || '官方'}出題・超大型 ${mapCols} × ${mapRows}` : `${res.mapData.author || '官方'}出題・${size.replace('x', ' × ')}`);
                 if (limitTextEl) limitTextEl.textContent = res.timeLimitDesc;
-                document.getElementById('liveMapId').textContent = res.mapId;
+                const liveMapIdEl = document.getElementById('liveMapId');
+                if (liveMapIdEl) {
+                    liveMapIdEl.textContent = customName ? `${customName} (${res.mapId})` : res.mapId;
+                    liveMapIdEl.title = `地圖：${mapLabel} (出題：${authorName})`;
+                }
                 refreshLobbyScore(size);
 
                 // 更新 header 標籤
@@ -202,7 +219,7 @@ function loadRankedMatch(size = '10x10') {
                 if (tagTotal) tagTotal.textContent = `總長寬：${mapCols * 30}×${mapRows * 30} cm`;
 
                 btnStartDrive.classList.add('pulse-prompt');
-                showToast(`已換成 ${tierTitle} 的 ${res.mapId}`);
+                showToast(`已換成 ${tierTitle} 的 ${mapLabel}`);
             } else {
                 if (res.requireLogin) {
                     openAuthModal(res.message, 'login');
@@ -470,10 +487,10 @@ function openRankedGallery() {
                 maps.forEach(m => {
                     const isCurrent = size === currentRankedSize && m.mapId === currentRankedMapId;
                     html += `
-                        <div class="ranked-gallery-item${isCurrent ? ' is-current' : ''}" title="${escapeHtml(String(m.name || m.mapId))}">
+                        <div class="ranked-gallery-item${isCurrent ? ' is-current' : ''}" title="${escapeHtml(String(m.customName ? `${m.customName} (${m.mapId})` : (m.name || m.mapId)))}">
                             ${mazePreviewSvg(m)}
-                            <div class="ranked-gallery-name">${escapeHtml(String(m.mapId))}${isCurrent ? '（本場）' : ''}</div>
-                            <div class="ranked-gallery-author">${escapeHtml(String(m.author || '官方'))}</div>
+                            <div class="ranked-gallery-name">${escapeHtml(String(m.customName || m.mapId))}${isCurrent ? '（本場）' : ''}</div>
+                            <div class="ranked-gallery-author">${m.customName ? `<span class="gallery-sub-id">${escapeHtml(m.mapId)}</span>・` : ''}${escapeHtml(String(m.author || '官方'))}</div>
                         </div>
                     `;
                 });
@@ -491,3 +508,198 @@ document.getElementById('btnCloseRankedGallery')?.addEventListener('click', () =
 rankedGalleryBackdrop?.addEventListener('click', (e) => {
     if (e.target === rankedGalleryBackdrop) rankedGalleryBackdrop.classList.remove('show');
 });
+
+
+// ============================================
+// 我發布的排位賽地圖 Modal
+// ============================================
+const myRankedMapsModalBackdrop = document.getElementById('myRankedMapsModalBackdrop');
+const btnCloseMyRankedMapsModal = document.getElementById('btnCloseMyRankedMapsModal');
+const btnRefreshMyRankedMaps = document.getElementById('btnRefreshMyRankedMaps');
+const myRankedMapsList = document.getElementById('myRankedMapsList');
+const myRankedMapsStats = document.getElementById('myRankedMapsStats');
+
+let myPublishedMapsCache = [];
+
+function openMyRankedMapsModal() {
+    if (!currentUser) {
+        openAuthModal('訪客限制：【我發布的排位地圖】需要登入會員帳號方可查看！請先登入。', 'login');
+        return;
+    }
+    // 關閉可能開啟中的帳號選單
+    const accMenu = document.getElementById('accountMenu');
+    if (accMenu) accMenu.hidden = true;
+
+    myRankedMapsModalBackdrop?.classList.add('show');
+    loadMyRankedMapsData();
+}
+
+function closeMyRankedMapsModal() {
+    myRankedMapsModalBackdrop?.classList.remove('show');
+}
+
+function loadMyRankedMapsData() {
+    if (!myRankedMapsList) return;
+    myRankedMapsList.innerHTML = '<div class="list-note">載入中…</div>';
+    if (myRankedMapsStats) myRankedMapsStats.innerHTML = '';
+
+    fetch('api/ranked.php?action=my_published_maps')
+        .then(res => res.json())
+        .then(res => {
+            if (!res.success) {
+                myRankedMapsList.innerHTML = `<div class="list-note error">無法載入發布地圖：${escapeHtml(res.message || '未知錯誤')}</div>`;
+                return;
+            }
+            const maps = res.maps || [];
+            myPublishedMapsCache = maps;
+
+            // 更新頂部帳號選單的數量顯示
+            const countEl = document.getElementById('myRankedMapCount');
+            if (countEl) countEl.textContent = `共 ${maps.length} 張`;
+
+            if (maps.length === 0) {
+                if (myRankedMapsStats) myRankedMapsStats.style.display = 'none';
+                myRankedMapsList.innerHTML = `
+                    <div class="list-note">
+                        您目前尚未發布任何排位賽地圖。<br>
+                        可在【練習賽】完成迷宮設計後，點擊工具列的「發布到排位賽」投稿您的專屬地圖！
+                    </div>
+                `;
+                return;
+            }
+
+            // 計算統計
+            let approvedCount = 0;
+            let pendingCount = 0;
+            let rejectedCount = 0;
+            maps.forEach(m => {
+                if (m.status === 'approved') approvedCount++;
+                else if (m.status === 'pending') pendingCount++;
+                else if (m.status === 'rejected') rejectedCount++;
+            });
+
+            if (myRankedMapsStats) {
+                myRankedMapsStats.style.display = 'flex';
+                myRankedMapsStats.innerHTML = `
+                    <div class="stat-item"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布總數：<strong>${maps.length} 張</strong></div>
+                    <div class="stat-item" style="color: #4ade80;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>官方收錄：<strong>${approvedCount} 張</strong></div>
+                    ${pendingCount > 0 ? `<div class="stat-item" style="color: #fbbf24;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg>審核中：<strong>${pendingCount} 張</strong></div>` : ''}
+                    ${rejectedCount > 0 ? `<div class="stat-item" style="color: #f87171;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg>已退回：<strong>${rejectedCount} 張</strong></div>` : ''}
+                `;
+            }
+
+            let html = '';
+            maps.forEach((m, idx) => {
+                const statusMap = {
+                    'approved': { text: '已收錄官方題庫（全服可抽）', cls: 'status-approved', icon: 'check' },
+                    'pending': { text: '待高級使用者審核中', cls: 'status-pending', icon: 'clock' },
+                    'rejected': { text: '審核未通過／已退回', cls: 'status-rejected', icon: 'x' }
+                };
+                const st = statusMap[m.status] || { text: m.status, cls: '', icon: 'help' };
+                const timeStr = m.createdAt ? m.createdAt.substring(0, 16) : '-';
+
+                html += `
+                    <div class="my-ranked-map-card">
+                        <div class="my-ranked-map-preview">
+                            ${mazePreviewSvg(m)}
+                            <span class="preview-badge">${escapeHtml(m.tierName)}</span>
+                        </div>
+                        <div class="my-ranked-map-info">
+                            <div class="my-ranked-map-header">
+                                <h3 class="my-ranked-map-title">
+                                    <span>${escapeHtml(m.displayName || m.name)}</span>
+                                    ${m.mapId ? `<span class="map-id-tag">${escapeHtml(m.mapId)}</span>` : ''}
+                                </h3>
+                                <span class="status-badge ${st.cls}">
+                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#${st.icon}"></use></svg>
+                                    ${st.text}
+                                </span>
+                            </div>
+                            <div class="my-ranked-map-specs">
+                                <div class="spec-chip">
+                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg>
+                                    <span>規格：<strong>${m.gridSize.cols} × ${m.gridSize.rows} 格</strong></span>
+                                </div>
+                                <div class="spec-chip">
+                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#ruler"></use></svg>
+                                    <span>尺寸：<strong>${m.totalWidthCm} × ${m.totalHeightCm} cm</strong></span>
+                                </div>
+                                <div class="spec-chip">
+                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wall"></use></svg>
+                                    <span>隔板：<strong>${m.wallCount} 段</strong></span>
+                                </div>
+                                <div class="spec-chip">
+                                    <span class="dot-start" title="起點"></span> 起點 (${m.start.x}, ${m.start.y})
+                                    <span class="sep"></span>
+                                    <span class="dot-goal" title="終點"></span> 終點 (${m.goal.x}, ${m.goal.y})
+                                </div>
+                            </div>
+                            <div class="my-ranked-map-footer">
+                                <span><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#calendar"></use></svg> 投稿於 ${timeStr}</span>
+                                <div class="map-actions">
+                                    <button type="button" class="tool-btn btn-sm btn-ghost btn-load-ranked-map" data-index="${idx}" title="載入至練習賽編輯器">
+                                        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"></use></svg>載入至編輯器
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            myRankedMapsList.innerHTML = html;
+
+            // 綁定「載入至編輯器」按鈕
+            myRankedMapsList.querySelectorAll('.btn-load-ranked-map').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.getAttribute('data-index'), 10);
+                    const mapData = myPublishedMapsCache[idx];
+                    if (mapData) {
+                        loadRankedMapToEditor(mapData);
+                    }
+                });
+            });
+        })
+        .catch(err => {
+            console.error('載入發布地圖失敗:', err);
+            myRankedMapsList.innerHTML = '<div class="list-note error">無法連線到伺服器，請稍後再試</div>';
+        });
+}
+
+function loadRankedMapToEditor(m) {
+    if (currentGameMode === 'ranked') {
+        showToast('排位賽進行中禁止載入外部地圖！請切換至【練習賽】進行載入。', true);
+        return;
+    }
+    closeMyRankedMapsModal();
+    if (typeof switchGameMode === 'function' && currentGameMode !== 'practice') {
+        switchGameMode('practice');
+    }
+    if (typeof editor !== 'undefined') {
+        editor.loadData({
+            gridSize: m.gridSize,
+            cellSizeCm: 30,
+            wallHeightCm: 15,
+            start: m.start,
+            goal: m.goal,
+            hWalls: m.hWalls,
+            vWalls: m.vWalls
+        });
+        if (typeof maze3D !== 'undefined' && maze3D.resetOrbitCamera) {
+            maze3D.resetOrbitCamera();
+        }
+        const saveNameInput = document.getElementById('saveMapNameInput');
+        if (saveNameInput) saveNameInput.value = m.displayName || m.name || '';
+        showToast(`已載入地圖【${m.displayName || m.name}】至練習賽編輯器`);
+    }
+}
+
+// 註冊「我發布的排位地圖」按鈕事件
+document.getElementById('btnOpenMyRankedMaps')?.addEventListener('click', openMyRankedMapsModal);
+document.getElementById('btnLobbyMyRankedMaps')?.addEventListener('click', openMyRankedMapsModal);
+btnCloseMyRankedMapsModal?.addEventListener('click', closeMyRankedMapsModal);
+btnRefreshMyRankedMaps?.addEventListener('click', loadMyRankedMapsData);
+myRankedMapsModalBackdrop?.addEventListener('click', (e) => {
+    if (e.target === myRankedMapsModalBackdrop) closeMyRankedMapsModal();
+});
+window.openMyRankedMapsModal = openMyRankedMapsModal;

@@ -19,7 +19,14 @@ setupMenu(btnAccountMenu, accountMenu, () => {
     const el = document.getElementById('myRankedMapCount');
     fetch('api/ranked.php?action=leaderboard&size=10x10')
         .then(res => res.json())
-        .then(res => { if (res.myMapCount) el.textContent = `共 ${res.myMapCount.total} 張`; })
+        .then(res => {
+            if (res.myMapCount && el) {
+                el.textContent = `共 ${res.myMapCount.total} 張`;
+                if (res.myMapCount.pending > 0) {
+                    el.textContent += ` (${res.myMapCount.pending} 待審)`;
+                }
+            }
+        })
         .catch(() => {});
 });
 const authModalBackdrop = document.getElementById('authModalBackdrop');

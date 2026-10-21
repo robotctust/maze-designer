@@ -16,6 +16,22 @@ $allowedSizes = [
 
 $db = connectDbOrExit();
 
+/**
+ * 取得排位賽地圖之自訂名稱（若創作者有命名）
+ */
+function getRankedMapCustomName(array $mapData): string {
+    if (!empty($mapData['customName'])) {
+        return trim($mapData['customName']);
+    }
+    if (!empty($mapData['name']) && preg_match('/\(([^)]+)\)$/', trim($mapData['name']), $matches)) {
+        $candidate = trim($matches[1]);
+        if (!str_starts_with($candidate, '由 ') && !str_ends_with($candidate, '發布') && !str_ends_with($candidate, '提供')) {
+            return $candidate;
+        }
+    }
+    return '';
+}
+
 // 1. 取得隨機排位賽地圖
 if ($action === 'get_map') {
     $size = $_GET['size'] ?? '10x10';
@@ -55,14 +71,21 @@ if ($action === 'get_map') {
         exit;
     }
 
+    $customName = getRankedMapCustomName($mapData);
+    $defaultName = ($size === 'special') ? "特殊排位賽官方地圖" : (($size === 'apex') ? "巔峰排位賽官方地圖" : "{$size} 官方排位賽地圖");
+    $mapName = $mapData['name'] ?? $defaultName;
+    $displayName = !empty($customName) ? $customName : $mapName;
+
     echo json_encode([
         'success' => true,
         'size' => $size,
         'mapId' => $mapData['mapId'] ?? basename($chosenFile, '.json'),
-        'mapName' => $mapData['name'] ?? (($size === 'special') ? "特殊排位賽官方地圖" : (($size === 'apex') ? "巔峰排位賽官方地圖" : "{$size} 官方排位賽地圖")),
+        'mapName' => $mapName,
+        'customName' => $customName,
+        'displayName' => $displayName,
         'timeLimitMs' => $allowedSizes[$size]['limitMs'],
         'timeLimitDesc' => $allowedSizes[$size]['desc'],
-        'mapData' => $mapData
+        'mapData' => array_merge($mapData, ['customName' => $customName, 'displayName' => $displayName])
     ]);
     exit;
 }
@@ -242,17 +265,41 @@ if ($action === 'leaderboard') {
         $uStmt->close();
     }
 
-    // 若有登入，統計該用戶發布至排位圖庫的地圖數量 (全部 / 本級別)
+    // 若有登入，統計該用戶發布至排位圖庫的地圖數量 (全部 / 本級別，含已收錄與審核中)
     $myMapCount = null;
     if (!empty($_SESSION['user_id'])) {
-        $myMapCount = ['total' => 0, 'size' => 0];
+        $userId = intval($_SESSION['user_id']);
+        $myMapCount = ['total' => 0, 'size' => 0, 'pending' => 0, 'approved' => 0];
+
+        $cntStmt = $db->prepare("SELECT status, size, COUNT(*) as c FROM `ranked_submissions` WHERE author_id = ? GROUP BY status, size");
+        if ($cntStmt) {
+            $cntStmt->bind_param('i', $userId);
+            $cntStmt->execute();
+            $cntRes = $cntStmt->get_result();
+            $subTotals = [];
+            while ($cRow = $cntRes->fetch_assoc()) {
+                if ($cRow['status'] === 'pending') {
+                    $myMapCount['pending'] += intval($cRow['c']);
+                } elseif ($cRow['status'] === 'approved') {
+                    $myMapCount['approved'] += intval($cRow['c']);
+                }
+                $subTotals[$cRow['size']] = ($subTotals[$cRow['size']] ?? 0) + intval($cRow['c']);
+            }
+            $cntStmt->close();
+        }
+
+        $diskCount = 0;
+        $diskSizeCount = 0;
         foreach (glob(dirname(__DIR__) . '/data/ranked_maps/*/map_*.json') as $f) {
             $m = json_decode(file_get_contents($f), true);
-            if (intval($m['authorId'] ?? 0) === intval($_SESSION['user_id'])) {
-                $myMapCount['total']++;
-                if (basename(dirname($f)) === $size) $myMapCount['size']++;
+            if (intval($m['authorId'] ?? 0) === $userId) {
+                $diskCount++;
+                if (basename(dirname($f)) === $size) $diskSizeCount++;
             }
         }
+
+        $myMapCount['total'] = max($myMapCount['pending'] + $myMapCount['approved'], $diskCount + $myMapCount['pending']);
+        $myMapCount['size'] = max($subTotals[$size] ?? 0, $diskSizeCount);
     }
 
     echo json_encode([
@@ -452,6 +499,7 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : (($size 
 
         $submissionData = [
             'name' => $finalName,
+            'customName' => $customName,
             'author' => $username,
             'authorId' => $userId,
             'gridSize' => ['rows' => $rows, 'cols' => $cols],
@@ -511,6 +559,7 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : (($size 
     $fileData = [
         'mapId' => $newMapId,
         'name' => $finalName,
+            'customName' => $customName,
         'author' => $username,
         'authorId' => $userId,
         'gridSize' => ['rows' => $rows, 'cols' => $cols],
@@ -567,7 +616,11 @@ if ($action === 'list_maps') {
         natsort($files);
         foreach ($files as $f) {
             $m = json_decode(file_get_contents($f), true);
-            if ($m) $maps[$size][] = $m + ['mapId' => basename($f, '.json')];
+            if ($m) {
+                $m['mapId'] = basename($f, '.json');
+                $m['customName'] = getRankedMapCustomName($m);
+                $maps[$size][] = $m;
+            }
         }
     }
 
@@ -575,6 +628,158 @@ if ($action === 'list_maps') {
     exit;
 }
 
+// 6. 取得當前用戶發布的所有排位賽地圖（含地圖規格、審核狀態與 2D 迷宮結構數據）
+if ($action === 'my_published_maps') {
+    if (empty($_SESSION['user_id'])) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'requireLogin' => true, 'message' => '🔒 請先登入帳號以查看您發布的排位賽地圖！']);
+        exit;
+    }
+
+    $userId = intval($_SESSION['user_id']);
+
+    // 1. 從 ranked_submissions 表查詢該用戶所有投稿紀錄（含 pending, approved, rejected）
+    $stmt = $db->prepare("SELECT id, size, name, author_id, author_name, grid_rows, grid_cols, maze_data, status, reviewer_id, reviewed_at, created_at FROM `ranked_submissions` WHERE author_id = ? ORDER BY created_at DESC");
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $subRes = $stmt->get_result();
+
+    $myMaps = [];
+    $seenDiskMaps = [];
+
+    while ($sub = $subRes->fetch_assoc()) {
+        $mazeData = json_decode($sub['maze_data'], true) ?: [];
+        $cName = getRankedMapCustomName(['customName' => $mazeData['customName'] ?? '', 'name' => $sub['name']]);
+        $rows = intval($sub['grid_rows'] ?? ($mazeData['gridSize']['rows'] ?? 10));
+        $cols = intval($sub['grid_cols'] ?? ($mazeData['gridSize']['cols'] ?? 10));
+        $hWalls = $mazeData['hWalls'] ?? [];
+        $vWalls = $mazeData['vWalls'] ?? [];
+        $start = $mazeData['start'] ?? ['x' => 0, 'y' => $rows - 1];
+        $goal = $mazeData['goal'] ?? ['x' => $cols - 1, 'y' => 0];
+
+        // 計算牆面段數
+        $wallCount = 0;
+        foreach ($hWalls as $r) { foreach ($r as $w) { if (!empty($w)) $wallCount++; } }
+        foreach ($vWalls as $r) { foreach ($r as $w) { if (!empty($w)) $wallCount++; } }
+
+        $size = $sub['size'];
+        $tierName = ($size === 'special') ? "特殊賽（長方形 {$cols}×{$rows}）" : (($size === 'apex') ? "巔峰賽（超大型 {$cols}×{$rows}）" : "{$size} 標準排位賽");
+        if ($size !== 'special' && $size !== 'apex') {
+            $tierName = str_replace('x', ' × ', $size);
+        }
+
+        $item = [
+            'id' => intval($sub['id']),
+            'submissionId' => intval($sub['id']),
+            'size' => $size,
+            'tierName' => $tierName,
+            'name' => $sub['name'],
+            'customName' => $cName,
+            'displayName' => !empty($cName) ? $cName : $sub['name'],
+            'author' => $sub['author_name'],
+            'authorId' => intval($sub['author_id']),
+            'gridSize' => ['rows' => $rows, 'cols' => $cols],
+            'totalWidthCm' => $cols * 30,
+            'totalHeightCm' => $rows * 30,
+            'wallCount' => $wallCount,
+            'start' => $start,
+            'goal' => $goal,
+            'hWalls' => $hWalls,
+            'vWalls' => $vWalls,
+            'status' => $sub['status'], // 'pending', 'approved', 'rejected'
+            'reviewedAt' => $sub['reviewed_at'],
+            'createdAt' => $sub['created_at'],
+            'mapId' => $mazeData['mapId'] ?? null
+        ];
+
+        // 如果已核准，嘗試找到對應的官方檔案 ID
+        if ($sub['status'] === 'approved') {
+            $matchedFile = null;
+            foreach (glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json") as $f) {
+                $m = json_decode(file_get_contents($f), true);
+                if (intval($m['authorId'] ?? 0) === $userId) {
+                    if (($m['name'] ?? '') === ($sub['name'] ?? '') || ($cName !== '' && getRankedMapCustomName($m) === $cName)) {
+                        $matchedFile = basename($f, '.json');
+                        $seenDiskMaps[$f] = true;
+                        break;
+                    }
+                }
+            }
+            if ($matchedFile) {
+                $item['mapId'] = $matchedFile;
+            }
+        }
+
+        $myMaps[] = $item;
+    }
+    $stmt->close();
+
+    // 2. 補充：檢查磁碟中 authorId 為此用戶、但未被上述 submission 關聯到的官方排位圖
+    foreach (glob(dirname(__DIR__) . '/data/ranked_maps/*/map_*.json') as $f) {
+        if (isset($seenDiskMaps[$f])) continue;
+        $m = json_decode(file_get_contents($f), true);
+        if (!$m || intval($m['authorId'] ?? 0) !== $userId) continue;
+
+        $fBase = basename($f, '.json');
+        $size = basename(dirname($f));
+        $alreadyExists = false;
+        foreach ($myMaps as $existingItem) {
+            if ($existingItem['size'] === $size && ($existingItem['mapId'] === $fBase || $existingItem['name'] === ($m['name'] ?? ''))) {
+                $alreadyExists = true;
+                break;
+            }
+        }
+        if ($alreadyExists) continue;
+
+        $cName = getRankedMapCustomName($m);
+        $rows = intval($m['gridSize']['rows'] ?? (isset($m['hWalls']) ? count($m['hWalls']) - 1 : 10));
+        $cols = intval($m['gridSize']['cols'] ?? (isset($m['hWalls'][0]) ? count($m['hWalls'][0]) : 10));
+        $hWalls = $m['hWalls'] ?? [];
+        $vWalls = $m['vWalls'] ?? [];
+        $start = $m['start'] ?? ['x' => 0, 'y' => $rows - 1];
+        $goal = $m['goal'] ?? ['x' => $cols - 1, 'y' => 0];
+
+        $wallCount = 0;
+        foreach ($hWalls as $r) { foreach ($r as $w) { if (!empty($w)) $wallCount++; } }
+        foreach ($vWalls as $r) { foreach ($r as $w) { if (!empty($w)) $wallCount++; } }
+
+        $tierName = ($size === 'special') ? "特殊賽（長方形 {$cols}×{$rows}）" : (($size === 'apex') ? "巔峰賽（超大型 {$cols}×{$rows}）" : "{$size} 標準排位賽");
+        if ($size !== 'special' && $size !== 'apex') {
+            $tierName = str_replace('x', ' × ', $size);
+        }
+
+        $myMaps[] = [
+            'id' => null,
+            'mapId' => $fBase,
+            'size' => $size,
+            'tierName' => $tierName,
+            'name' => $m['name'] ?? "{$size} 官方排位賽地圖",
+            'customName' => $cName,
+            'displayName' => !empty($cName) ? $cName : ($m['name'] ?? $fBase),
+            'author' => $m['author'] ?? ($_SESSION['username'] ?? 'User'),
+            'authorId' => $userId,
+            'gridSize' => ['rows' => $rows, 'cols' => $cols],
+            'totalWidthCm' => $cols * 30,
+            'totalHeightCm' => $rows * 30,
+            'wallCount' => $wallCount,
+            'start' => $start,
+            'goal' => $goal,
+            'hWalls' => $hWalls,
+            'vWalls' => $vWalls,
+            'status' => 'approved',
+            'reviewedAt' => $m['createdAt'] ?? null,
+            'createdAt' => $m['createdAt'] ?? null
+        ];
+    }
+
+    echo json_encode([
+        'success' => true,
+        'count' => count($myMaps),
+        'maps' => $myMaps
+    ]);
+    exit;
+}
+
 http_response_code(400);
-echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: get_map, submit_score, leaderboard, publish_map, list_maps)']);
+echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: get_map, submit_score, leaderboard, publish_map, list_maps, my_published_maps)']);
 
