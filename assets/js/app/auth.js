@@ -432,6 +432,9 @@ btnLogout?.addEventListener('click', async () => {
         .then(res => res.json())
         .then(res => {
             updateAuthUI(null);
+            if (typeof setActiveMapInfo === 'function') {
+                setActiveMapInfo(0, '');
+            }
             showToast(res.message || '您已成功登出！');
 
             if (currentGameMode === 'ranked') {

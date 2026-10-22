@@ -41,6 +41,7 @@
             <button type="button" class="menu-item" id="btnRandom" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>隨機產生迷宮</button>
             <button type="button" class="menu-item" id="btnOuterWalls" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#square"></use></svg>四周圍牆開／關</button>
             <button type="button" class="menu-item" id="btnClearInner" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eraser"></use></svg>清空內牆<span class="menu-end">保留圍牆</span></button>
+            <button type="button" class="menu-item" id="btnMenuToggle2dTheme" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sun"></use></svg>切換底板顏色<span class="menu-end" id="menu2dThemeStatus">深色</span></button>
             <div class="menu-sep"></div>
             <button type="button" class="menu-item danger" id="btnClearAll" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trash"></use></svg>全部清空</button>
         </div>
@@ -48,6 +49,7 @@
     <div class="menu-wrap">
         <button type="button" class="tool-btn btn-ghost" id="btnFileMenu" aria-haspopup="menu" aria-expanded="false">檔案<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="assets/icons.svg#chevron-down"></use></svg></button>
         <div class="menu" id="fileMenu" role="menu" hidden>
+            <button type="button" class="menu-item" id="btnQuickSave" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>快速儲存<span class="menu-end">Ctrl+S</span></button>
             <button type="button" class="menu-item" id="btnFileMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#folder"></use></svg>我的地圖庫</button>
             <div class="menu-sep"></div>
             <button type="button" class="menu-item" id="btnImportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-import"></use></svg>匯入 JSON</button>
@@ -65,5 +67,5 @@
     </div>
     <div class="editbar-spacer"></div>
     <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽</button>
-    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（最多 8 張）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
+    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（Ctrl+S 快速儲存）"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
 </div>

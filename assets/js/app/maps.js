@@ -11,6 +11,11 @@ const loadMazeConfig = () => {
         .then(res => res.json())
         .then(res => {
             if (res.success && res.data) {
+                if (res.source === 'database' && res.id > 0) {
+                    setActiveMapInfo(res.id, res.name || '我的迷宮');
+                } else {
+                    setActiveMapInfo(0, '');
+                }
                 // 若未登入且取到的資料大於 10x10，自動限制
                 if (!currentUser && (
                     (res.data.gridSize?.rows > 10) ||
@@ -57,6 +62,15 @@ const saveOverwriteGroup = document.getElementById('saveOverwriteGroup');
 
 let userSavedMapsCache = [];
 
+// 當前正在檢視或編輯的個人地圖資訊（用於快速儲存 Ctrl+S 直接覆蓋更新）
+let currentActiveMapId = 0;
+let currentActiveMapName = '';
+
+function setActiveMapInfo(id, name) {
+    currentActiveMapId = parseInt(id, 10) || 0;
+    currentActiveMapName = name ? String(name).trim() : '';
+}
+
 function openSaveMapModal() {
     if (!currentUser) {
         openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
@@ -83,7 +97,7 @@ function openSaveMapModal() {
     if (saveCurrentWalls) saveCurrentWalls.textContent = `${wallCount} 段`;
 
     if (saveMapNameInput) {
-        saveMapNameInput.value = `我的迷宮 (${cols}×${rows})`;
+        saveMapNameInput.value = currentActiveMapName || `我的迷宮 (${cols}×${rows})`;
     }
 
     saveMapModalBackdrop?.classList.add('show');
@@ -115,7 +129,9 @@ function openSaveMapModal() {
             const headerMapCountBadge = document.getElementById('headerMapCountBadge');
             if (headerMapCountBadge) headerMapCountBadge.textContent = `${count} / ${max}`;
 
-            // 判斷是否已滿 5 張
+            const hasActiveExisting = currentActiveMapId > 0 && userSavedMapsCache.some(x => x.id === currentActiveMapId);
+
+            // 判斷是否已滿額
             if (count >= max) {
                 // 滿額：禁用存為全新地圖
                 if (slotOptionNewWrapper) {
@@ -129,9 +145,10 @@ function openSaveMapModal() {
                 if (slotOptionNewWrapper) {
                     slotOptionNewWrapper.style.opacity = '1';
                     slotOptionNewWrapper.style.pointerEvents = 'auto';
-                    slotOptionNewWrapper.classList.add('active');
+                    if (!hasActiveExisting) slotOptionNewWrapper.classList.add('active');
+                    else slotOptionNewWrapper.classList.remove('active');
                 }
-                if (radioSaveNew) radioSaveNew.checked = true;
+                if (radioSaveNew) radioSaveNew.checked = !hasActiveExisting;
                 if (slotNewDesc) slotNewDesc.textContent = `還有 ${remaining} 格`;
                 if (mapFullWarning) mapFullWarning.style.display = 'none';
             }
@@ -144,7 +161,8 @@ function openSaveMapModal() {
                 if (saveOverwriteGroup) saveOverwriteGroup.style.display = 'flex';
                 let html = '';
                 userSavedMapsCache.forEach((m, idx) => {
-                    const isChecked = (count >= max && idx === 0) ? 'checked' : '';
+                    const isTarget = hasActiveExisting ? (m.id === currentActiveMapId) : (count >= max && idx === 0);
+                    const isChecked = isTarget ? 'checked' : '';
                     html += `
                         <label class="existing-map-slot-label ${isChecked ? 'selected' : ''}">
                             <input type="radio" name="saveTargetMode" value="${m.id}" ${isChecked}>
@@ -154,6 +172,13 @@ function openSaveMapModal() {
                     `;
                 });
                 if (saveExistingMapsList) saveExistingMapsList.innerHTML = html;
+
+                if (hasActiveExisting) {
+                    const activeMap = userSavedMapsCache.find(x => x.id === currentActiveMapId);
+                    if (activeMap && saveMapNameInput) {
+                        saveMapNameInput.value = activeMap.name;
+                    }
+                }
 
                 // 綁定點選反白狀態
                 saveExistingMapsList.querySelectorAll('input[type="radio"]').forEach(radio => {
@@ -245,6 +270,7 @@ btnConfirmSaveMap?.addEventListener('click', () => {
         if (res.success) {
             closeSaveMapModal();
             editor.markSaved();
+            setActiveMapInfo(res.mapId, res.mapName);
             showToast(res.message || '已儲存');
             refreshMapLibraryBadge();
         } else {
@@ -282,6 +308,85 @@ document.getElementById('btnSave').addEventListener('click', () => {
     }
     openSaveMapModal();
 });
+
+// 快速儲存（Ctrl + S / Cmd + S）
+let isQuickSaving = false;
+
+function quickSaveMap() {
+    if (currentGameMode === 'ranked') {
+        showToast('排位賽官方地圖禁止儲存至個人資料庫！請先回到練習模式再儲存。', true);
+        return;
+    }
+    if (!currentUser) {
+        openAuthModal('訪客限制：「快速儲存」僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        return;
+    }
+    if (isQuickSaving) return;
+
+    // 若尚未儲存過個人地圖槽位，開啟儲存彈窗進行命名與指定槽位
+    if (!currentActiveMapId) {
+        openSaveMapModal();
+        return;
+    }
+
+    isQuickSaving = true;
+    const currentData = editor.getData();
+    currentData.isRanked = false;
+    currentData.name = currentActiveMapName;
+    currentData.targetMapId = currentActiveMapId;
+
+    const btnSaveEl = document.getElementById('btnSave');
+    if (btnSaveEl) btnSaveEl.classList.add('btn-saving');
+
+    showToast(`⏳ 正在快速儲存【${currentActiveMapName}】…`, false);
+
+    fetch('api/maps.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentData)
+    })
+    .then(res => res.json())
+    .then(res => {
+        isQuickSaving = false;
+        if (btnSaveEl) btnSaveEl.classList.remove('btn-saving');
+
+        if (res.success) {
+            editor.markSaved();
+            setActiveMapInfo(res.mapId || currentActiveMapId, res.mapName || currentActiveMapName);
+            showToast(`💾 已快速儲存至【${res.mapName || currentActiveMapName}】！`);
+            refreshMapLibraryBadge();
+        } else {
+            if (res.message && res.message.includes('不存在')) {
+                setActiveMapInfo(0, '');
+                openSaveMapModal();
+            } else {
+                showToast(res.message || '快速儲存失敗', true);
+            }
+        }
+    })
+    .catch(err => {
+        isQuickSaving = false;
+        if (btnSaveEl) btnSaveEl.classList.remove('btn-saving');
+        console.error('快速儲存錯誤:', err);
+        showToast('無法連接伺服器進行儲存', true);
+    });
+}
+
+// 快速儲存快捷鍵 Ctrl + S / Cmd + S
+window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        // 若儲存彈窗已開啟，直接確認送出
+        if (saveMapModalBackdrop?.classList.contains('show')) {
+            btnConfirmSaveMap?.click();
+            return;
+        }
+        quickSaveMap();
+    }
+});
+
+// 檔案選單中的「快速儲存」
+document.getElementById('btnQuickSave')?.addEventListener('click', quickSaveMap);
 
 // 地圖庫彈窗相關 DOM 節點
 const mapLibraryModalBackdrop = document.getElementById('mapLibraryModalBackdrop');
@@ -395,6 +500,7 @@ function loadUserMapById(id, name) {
         .then(res => res.json())
         .then(res => {
             if (res.success && res.data) {
+                setActiveMapInfo(res.id || id, name || res.name);
                 editor.loadData(res.data);
                 editor.markSaved();
                 maze3D.resetOrbitCamera();
@@ -422,6 +528,9 @@ async function deleteUserMapById(id, name) {
         .then(res => res.json())
         .then(res => {
             if (res.success) {
+                if (currentActiveMapId === parseInt(id, 10)) {
+                    setActiveMapInfo(0, '');
+                }
                 showToast(res.message || '地圖已刪除');
                 loadMapLibraryList();
                 refreshMapLibraryBadge();

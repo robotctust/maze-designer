@@ -22,12 +22,14 @@
                 <button type="button" class="float-btn" id="btnRedo" title="重做（Ctrl／⌘ + Shift + Z）" aria-label="重做" disabled><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-forward-up"></use></svg></button>
             </div>
 
-            <!-- 右上：快捷鍵說明 -->
+            <!-- 右上：底板外觀與快捷鍵說明 -->
             <div class="sim-overlay top-right editor-overlay">
+                <button type="button" class="float-btn" id="btnToggle2dTheme" title="切換為淺色地圖底板" aria-label="切換地圖底板顏色"><svg class="icon" aria-hidden="true"><use id="icon2dTheme" href="assets/icons.svg#sun"></use></svg></button>
                 <div class="menu-wrap">
                     <button type="button" class="float-btn" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明" aria-label="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#keyboard"></use></svg></button>
                     <div class="menu menu-end-align shortcuts-menu" id="shortcutsMenu" hidden>
                         <p class="menu-heading">2D 編輯</p>
+                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>S</kbd><span>快速儲存</span></div>
                         <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Z</kbd><span>復原</span></div>
                         <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Shift</kbd><kbd>Z</kbd><span>重做</span></div>
                         <div class="kbd-row"><kbd>滾輪</kbd><span>縮放</span></div>

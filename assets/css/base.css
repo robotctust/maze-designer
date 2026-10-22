@@ -133,6 +133,11 @@ body {
     color: var(--on-accent);
 }
 
+.tool-btn.btn-save.btn-saving {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
 .tool-btn.guest-locked {
     background: var(--surface) !important;
     border-color: var(--border-strong) !important;
@@ -187,6 +192,7 @@ body {
 /* 2D 地圖：純色底、淡格線、牆與 3D 木板同色（0xd99b5a） */
 .map-bg {
     fill: var(--surface-raised);
+    transition: fill 0.2s ease;
 }
 
 .map-grid-line {
@@ -194,6 +200,45 @@ body {
     stroke: #2C3854;
     stroke-width: 1px;
     pointer-events: none;
+    transition: stroke 0.2s ease;
+}
+
+/* 2D 地圖淺色底板模式 */
+.map-viewport.theme-light .map-bg {
+    fill: #F8FAFC;
+}
+
+.map-viewport.theme-light .map-grid-line {
+    stroke: #CBD5E1;
+}
+
+.map-viewport.theme-light .wall-visual {
+    stroke: #B45309;
+}
+
+.map-viewport.theme-light .grid-wrapper {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.map-viewport.theme-light .cell-start {
+    fill: rgba(34, 197, 94, 0.25);
+}
+
+.map-viewport.theme-light .cell-goal {
+    fill: rgba(239, 68, 68, 0.25);
+}
+
+.map-viewport.theme-light #mazeSvg[data-tool="wall"] .wall-hit-line:hover {
+    stroke: rgba(2, 132, 199, 0.35);
+}
+
+.map-viewport.theme-light #mazeSvg[data-tool="wall"] .wall-hit-line.has-wall:hover {
+    stroke: rgba(220, 38, 38, 0.35);
+}
+
+.map-viewport.theme-light #mazeSvg[data-tool="start"] .cell-overlay:hover,
+.map-viewport.theme-light #mazeSvg[data-tool="goal"] .cell-overlay:hover {
+    fill: rgba(2, 132, 199, 0.15);
 }
 
 .cell-overlay {

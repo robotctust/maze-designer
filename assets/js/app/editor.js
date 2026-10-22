@@ -282,3 +282,62 @@ fileInputJSON.addEventListener('change', (e) => {
         );
     }
 });
+
+// ============================================
+// 5. 2D 地圖底板深淺色切換
+// ============================================
+const mapViewport = document.getElementById('mapViewport');
+const btnToggle2dTheme = document.getElementById('btnToggle2dTheme');
+const btnMenuToggle2dTheme = document.getElementById('btnMenuToggle2dTheme');
+const icon2dTheme = document.getElementById('icon2dTheme');
+const menu2dThemeStatus = document.getElementById('menu2dThemeStatus');
+
+const MAP_2D_THEME_KEY = 'maze_2d_theme';
+
+function set2DMapTheme(theme, showFeedback = true) {
+    const isLight = theme === 'light';
+    if (!mapViewport) return;
+
+    if (isLight) {
+        mapViewport.classList.add('theme-light');
+    } else {
+        mapViewport.classList.remove('theme-light');
+    }
+
+    if (icon2dTheme) {
+        icon2dTheme.setAttribute('href', isLight ? 'assets/icons.svg#moon' : 'assets/icons.svg#sun');
+    }
+    if (btnToggle2dTheme) {
+        btnToggle2dTheme.setAttribute('title', isLight ? '切換為深色地圖底板' : '切換為淺色地圖底板');
+        btnToggle2dTheme.setAttribute('aria-label', isLight ? '切換為深色地圖底板' : '切換為淺色地圖底板');
+    }
+    if (menu2dThemeStatus) {
+        menu2dThemeStatus.textContent = isLight ? '淺色' : '深色';
+    }
+
+    try {
+        localStorage.setItem(MAP_2D_THEME_KEY, isLight ? 'light' : 'dark');
+    } catch (e) {}
+
+    if (showFeedback) {
+        showToast(isLight ? '已切換為淺色地圖底板' : '已切換為深色地圖底板');
+    }
+}
+
+function toggle2DMapTheme() {
+    const isCurrentlyLight = mapViewport?.classList.contains('theme-light');
+    set2DMapTheme(isCurrentlyLight ? 'dark' : 'light', true);
+}
+
+btnToggle2dTheme?.addEventListener('click', toggle2DMapTheme);
+btnMenuToggle2dTheme?.addEventListener('click', toggle2DMapTheme);
+
+// 初始化載入偏好的底板顏色
+try {
+    const savedTheme = localStorage.getItem(MAP_2D_THEME_KEY);
+    if (savedTheme === 'light') {
+        set2DMapTheme('light', false);
+    } else {
+        set2DMapTheme('dark', false);
+    }
+} catch (e) {}
