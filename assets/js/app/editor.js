@@ -286,7 +286,6 @@ fileInputJSON.addEventListener('change', (e) => {
 // ============================================
 // 5. 2D 地圖底板深淺色切換
 // ============================================
-const mapViewport = document.getElementById('mapViewport');
 const btnToggle2dTheme = document.getElementById('btnToggle2dTheme');
 const btnMenuToggle2dTheme = document.getElementById('btnMenuToggle2dTheme');
 const icon2dTheme = document.getElementById('icon2dTheme');
@@ -313,6 +312,10 @@ function set2DMapTheme(theme, showFeedback = true) {
     }
     if (menu2dThemeStatus) {
         menu2dThemeStatus.textContent = isLight ? '淺色' : '深色';
+    }
+    const menuThemeIcon = btnMenuToggle2dTheme?.querySelector('use');
+    if (menuThemeIcon) {
+        menuThemeIcon.setAttribute('href', isLight ? 'assets/icons.svg#moon' : 'assets/icons.svg#sun');
     }
 
     try {
