@@ -288,7 +288,7 @@ if ($action === 'review_submission') {
     $up->execute();
     $up->close();
 
-    $totalMaps = count(glob("{$mapDir}/map_*.json"));
+    $totalMaps = count(glob("{$mapDir}/map_*.json") ?: []);
 
     echo json_encode([
         'success' => true,
@@ -332,7 +332,7 @@ if ($action === 'delete_ranked_map') {
         }
 
         // 安全限制：每個規格至少保留 1 張地圖，避免排位賽無圖可抽
-        $allFiles = glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json");
+        $allFiles = glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json") ?: [];
         if (count($allFiles) <= 1) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => "⚠️ 無法刪除：{$size} 級別至少需保留 1 張官方地圖以供排位賽抽題！"]);
@@ -401,7 +401,7 @@ if ($action === 'delete_ranked_map') {
             }
         }
 
-        $remainingCount = count(glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json"));
+        $remainingCount = count(glob(dirname(__DIR__) . "/data/ranked_maps/{$size}/map_*.json") ?: []);
 
         echo json_encode([
             'success' => true,

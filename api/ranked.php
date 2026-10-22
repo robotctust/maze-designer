@@ -351,8 +351,8 @@ if ($action === 'publish_map') {
     $payload = json_decode($raw, true) ?: [];
 
     $mapData = $payload['mapData'] ?? $payload;
-    $rows = intval($mapData['gridSize']['rows'] ?? (isset($mapData['hWalls']) ? count($mapData['hWalls']) - 1 : 0));
-    $cols = intval($mapData['gridSize']['cols'] ?? (isset($mapData['hWalls'][0]) ? count($mapData['hWalls'][0]) : 0));
+    $rows = intval($mapData['gridSize']['rows'] ?? ((isset($mapData['hWalls']) && is_array($mapData['hWalls'])) ? count($mapData['hWalls']) - 1 : 0));
+    $cols = intval($mapData['gridSize']['cols'] ?? ((isset($mapData['hWalls'][0]) && is_array($mapData['hWalls'][0])) ? count($mapData['hWalls'][0]) : 0));
     if ($cols !== $rows) {
         // 長方形地圖：歸類於「特殊排位賽」
         if (max($cols, $rows) > 30) {
@@ -595,7 +595,7 @@ $sizeLabel = ($size === 'special') ? '特殊排位賽（長方形）' : (($size 
         @file_put_contents($filePath, json_encode($fileData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    $totalMaps = count(glob("{$mapDir}/map_*.json"));
+    $totalMaps = count(glob("{$mapDir}/map_*.json") ?: []);
 
     echo json_encode([
         'success' => true,
@@ -739,8 +739,8 @@ if ($action === 'my_published_maps') {
         if ($alreadyExists) continue;
 
         $cName = getRankedMapCustomName($m);
-        $rows = intval($m['gridSize']['rows'] ?? (isset($m['hWalls']) ? count($m['hWalls']) - 1 : 10));
-        $cols = intval($m['gridSize']['cols'] ?? (isset($m['hWalls'][0]) ? count($m['hWalls'][0]) : 10));
+        $rows = intval($m['gridSize']['rows'] ?? ((isset($m['hWalls']) && is_array($m['hWalls'])) ? count($m['hWalls']) - 1 : 10));
+        $cols = intval($m['gridSize']['cols'] ?? ((isset($m['hWalls'][0]) && is_array($m['hWalls'][0])) ? count($m['hWalls'][0]) : 10));
         $hWalls = $m['hWalls'] ?? [];
         $vWalls = $m['vWalls'] ?? [];
         $start = $m['start'] ?? ['x' => 0, 'y' => $rows - 1];

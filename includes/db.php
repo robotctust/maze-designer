@@ -6,6 +6,8 @@
 // 統一設定台灣時區，確保 PHP 與 MySQL NOW() 完全一致
 date_default_timezone_set('Asia/Taipei');
 
+global $dbHost, $dbUser, $dbPass, $dbName, $dbPort;
+
 $dbHost = '127.0.0.1';
 $dbUser = 'root';
 $dbPass = '';
@@ -31,6 +33,9 @@ function getDbConnection() {
     if ($conn !== null) {
         return $conn;
     }
+
+    // PHP 8.1+ 預設開啟 MYSQLI_REPORT_STRICT 會拋出例外，關閉以維持本專案相容性與自訂錯誤處理
+    mysqli_report(MYSQLI_REPORT_OFF);
 
     // 1. 先嘗試連接 MySQL 伺服器
     $conn = @new mysqli($dbHost, $dbUser, $dbPass, '', $dbPort);

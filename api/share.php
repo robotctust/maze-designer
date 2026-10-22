@@ -24,11 +24,11 @@ function getUserRole($db, $userId) {
 
 // 輔助函式：驗證迷宮結構合法性
 function isValidMazeStructure($data) {
-    if (!isset($data['hWalls']) || !isset($data['vWalls']) || !is_array($data['hWalls']) || !is_array($data['vWalls'])) {
+    if (!isset($data['hWalls']) || !isset($data['vWalls']) || !is_array($data['hWalls']) || !is_array($data['vWalls']) || empty($data['hWalls']) || empty($data['vWalls'])) {
         return false;
     }
     $rows = isset($data['gridSize']['rows']) ? intval($data['gridSize']['rows']) : (count($data['hWalls']) - 1);
-    $cols = isset($data['gridSize']['cols']) ? intval($data['gridSize']['cols']) : count($data['hWalls'][0]);
+    $cols = isset($data['gridSize']['cols']) ? intval($data['gridSize']['cols']) : ((isset($data['hWalls'][0]) && is_array($data['hWalls'][0])) ? count($data['hWalls'][0]) : 0);
     if ($rows < 2 || $cols < 2 || $rows > 50 || $cols > 50) return false;
     if (count($data['hWalls']) !== ($rows + 1)) return false;
     if (count($data['vWalls']) !== $rows) return false;
@@ -89,7 +89,7 @@ if ($action === 'create') {
     }
 
     $rows = isset($mapData['gridSize']['rows']) ? intval($mapData['gridSize']['rows']) : (count($mapData['hWalls']) - 1);
-    $cols = isset($mapData['gridSize']['cols']) ? intval($mapData['gridSize']['cols']) : count($mapData['hWalls'][0]);
+    $cols = isset($mapData['gridSize']['cols']) ? intval($mapData['gridSize']['cols']) : ((isset($mapData['hWalls'][0]) && is_array($mapData['hWalls'][0])) ? count($mapData['hWalls'][0]) : 0);
     $mazeName = trim($payload['name'] ?? ($mapData['name'] ?? "分享迷宮 ({$cols}×{$rows})"));
     if (empty($mazeName)) {
         $mazeName = "分享迷宮 ({$cols}×{$rows})";

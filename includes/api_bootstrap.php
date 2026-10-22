@@ -2,7 +2,9 @@
 /**
  * 所有 api/*.php 共用的開頭：開啟 session、回傳 JSON、載入資料庫設定、讀取 action 與 JSON 請求內容
  */
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/db.php';

@@ -41,16 +41,16 @@ function getDefaultConfig() {
 
 // 驗證迷宮維度與陣列結構是否完整且合法
 function isValidMazeData($data) {
-    if (!isset($data['hWalls']) || !isset($data['vWalls']) || !is_array($data['hWalls']) || !is_array($data['vWalls'])) {
+    if (!isset($data['hWalls']) || !isset($data['vWalls']) || !is_array($data['hWalls']) || !is_array($data['vWalls']) || empty($data['hWalls']) || empty($data['vWalls'])) {
         return false;
     }
     $rows = isset($data['gridSize']['rows']) ? intval($data['gridSize']['rows']) : (count($data['hWalls']) - 1);
-    $cols = isset($data['gridSize']['cols']) ? intval($data['gridSize']['cols']) : count($data['hWalls'][0]);
+    $cols = isset($data['gridSize']['cols']) ? intval($data['gridSize']['cols']) : ((isset($data['hWalls'][0]) && is_array($data['hWalls'][0])) ? count($data['hWalls'][0]) : 0);
     if ($rows < 2 || $cols < 2 || $rows > 50 || $cols > 50) return false;
     if (count($data['hWalls']) !== ($rows + 1)) return false;
     if (count($data['vWalls']) !== $rows) return false;
-    if (!isset($data['hWalls'][0]) || count($data['hWalls'][0]) !== $cols) return false;
-    if (!isset($data['vWalls'][0]) || count($data['vWalls'][0]) !== ($cols + 1)) return false;
+    if (!isset($data['hWalls'][0]) || !is_array($data['hWalls'][0]) || count($data['hWalls'][0]) !== $cols) return false;
+    if (!isset($data['vWalls'][0]) || !is_array($data['vWalls'][0]) || count($data['vWalls'][0]) !== ($cols + 1)) return false;
     return true;
 }
 
@@ -321,7 +321,7 @@ if ($method === 'POST') {
     }
 
     $rows = isset($payload['gridSize']['rows']) ? intval($payload['gridSize']['rows']) : (count($payload['hWalls']) - 1);
-    $cols = isset($payload['gridSize']['cols']) ? intval($payload['gridSize']['cols']) : count($payload['hWalls'][0]);
+    $cols = isset($payload['gridSize']['cols']) ? intval($payload['gridSize']['cols']) : ((isset($payload['hWalls'][0]) && is_array($payload['hWalls'][0])) ? count($payload['hWalls'][0]) : 0);
 
     if (!isValidMazeData($payload)) {
         http_response_code(400);
