@@ -24,7 +24,7 @@
 
             <!-- 右上：底板外觀與快捷鍵說明 -->
             <div class="sim-overlay top-right editor-overlay">
-                <button type="button" class="float-btn" id="btnToggle2dTheme" title="切換為淺色地圖底板" aria-label="切換地圖底板顏色"><svg class="icon" aria-hidden="true"><use id="icon2dTheme" href="assets/icons.svg#sun"></use></svg></button>
+                <button type="button" class="float-btn" id="btnToggle2dTheme" title="切換為淺色地圖底板" aria-label="切換地圖底板顏色"><svg class="icon" aria-hidden="true"><use id="icon2dTheme" href="#sun"></use></svg></button>
                 <div class="menu-wrap">
                     <button type="button" class="float-btn" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明" aria-label="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#keyboard"></use></svg></button>
                     <div class="menu menu-end-align shortcuts-menu" id="shortcutsMenu" hidden>

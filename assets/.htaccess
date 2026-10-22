@@ -1,0 +1,5 @@
+<Files "icons.svg">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-cache, must-revalidate"
+    </IfModule>
+</Files>

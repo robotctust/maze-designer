@@ -304,7 +304,7 @@ function set2DMapTheme(theme, showFeedback = true) {
     }
 
     if (icon2dTheme) {
-        icon2dTheme.setAttribute('href', isLight ? 'assets/icons.svg#moon' : 'assets/icons.svg#sun');
+        icon2dTheme.setAttribute('href', isLight ? '#moon' : '#sun');
     }
     if (btnToggle2dTheme) {
         btnToggle2dTheme.setAttribute('title', isLight ? '切換為深色地圖底板' : '切換為淺色地圖底板');
@@ -315,7 +315,7 @@ function set2DMapTheme(theme, showFeedback = true) {
     }
     const menuThemeIcon = btnMenuToggle2dTheme?.querySelector('use');
     if (menuThemeIcon) {
-        menuThemeIcon.setAttribute('href', isLight ? 'assets/icons.svg#moon' : 'assets/icons.svg#sun');
+        menuThemeIcon.setAttribute('href', isLight ? '#moon' : '#sun');
     }
 
     try {

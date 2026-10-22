@@ -10,6 +10,11 @@
 </head>
 <body>
 
+    <!-- 全站向量圖示集：直接內嵌於頁面中，確保所有電腦與跨裝置載入時立即呈現最新圖示，避免瀏覽器外部快取造成的圖示空白 -->
+    <div style="display: none;" aria-hidden="true">
+        <?php readfile(__DIR__ . '/assets/icons.svg'); ?>
+    </div>
+
     <?php include __DIR__ . '/views/topbar.php'; ?>
 
     <!-- 設計窗口：上方編輯列，下方左側 2D 編輯器、右側 3D 模擬視窗，以分割線隔開 -->

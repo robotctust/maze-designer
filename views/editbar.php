@@ -41,7 +41,7 @@
             <button type="button" class="menu-item" id="btnRandom" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrows-shuffle"></use></svg>隨機產生迷宮</button>
             <button type="button" class="menu-item" id="btnOuterWalls" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#square"></use></svg>四周圍牆開／關</button>
             <button type="button" class="menu-item" id="btnClearInner" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eraser"></use></svg>清空內牆<span class="menu-end">保留圍牆</span></button>
-            <button type="button" class="menu-item" id="btnMenuToggle2dTheme" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#sun"></use></svg>切換底板顏色<span class="menu-end" id="menu2dThemeStatus">深色</span></button>
+            <button type="button" class="menu-item" id="btnMenuToggle2dTheme" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#sun"></use></svg>切換底板顏色<span class="menu-end" id="menu2dThemeStatus">深色</span></button>
             <div class="menu-sep"></div>
             <button type="button" class="menu-item danger" id="btnClearAll" role="menuitem"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trash"></use></svg>全部清空</button>
         </div>
