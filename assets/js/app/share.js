@@ -35,10 +35,6 @@ function openCreateShareModal() {
         openAuthModal('請先登入帳號以使用分享碼功能！', 'login');
         return;
     }
-    if (currentUser.role === 'junior') {
-        showToast('權限限制：初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖！', true);
-        return;
-    }
 
     clearShareTimers();
     currentShareCode = null;

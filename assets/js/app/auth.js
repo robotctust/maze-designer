@@ -179,18 +179,12 @@ function updateAuthUI(user) {
         if (btnAdminReview) btnAdminReview.style.display = (role === 'senior') ? 'flex' : 'none';
         if (adminMenuSep) adminMenuSep.style.display = (role === 'senior') ? 'block' : 'none';
 
-        // 分享碼權限控管
+        // 分享碼權限控管 (所有已登入會員皆可使用)
         if (btnOpenRedeemShare) btnOpenRedeemShare.classList.remove('guest-locked');
         if (btnOpenCreateShare) {
-            if (role === 'junior') {
-                btnOpenCreateShare.classList.add('guest-locked');
-                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#lock"></use></svg>產生分享碼<span class="menu-end">中／高級</span>';
-                btnOpenCreateShare.title = '初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖';
-            } else {
-                btnOpenCreateShare.classList.remove('guest-locked');
-                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
-                btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
-            }
+            btnOpenCreateShare.classList.remove('guest-locked');
+            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
+            btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
         }
 
         // 解除所有預設按鈕鎖定
@@ -245,8 +239,15 @@ function updateAuthUI(user) {
         if (btnAdminUsers) btnAdminUsers.style.display = 'none';
         if (btnAdminReview) btnAdminReview.style.display = 'none';
         if (adminMenuSep) adminMenuSep.style.display = 'none';
-        if (btnOpenCreateShare) btnOpenCreateShare.classList.add('guest-locked');
-        if (btnOpenRedeemShare) btnOpenRedeemShare.classList.add('guest-locked');
+        if (btnOpenCreateShare) {
+            btnOpenCreateShare.classList.add('guest-locked');
+            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#lock"></use></svg>產生分享碼<span class="menu-end">需登入</span>';
+            btnOpenCreateShare.title = '請先登入會員以使用分享碼功能';
+        }
+        if (btnOpenRedeemShare) {
+            btnOpenRedeemShare.classList.add('guest-locked');
+            btnOpenRedeemShare.title = '請先登入會員以使用分享碼功能';
+        }
 
         // 鎖定大於 10x10 的預設按鈕
         presetButtons.forEach(btn => {

@@ -1,6 +1,6 @@
 <?php
 /**
- * 分享碼 API (中高級使用者產生 / 全員兌換載入 / 狀態查詢)
+ * 分享碼 API (所有會員產生 / 全員兌換載入 / 狀態查詢)
  * 規則：限時 1 分鐘，限 3 人使用，儲存於資料庫
  */
 require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
@@ -59,7 +59,7 @@ function generateShareCode($db) {
 }
 
 // ============================================================
-// 1. 產生分享碼 (中級、高級使用者專屬)
+// 1. 產生分享碼 (所有會員皆可使用)
 // ============================================================
 if ($action === 'create') {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -78,15 +78,7 @@ if ($action === 'create') {
         exit;
     }
 
-    $currentRole = getUserRole($db, $userId);
-    if ($currentRole !== ROLE_INTERMEDIATE && $currentRole !== ROLE_SENIOR) {
-        http_response_code(403);
-        echo json_encode([
-            'success' => false,
-            'message' => '初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖！請向管理員申請提升為中級或高級使用者。'
-        ]);
-        exit;
-    }
+    // 所有已登入會員（初級、中級、高級）皆可產生分享碼
 
     $payload = $jsonBody;
     $mapData = $payload['mapData'] ?? $payload['data'] ?? null;

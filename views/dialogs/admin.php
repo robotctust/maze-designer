@@ -25,7 +25,7 @@
                     </tbody>
                 </table>
             </div>
-            <p class="dlg-note">註冊新帳號皆預設為「初級使用者」，可在此將其升等為「中級使用者」以解鎖分享碼與排位投稿功能。</p>
+            <p class="dlg-note">註冊新帳號皆預設為「初級使用者」，可在此將其升等為「中級使用者」以解鎖排位賽投稿與發布功能。</p>
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminUsers"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>

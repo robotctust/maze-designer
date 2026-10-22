@@ -61,7 +61,7 @@
     <div class="menu-wrap">
         <button type="button" class="tool-btn btn-ghost" id="btnShareMenu" aria-haspopup="menu" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#share"></use></svg>分享碼<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="#chevron-down"></use></svg></button>
         <div class="menu" id="shareMenu" role="menu" hidden>
-            <button type="button" class="menu-item" id="btnOpenCreateShare" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#share"></use></svg>產生分享碼<span class="menu-end" id="shareCreateRoleTag">中／高級</span></button>
+            <button type="button" class="menu-item" id="btnOpenCreateShare" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#share"></use></svg>產生分享碼<span class="menu-end" id="shareCreateRoleTag">限時 1 分</span></button>
             <button type="button" class="menu-item" id="btnOpenRedeemShare" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#file-import"></use></svg>使用分享碼載入</button>
         </div>
     </div>
