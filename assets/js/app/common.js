@@ -69,6 +69,8 @@ function showConfirm({ title, message = '', confirmLabel = '確定', danger = fa
 }
 
 const btnStartDrive = document.getElementById('btnStartDrive');
+const btnPauseDrive = document.getElementById('btnPauseDrive');
+const btnResumeDrive = document.getElementById('btnResumeDrive');
 const btnStopDrive = document.getElementById('btnStopDrive');
 const btnResetCar = document.getElementById('btnResetCar');
 const btnModeOrbit = document.getElementById('btnModeOrbit');
@@ -80,6 +82,7 @@ const driveStatusDot = document.getElementById('driveStatusDot');
 
 // 賽事模式：'practice' (練習賽) | 'ranked' (排位賽)
 let currentGameMode = 'practice';
+let practiceDriveState = 'idle'; // 'idle' | 'running' | 'paused'
 let currentRankedSize = '10x10'; // 10x10, 15x15, 20x20, 25x25, 30x30, apex, special
 let currentRankedMapId = 'map_1';
 let currentRankedLimitMs = 90 * 1000;

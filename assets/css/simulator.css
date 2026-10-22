@@ -193,6 +193,14 @@
     background: var(--go-fill);
 }
 
+.drive-status-tag.paused {
+    color: #FBBF24;
+}
+
+.drive-status-tag.paused .status-dot {
+    background: #F59E0B;
+}
+
 /* 計時器佔用按鈕與狀態之間的空間並置中，空間不足時不會蓋住按鈕 */
 .drive-bar .timer-display {
     flex: 1;
@@ -216,6 +224,15 @@
 }
 
 @container (max-width: 520px) {
+    .drive-bar {
+        gap: 6px;
+        padding: 0 8px;
+    }
+    .drive-bar .sim-btn {
+        padding: 0 8px;
+        font-size: 12px;
+        gap: 4px;
+    }
     .drive-bar .timer-label {
         display: none;
     }

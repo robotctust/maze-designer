@@ -92,6 +92,8 @@ function switchGameMode(mode) {
 
         maze3D.stopDriving();
         resetTimer();
+        practiceDriveState = 'idle';
+        if (typeof updatePracticeControlsUI === 'function') updatePracticeControlsUI();
         maze3D.arenaColor = null;
 
         // 回到排位賽前正在編輯的練習地圖（排位賽只改 3D 場景，不會動到編輯器，未存的修改也會保留）

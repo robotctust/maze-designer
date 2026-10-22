@@ -90,6 +90,8 @@ const maze3D = new Maze3D(canvasContainer, {
         }
 
         // 練習賽結算
+        practiceDriveState = 'idle';
+        if (typeof updatePracticeControlsUI === 'function') updatePracticeControlsUI();
         const modal = document.getElementById('victoryModal');
         const timeLabel = document.getElementById('victoryTimeLabel');
         const timeValue = document.getElementById('victoryTimeValue');
@@ -153,9 +155,11 @@ editor = new MazeEditor(svgElement, {
         // 同步到 3D
         maze3D.buildMaze3D(data);
 
-        if (timerRunning) {
+        if (timerRunning || practiceDriveState !== 'idle') {
             maze3D.stopDriving();
             resetTimer();
+            practiceDriveState = 'idle';
+            if (typeof updatePracticeControlsUI === 'function') updatePracticeControlsUI();
         }
 
         const cols = data.gridSize ? data.gridSize.cols : 10;

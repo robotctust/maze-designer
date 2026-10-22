@@ -77,9 +77,11 @@
 
     <!-- 底部操控列 -->
     <div class="drive-bar">
-        <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive"><svg class="icon" aria-hidden="true"><use href="#player-play"></use></svg>試跑</button>
-        <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="停止"><svg class="icon" aria-hidden="true"><use href="#player-stop"></use></svg>停止</button>
-        <button type="button" class="sim-btn" id="btnResetCar" title="車子回到起點"><svg class="icon" aria-hidden="true"><use href="#arrow-back-up"></use></svg>回起點</button>
+        <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive" title="開始計時並操控自走車"><svg class="icon" aria-hidden="true"><use href="#player-play"></use></svg>開始</button>
+        <button type="button" class="sim-btn btn-pause-drive" id="btnPauseDrive" disabled title="暫停試跑"><svg class="icon" aria-hidden="true"><use href="#player-pause"></use></svg>暫停</button>
+        <button type="button" class="sim-btn btn-resume-drive" id="btnResumeDrive" disabled title="繼續試跑"><svg class="icon" aria-hidden="true"><use href="#player-play"></use></svg>繼續</button>
+        <button type="button" class="sim-btn btn-restart-drive" id="btnResetCar" title="重新開始（自走車回起點並重設計時）"><svg class="icon" aria-hidden="true"><use href="#arrow-back-up"></use></svg>重新開始</button>
+        <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="放棄比賽" style="display: none;"><svg class="icon" aria-hidden="true"><use href="#player-stop"></use></svg>放棄</button>
         <button type="button" class="sim-btn sfx-toggle sfx-live" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="#volume"></use></svg></button>
         
         <!-- 計時器居中顯示，避免被右側懸浮功能擋住 -->
@@ -89,7 +91,7 @@
             <span class="timer-bar" aria-hidden="true"><span id="timerBarFill"></span></span>
         </div>
 
-        <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按試跑後可用鍵盤操控</span></span>
+        <span class="drive-status-tag" id="driveStatusBadge"><span class="status-dot" id="driveStatusDot"></span><span id="driveStatusText">按「開始」後可用鍵盤操控</span></span>
     </div>
 
     <!-- 結算對話框：練習完賽／練習超時／排位完賽／排位超時 -->

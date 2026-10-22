@@ -111,6 +111,8 @@ function startTimer(reset = true) {
                 document.body.classList.add('ranked-live');
                 RankedFx.play('timeout');
             } else {
+                practiceDriveState = 'idle';
+                if (typeof updatePracticeControlsUI === 'function') updatePracticeControlsUI();
                 const timeoutModal = document.getElementById('timeoutModal');
                 const timeoutTimeValue = document.getElementById('timeoutTimeValue');
                 const timeoutTimeSub = document.getElementById('timeoutTimeSub');
@@ -271,19 +273,79 @@ if (btnApplyCustomTimer) {
     }
 });
 
+function updatePracticeControlsUI() {
+    if (currentGameMode === 'ranked') return;
+
+    if (practiceDriveState === 'running') {
+        if (btnStartDrive) {
+            btnStartDrive.disabled = true;
+            btnStartDrive.classList.remove('pulse-prompt', 'driving-active');
+        }
+        if (btnPauseDrive) {
+            btnPauseDrive.disabled = false;
+        }
+        if (btnResumeDrive) {
+            btnResumeDrive.disabled = true;
+            btnResumeDrive.classList.remove('pulse-prompt');
+        }
+        if (btnResetCar) {
+            btnResetCar.disabled = false;
+        }
+        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag active';
+        if (driveStatusText) driveStatusText.textContent = '操控中';
+        document.getElementById('simulatorPanel')?.classList.add('is-driving');
+    } else if (practiceDriveState === 'paused') {
+        if (btnStartDrive) {
+            btnStartDrive.disabled = true;
+            btnStartDrive.classList.remove('pulse-prompt', 'driving-active');
+        }
+        if (btnPauseDrive) {
+            btnPauseDrive.disabled = true;
+        }
+        if (btnResumeDrive) {
+            btnResumeDrive.disabled = false;
+            btnResumeDrive.classList.add('pulse-prompt');
+        }
+        if (btnResetCar) {
+            btnResetCar.disabled = false;
+        }
+        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag paused';
+        if (driveStatusText) driveStatusText.textContent = '已暫停（按「繼續」繼續跑）';
+        document.getElementById('simulatorPanel')?.classList.remove('is-driving');
+    } else {
+        practiceDriveState = 'idle';
+        if (btnStartDrive) {
+            btnStartDrive.disabled = false;
+            btnStartDrive.classList.remove('driving-active');
+            btnStartDrive.classList.add('pulse-prompt');
+        }
+        if (btnPauseDrive) {
+            btnPauseDrive.disabled = true;
+        }
+        if (btnResumeDrive) {
+            btnResumeDrive.disabled = true;
+            btnResumeDrive.classList.remove('pulse-prompt');
+        }
+        if (btnResetCar) {
+            btnResetCar.disabled = false;
+        }
+        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag';
+        if (driveStatusText) driveStatusText.textContent = '按「開始」後可用鍵盤操控';
+        document.getElementById('simulatorPanel')?.classList.remove('is-driving');
+    }
+}
+
 function updateDrivingUI(isDriving) {
-    if (isDriving) {
-        btnStartDrive.disabled = true;
-        btnStartDrive.classList.add('driving-active');
-        btnStopDrive.disabled = false;
+    if (currentGameMode === 'ranked') {
+        if (isDriving) {
+            if (btnStartDrive) btnStartDrive.disabled = true;
+            if (btnStopDrive) btnStopDrive.disabled = false;
 
-        driveStatusBadge.className = 'drive-status-tag active';
-        driveStatusText.textContent = '操控中';
-        document.getElementById('simulatorPanel').classList.add('is-driving');
-        document.body.classList.toggle('ranked-live', currentGameMode === 'ranked');
+            if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag active';
+            if (driveStatusText) driveStatusText.textContent = '操控中';
+            document.getElementById('simulatorPanel')?.classList.add('is-driving');
+            document.body.classList.add('ranked-live');
 
-        if (currentGameMode === 'ranked') {
-            // 排位賽模式：按下開始後強制切換並鎖定車子視角
             if (maze3D && maze3D.currentMode !== 'driver') {
                 maze3D.setMode('driver');
             }
@@ -298,6 +360,14 @@ function updateDrivingUI(isDriving) {
                 btnResetCam.title = '排位賽進行中已鎖定車子視角';
             }
         } else {
+            if (btnStartDrive) btnStartDrive.disabled = false;
+            if (btnStopDrive) btnStopDrive.disabled = true;
+
+            if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag';
+            if (driveStatusText) driveStatusText.textContent = '排位賽已停止';
+            document.getElementById('simulatorPanel')?.classList.remove('is-driving');
+            document.body.classList.remove('ranked-live');
+
             if (btnModeOrbit) {
                 btnModeOrbit.disabled = false;
                 btnModeOrbit.title = '3D 自由俯瞰視角';
@@ -306,29 +376,36 @@ function updateDrivingUI(isDriving) {
                 btnResetCam.disabled = false;
                 btnResetCam.title = '重設視角至標準角度';
             }
+            if (timerRunning) {
+                pauseTimer();
+            }
         }
+        return;
+    }
+
+    // 練習賽模式
+    if (isDriving) {
+        practiceDriveState = 'running';
+        updatePracticeControlsUI();
     } else {
-        btnStartDrive.disabled = false;
-        btnStartDrive.classList.remove('driving-active');
-        btnStopDrive.disabled = true;
-
-        driveStatusBadge.className = 'drive-status-tag';
-        driveStatusText.textContent = '按試跑後可用鍵盤操控';
-        document.getElementById('simulatorPanel').classList.remove('is-driving');
-        document.body.classList.remove('ranked-live');
-
-        // 比賽開始前或停止遙控後：解除視角鎖定，允許自由切換俯瞰/車載視角
-        if (btnModeOrbit) {
-            btnModeOrbit.disabled = false;
-            btnModeOrbit.title = '3D 自由俯瞰視角';
+        if (practiceDriveState !== 'paused') {
+            practiceDriveState = 'idle';
         }
-        if (btnResetCam) {
-            btnResetCam.disabled = false;
-            btnResetCam.title = '重設視角至標準角度';
-        }
-
+        updatePracticeControlsUI();
         if (timerRunning) {
             pauseTimer();
         }
     }
+
+    if (btnModeOrbit) {
+        btnModeOrbit.disabled = false;
+        btnModeOrbit.title = '3D 自由俯瞰視角';
+    }
+    if (btnResetCam) {
+        btnResetCam.disabled = false;
+        btnResetCam.title = '重設視角至標準角度';
+    }
 }
+
+// 初始化練習賽按鈕狀態
+updatePracticeControlsUI();
