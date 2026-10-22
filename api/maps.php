@@ -4,10 +4,9 @@
  */
 require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
-$dataFile = dirname(__DIR__) . '/data/maze_config.json';
 const MAX_USER_MAPS = 8;
 
-// 預設 10x10 迷宮配置
+// 預設 10x10 迷宮配置 (四周圍牆封閉，內部乾淨無牆壁，起點左下 (0, 9)，終點右上 (9, 0))
 function getDefaultConfig() {
     $rows = 10;
     $cols = 10;
@@ -27,10 +26,6 @@ function getDefaultConfig() {
             $vWalls[$r][$c] = ($c === 0 || $c === $cols) ? 1 : 0;
         }
     }
-
-    $hWalls[2][1] = 1; $hWalls[2][2] = 1; $hWalls[2][3] = 1;
-    $vWalls[3][4] = 1; $vWalls[4][4] = 1; $vWalls[5][4] = 1;
-    $hWalls[6][6] = 1; $hWalls[6][7] = 1; $hWalls[6][8] = 1;
 
     return [
         'gridSize' => ['rows' => 10, 'cols' => 10],
@@ -256,30 +251,37 @@ if ($method === 'GET') {
                 }
             }
             $stmt->close();
-        } catch (Exception $e) {
-            // DB 失敗時降級讀取本地 JSON
-        }
-    }
 
-    if (file_exists($dataFile)) {
-        $content = file_get_contents($dataFile);
-        $data = json_decode($content, true);
-        if ($data && isValidMazeData($data)) {
-            if (!$isLoggedIn && (
-                ($data['gridSize']['rows'] ?? 10) > 10 || 
-                ($data['gridSize']['cols'] ?? 10) > 10
-            )) {
-                $default = getDefaultConfig();
-                echo json_encode(['success' => true, 'data' => $default, 'source' => 'default_restricted']);
-                exit;
-            }
-            echo json_encode(['success' => true, 'data' => $data, 'source' => 'file']);
+            // 已登入但個人地圖庫尚無任何存檔：直接回傳乾淨的預設 10×10 迷宮
+            $default = getDefaultConfig();
+            echo json_encode([
+                'success' => true,
+                'id' => 0,
+                'name' => '預設迷宮 (10×10)',
+                'data' => $default,
+                'count' => 0,
+                'max' => MAX_USER_MAPS,
+                'source' => 'default'
+            ]);
+            exit;
+        } catch (Exception $e) {
+            // DB 異常時降級回傳乾淨的預設 10×10 迷宮
+            $default = getDefaultConfig();
+            echo json_encode([
+                'success' => true,
+                'id' => 0,
+                'name' => '預設迷宮 (10×10)',
+                'data' => $default,
+                'count' => 0,
+                'max' => MAX_USER_MAPS,
+                'source' => 'default'
+            ]);
             exit;
         }
     }
 
+    // 未登入（訪客）：直接回傳乾淨的預設 10×10 迷宮
     $default = getDefaultConfig();
-    @file_put_contents($dataFile, json_encode($default, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     echo json_encode(['success' => true, 'data' => $default, 'source' => 'default']);
     exit;
 }
@@ -402,12 +404,6 @@ if ($method === 'POST') {
 
             $currentCount++;
         }
-
-        // 同步寫入本機備份
-        if (!is_dir(dirname($dataFile))) {
-            @mkdir(dirname($dataFile), 0777, true);
-        }
-        @file_put_contents($dataFile, json_encode($saveData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         $actionText = $isOverwrite ? "覆蓋更新" : "新建儲存";
         $msg = "💾 迷宮【{$finalName}】已成功{$actionText}至個人雲端資料庫 (目前已存 {$currentCount}/" . MAX_USER_MAPS . " 張)！";
