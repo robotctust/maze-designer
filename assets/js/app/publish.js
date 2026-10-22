@@ -131,7 +131,7 @@ function openPublishModal() {
     };
 
     if (publishModalSpec) publishModalSpec.textContent = tierLabels[targetTier] || size;
-    if (publishModalPathCheck) publishModalPathCheck.innerHTML = '走得通<svg class="icon" style="color:var(--go)" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>';
+    if (publishModalPathCheck) publishModalPathCheck.innerHTML = '走得通<svg class="icon" style="color:var(--go)" aria-hidden="true"><use href="#check"></use></svg>';
 
     // 計算牆壁數量
     let hCount = 0;
@@ -180,7 +180,7 @@ btnConfirmPublish?.addEventListener('click', () => {
     .then(res => res.json())
     .then(res => {
         btnConfirmPublish.disabled = false;
-        btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>確認發布';
+        btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>確認發布';
 
         if (res.success) {
             closePublishModal();
@@ -204,7 +204,7 @@ btnConfirmPublish?.addEventListener('click', () => {
     })
     .catch(err => {
         btnConfirmPublish.disabled = false;
-        btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>確認發布';
+        btnConfirmPublish.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>確認發布';
         showToast('無法連接排位賽伺服器進行發布', true);
     });
 });

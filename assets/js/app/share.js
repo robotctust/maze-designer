@@ -48,7 +48,7 @@ function openCreateShareModal() {
     if (btnDoGenerateShare) {
         btnDoGenerateShare.style.display = 'inline-flex';
         btnDoGenerateShare.disabled = false;
-        btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+        btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼';
     }
     if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';
 
@@ -129,7 +129,7 @@ btnDoGenerateShare?.addEventListener('click', () => {
     .then(res => {
         if (!res.success) {
             btnDoGenerateShare.disabled = false;
-            btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+            btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼';
             if (shareAlert) {
                 shareAlert.className = 'auth-alert error';
                 shareAlert.textContent = res.message || '產生分享碼失敗';
@@ -146,7 +146,7 @@ btnDoGenerateShare?.addEventListener('click', () => {
         if (btnDoGenerateShare) btnDoGenerateShare.style.display = 'none';
         if (btnCopyShareCode) {
             btnCopyShareCode.style.display = 'inline-flex';
-            btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#copy"></use></svg>複製分享碼';
+            btnCopyShareCode.innerHTML = '<svg class="icon"><use href="#copy"></use></svg>複製分享碼';
         }
 
         if (shareCodeDisplay) shareCodeDisplay.textContent = res.code;
@@ -162,7 +162,7 @@ btnDoGenerateShare?.addEventListener('click', () => {
     })
     .catch(() => {
         btnDoGenerateShare.disabled = false;
-        btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼';
+        btnDoGenerateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼';
         if (shareAlert) {
             shareAlert.className = 'auth-alert error';
             shareAlert.textContent = '無法連線到伺服器產生分享碼';
@@ -174,10 +174,10 @@ btnDoGenerateShare?.addEventListener('click', () => {
 btnCopyShareCode?.addEventListener('click', () => {
     if (!currentShareCode) return;
     navigator.clipboard.writeText(currentShareCode).then(() => {
-        btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#check"></use></svg>已複製！';
+        btnCopyShareCode.innerHTML = '<svg class="icon"><use href="#check"></use></svg>已複製！';
         showToast(`分享碼【${currentShareCode}】已複製到剪貼簿！`);
         setTimeout(() => {
-            if (btnCopyShareCode) btnCopyShareCode.innerHTML = '<svg class="icon"><use href="assets/icons.svg#copy"></use></svg>複製分享碼';
+            if (btnCopyShareCode) btnCopyShareCode.innerHTML = '<svg class="icon"><use href="#copy"></use></svg>複製分享碼';
         }, 2000);
     }).catch(() => {
         showToast(`分享碼為：${currentShareCode}`);
@@ -236,7 +236,7 @@ btnConfirmRedeemShare?.addEventListener('click', () => {
     .then(res => res.json())
     .then(res => {
         btnConfirmRedeemShare.disabled = false;
-        btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮';
+        btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="#file-import"></use></svg>載入迷宮';
 
         if (!res.success) {
             if (redeemAlert) {
@@ -256,7 +256,7 @@ btnConfirmRedeemShare?.addEventListener('click', () => {
     })
     .catch(() => {
         btnConfirmRedeemShare.disabled = false;
-        btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮';
+        btnConfirmRedeemShare.innerHTML = '<svg class="icon"><use href="#file-import"></use></svg>載入迷宮';
         if (redeemAlert) {
             redeemAlert.className = 'auth-alert error';
             redeemAlert.textContent = '伺服器連線失敗，請稍後再試';

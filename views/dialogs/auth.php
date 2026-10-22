@@ -6,7 +6,7 @@
                 <h2 class="dlg-title" id="authTitle">登入</h2>
                 <p class="dlg-sub">登入後可用到 50 × 50、存地圖、參加排位賽</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAuthModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAuthModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="seg seg-full dlg-tabs" role="tablist">

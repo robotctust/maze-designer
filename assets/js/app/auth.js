@@ -184,11 +184,11 @@ function updateAuthUI(user) {
         if (btnOpenCreateShare) {
             if (role === 'junior') {
                 btnOpenCreateShare.classList.add('guest-locked');
-                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#lock"></use></svg>產生分享碼<span class="menu-end">中／高級</span>';
+                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#lock"></use></svg>產生分享碼<span class="menu-end">中／高級</span>';
                 btnOpenCreateShare.title = '初級使用者不能產生分享碼，只能使用別人的分享碼載入地圖';
             } else {
                 btnOpenCreateShare.classList.remove('guest-locked');
-                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="assets/icons.svg#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
+                btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
                 btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
             }
         }
@@ -210,7 +210,7 @@ function updateAuthUI(user) {
         // 會員解鎖儲存與個人地圖庫
         if (btnSave) {
             btnSave.classList.remove('guest-locked');
-            btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
+            btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存';
             btnSave.title = '將目前迷宮儲存至您的個人雲端資料庫 (最多 8 張)';
         }
         if (btnMapLibrary) {
@@ -222,11 +222,11 @@ function updateAuthUI(user) {
         if (btnPublishToRanked) {
             if (role === 'junior') {
                 btnPublishToRanked.classList.add('guest-locked');
-                btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>發布到排位賽（中級以上）';
+                btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#lock"></use></svg>發布到排位賽（中級以上）';
                 btnPublishToRanked.title = '初級使用者不能上傳排位賽地圖，需由高級使用者提升為中級或高級使用者！';
             } else {
                 btnPublishToRanked.classList.remove('guest-locked');
-                btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布到排位賽';
+                btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>發布到排位賽';
                 btnPublishToRanked.title = (role === 'intermediate')
                     ? '中級使用者：每一類限 3 張，需由高級使用者審核通過後加入題庫'
                     : '高級使用者：擁有發布與審核所有排位賽地圖權限';
@@ -254,7 +254,7 @@ function updateAuthUI(user) {
             const rows = parseInt(btn.getAttribute('data-rows'), 10);
             if (cols > 10 || rows > 10) {
                 btn.classList.add('locked');
-                btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>${cols}×${rows}`;
+                btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#lock"></use></svg>${cols}×${rows}`;
                 btn.title = `登入後可使用 ${cols}×${rows}`;
             } else {
                 btn.classList.remove('locked');
@@ -271,7 +271,7 @@ function updateAuthUI(user) {
         // 訪客限制：儲存、個人地圖庫與發布按鈕顯示鎖定狀態
         if (btnSave) {
             btnSave.classList.add('guest-locked');
-            btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>儲存（需登入）';
+            btnSave.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#lock"></use></svg>儲存（需登入）';
             btnSave.title = '登入後才能存到雲端';
         }
         if (btnMapLibrary) {
@@ -283,7 +283,7 @@ function updateAuthUI(user) {
         }
         if (btnPublishToRanked) {
             btnPublishToRanked.classList.add('guest-locked');
-            btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#lock"></use></svg>發布到排位賽（需登入）';
+            btnPublishToRanked.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#lock"></use></svg>發布到排位賽（需登入）';
             btnPublishToRanked.title = '登入後才能發布到排位賽';
         }
     }

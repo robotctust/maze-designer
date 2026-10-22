@@ -45,7 +45,7 @@ function set2DMapMode(mode, showNotification = false) {
         editorPanel.classList.add('mode-compact');
         editor.setCanvasBaseSize(400);
         if (btnToggleMapSize) {
-            btnToggleMapSize.querySelector('use').setAttribute('href', 'assets/icons.svg#arrows-minimize');
+            btnToggleMapSize.querySelector('use').setAttribute('href', '#arrows-minimize');
             btnToggleMapSize.title = '恢復並排';
             btnToggleMapSize.setAttribute('aria-label', '恢復並排');
         }
@@ -55,7 +55,7 @@ function set2DMapMode(mode, showNotification = false) {
         const designSize = getOptimalDesignCanvasSize();
         editor.setCanvasBaseSize(designSize);
         if (btnToggleMapSize) {
-            btnToggleMapSize.querySelector('use').setAttribute('href', 'assets/icons.svg#arrows-maximize');
+            btnToggleMapSize.querySelector('use').setAttribute('href', '#arrows-maximize');
             btnToggleMapSize.title = '放大 3D';
             btnToggleMapSize.setAttribute('aria-label', '放大 3D');
         }

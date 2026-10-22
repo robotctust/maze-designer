@@ -265,7 +265,7 @@ btnConfirmSaveMap?.addEventListener('click', () => {
     .then(res => res.json())
     .then(res => {
         btnConfirmSaveMap.disabled = false;
-        btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
+        btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存';
 
         if (res.success) {
             closeSaveMapModal();
@@ -283,7 +283,7 @@ btnConfirmSaveMap?.addEventListener('click', () => {
     })
     .catch(err => {
         btnConfirmSaveMap.disabled = false;
-        btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存';
+        btnConfirmSaveMap.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存';
         showToast('無法連接伺服器進行儲存', true);
     });
 });
@@ -466,7 +466,7 @@ function loadMapLibraryList() {
                             <div class="library-item-meta">${m.spec}・更新於 ${(m.updatedAt || m.createdAt || '-').substring(5, 16)}</div>
                         </div>
                         <button type="button" class="tool-btn btn-sm btn-map-load" data-id="${m.id}" data-name="${escapeHtml(m.name)}">載入</button>
-                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#trash"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
                     </div>
                 `;
             });

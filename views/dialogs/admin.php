@@ -6,7 +6,7 @@
                 <h2 class="dlg-title" id="adminUsersTitle">帳號管理</h2>
                 <p class="dlg-sub">調整初級與中級使用者身分（高級使用者帳號已隱藏）</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminUsersModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminUsersModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="admin-table-wrap">
@@ -28,7 +28,7 @@
             <p class="dlg-note">註冊新帳號皆預設為「初級使用者」，可在此將其升等為「中級使用者」以解鎖分享碼與排位投稿功能。</p>
         </div>
         <div class="dlg-foot">
-            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminUsers"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminUsers"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>
         </div>
     </div>
 </div>
@@ -41,7 +41,7 @@
                 <h2 class="dlg-title" id="adminReviewTitle">排位賽地圖審核與管理</h2>
                 <p class="dlg-sub">審核中級使用者投稿之迷宮、檢視 2D 地圖與刪除官方地圖</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminReviewModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseAdminReviewModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="seg seg-full dlg-tabs" role="tablist">
@@ -92,7 +92,7 @@
             </div>
         </div>
         <div class="dlg-foot">
-            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminReview"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshAdminReview"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>
         </div>
     </div>
 </div>
@@ -105,7 +105,7 @@
                 <h2 class="dlg-title" id="preview2DTitle">2D 地圖預覽</h2>
                 <p class="dlg-sub" id="preview2DSub">規格與路徑驗證</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnClosePreview2DModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnClosePreview2DModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body" style="text-align: center;">
             <div class="preview-2d-canvas-wrap">

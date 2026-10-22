@@ -192,9 +192,9 @@ function loadAdminSubmissionsList() {
                         <td>${escapeHtml(s.authorName)}</td>
                         <td>${escapeHtml(s.createdAt)}</td>
                         <td class="actions">
-                            <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-2d" data-json='${escapeHtml(JSON.stringify(s.mazeData))}' data-title="${escapeHtml(s.name)}" data-meta="${escapeHtml(s.authorName + ' ・ ' + s.createdAt)}"><svg class="icon"><use href="assets/icons.svg#focus-centered"></use></svg>2D 地圖</button>
-                            <button type="button" class="tool-btn btn-save btn-sm btn-approve-sub" data-sub-id="${s.id}"><svg class="icon"><use href="assets/icons.svg#check"></use></svg>核准</button>
-                            <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-reject-sub" data-sub-id="${s.id}"><svg class="icon"><use href="assets/icons.svg#x"></use></svg>退回</button>
+                            <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-2d" data-json='${escapeHtml(JSON.stringify(s.mazeData))}' data-title="${escapeHtml(s.name)}" data-meta="${escapeHtml(s.authorName + ' ・ ' + s.createdAt)}"><svg class="icon"><use href="#focus-centered"></use></svg>2D 地圖</button>
+                            <button type="button" class="tool-btn btn-save btn-sm btn-approve-sub" data-sub-id="${s.id}"><svg class="icon"><use href="#check"></use></svg>核准</button>
+                            <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-reject-sub" data-sub-id="${s.id}"><svg class="icon"><use href="#x"></use></svg>退回</button>
                         </td>
                     </tr>
                 `;
@@ -315,8 +315,8 @@ function loadAdminOfficialMapsList() {
                             <td>${escapeHtml(m.author || '官方')}</td>
                             <td>${escapeHtml(m.createdAt || '-')}</td>
                             <td class="actions">
-                                <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-official" data-json='${escapeHtml(JSON.stringify(m))}' data-title="${escapeHtml(m.name)}" data-meta="${escapeHtml((m.author || '官方') + ' ・ ' + (m.createdAt || ''))}"><svg class="icon"><use href="assets/icons.svg#focus-centered"></use></svg>2D 地圖</button>
-                                <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-delete-official" data-size="${escapeHtml(size)}" data-map-id="${escapeHtml(m.mapId)}"><svg class="icon"><use href="assets/icons.svg#trash"></use></svg>刪除</button>
+                                <button type="button" class="tool-btn btn-ghost btn-sm btn-preview-official" data-json='${escapeHtml(JSON.stringify(m))}' data-title="${escapeHtml(m.name)}" data-meta="${escapeHtml((m.author || '官方') + ' ・ ' + (m.createdAt || ''))}"><svg class="icon"><use href="#focus-centered"></use></svg>2D 地圖</button>
+                                <button type="button" class="tool-btn btn-ghost btn-sm text-danger btn-delete-official" data-size="${escapeHtml(size)}" data-map-id="${escapeHtml(m.mapId)}"><svg class="icon"><use href="#trash"></use></svg>刪除</button>
                             </td>
                         </tr>
                     `;

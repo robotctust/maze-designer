@@ -118,10 +118,10 @@ const RANKED_TIERS = {
 function applyTierTheme(size) {
     const t = RANKED_TIERS[size];
     document.body.dataset.tier = size;
-    document.getElementById('lobbyCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
+    document.getElementById('lobbyCrestUse').setAttribute('href', `#crest-${t.level}`);
     document.getElementById('lobbyTierEn').textContent = (size === 'special') ? 'SPECIAL ARENA' : ((size === 'apex') ? 'APEX ARENA' : `${t.en}・TIER ${t.level}`);
     document.getElementById('lobbyTierName').textContent = t.name;
-    document.getElementById('liveCrestUse').setAttribute('href', `assets/icons.svg#crest-${t.level}`);
+    document.getElementById('liveCrestUse').setAttribute('href', `#crest-${t.level}`);
     document.getElementById('liveTierName').textContent = t.name;
     document.getElementById('lobbyLimitClock').textContent = t.clock;
     document.getElementById('lobbyTierSub').textContent = (size === 'special') ? `長方形特殊迷宮・限時 ${t.limit}` : ((size === 'apex') ? `35×35～50×50 超大迷宮・限時 ${t.limit}` : `${size.replace('x', ' × ')} 迷宮・限時 ${t.limit}`);
@@ -356,7 +356,7 @@ function loadLeaderboardData(size) {
     // 彈窗主色、徽章跟著目前段位頁籤
     const tier = RANKED_TIERS[size];
     leaderboardModalBackdrop.dataset.tier = size;
-    document.getElementById('boardCrestUse').setAttribute('href', `assets/icons.svg#crest-${tier.level}`);
+    document.getElementById('boardCrestUse').setAttribute('href', `#crest-${tier.level}`);
     document.getElementById('boardKicker').textContent = `LEADERBOARD・${tier.en}`;
     leaderboardTableBody.innerHTML = '<tr><td colspan="6" class="table-note">載入中…</td></tr>';
 
@@ -582,10 +582,10 @@ function loadMyRankedMapsData() {
             if (myRankedMapsStats) {
                 myRankedMapsStats.style.display = 'flex';
                 myRankedMapsStats.innerHTML = `
-                    <div class="stat-item"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#upload"></use></svg>發布總數：<strong>${maps.length} 張</strong></div>
-                    <div class="stat-item" style="color: #4ade80;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>官方收錄：<strong>${approvedCount} 張</strong></div>
-                    ${pendingCount > 0 ? `<div class="stat-item" style="color: #fbbf24;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg>審核中：<strong>${pendingCount} 張</strong></div>` : ''}
-                    ${rejectedCount > 0 ? `<div class="stat-item" style="color: #f87171;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg>已退回：<strong>${rejectedCount} 張</strong></div>` : ''}
+                    <div class="stat-item"><svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>發布總數：<strong>${maps.length} 張</strong></div>
+                    <div class="stat-item" style="color: #4ade80;"><svg class="icon" aria-hidden="true"><use href="#check"></use></svg>官方收錄：<strong>${approvedCount} 張</strong></div>
+                    ${pendingCount > 0 ? `<div class="stat-item" style="color: #fbbf24;"><svg class="icon" aria-hidden="true"><use href="#clock"></use></svg>審核中：<strong>${pendingCount} 張</strong></div>` : ''}
+                    ${rejectedCount > 0 ? `<div class="stat-item" style="color: #f87171;"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg>已退回：<strong>${rejectedCount} 張</strong></div>` : ''}
                 `;
             }
 
@@ -612,21 +612,21 @@ function loadMyRankedMapsData() {
                                     ${m.mapId ? `<span class="map-id-tag">${escapeHtml(m.mapId)}</span>` : ''}
                                 </h3>
                                 <span class="status-badge ${st.cls}">
-                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#${st.icon}"></use></svg>
+                                    <svg class="icon" aria-hidden="true"><use href="#${st.icon}"></use></svg>
                                     ${st.text}
                                 </span>
                             </div>
                             <div class="my-ranked-map-specs">
                                 <div class="spec-chip">
-                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-grid"></use></svg>
+                                    <svg class="icon" aria-hidden="true"><use href="#layout-grid"></use></svg>
                                     <span>規格：<strong>${m.gridSize.cols} × ${m.gridSize.rows} 格</strong></span>
                                 </div>
                                 <div class="spec-chip">
-                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#ruler"></use></svg>
+                                    <svg class="icon" aria-hidden="true"><use href="#ruler"></use></svg>
                                     <span>尺寸：<strong>${m.totalWidthCm} × ${m.totalHeightCm} cm</strong></span>
                                 </div>
                                 <div class="spec-chip">
-                                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wall"></use></svg>
+                                    <svg class="icon" aria-hidden="true"><use href="#wall"></use></svg>
                                     <span>隔板：<strong>${m.wallCount} 段</strong></span>
                                 </div>
                                 <div class="spec-chip">
@@ -636,10 +636,10 @@ function loadMyRankedMapsData() {
                                 </div>
                             </div>
                             <div class="my-ranked-map-footer">
-                                <span><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#calendar"></use></svg> 投稿於 ${timeStr}</span>
+                                <span><svg class="icon" aria-hidden="true"><use href="#calendar"></use></svg> 投稿於 ${timeStr}</span>
                                 <div class="map-actions">
                                     <button type="button" class="tool-btn btn-sm btn-ghost btn-load-ranked-map" data-index="${idx}" title="載入至練習賽編輯器">
-                                        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#pencil"></use></svg>載入至編輯器
+                                        <svg class="icon" aria-hidden="true"><use href="#pencil"></use></svg>載入至編輯器
                                     </button>
                                 </div>
                             </div>

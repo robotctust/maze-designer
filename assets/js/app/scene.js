@@ -33,7 +33,7 @@ const maze3D = new Maze3D(canvasContainer, {
             const tier = RANKED_TIERS[currentRankedSize];
             const recordStamp = document.getElementById('rankedRecordStamp');
 
-            document.getElementById('resultCrestUse').setAttribute('href', `assets/icons.svg#crest-${tier.level}`);
+            document.getElementById('resultCrestUse').setAttribute('href', `#crest-${tier.level}`);
             document.getElementById('rankedResultTier').textContent = `${tier.en}・${currentRankedSize.replace('x', ' × ')}・${currentRankedMapId}`;
             document.getElementById('rankedGradeLetter').textContent = grade;
             recordStamp.hidden = true;

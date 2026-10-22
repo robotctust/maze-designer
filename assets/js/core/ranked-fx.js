@@ -59,7 +59,7 @@ const RankedFx = (() => {
             btn.setAttribute('aria-pressed', String(!muted));
             btn.title = muted ? '音效：關（點一下開啟）' : '音效：開（點一下關閉）';
             btn.setAttribute('aria-label', btn.title);
-            btn.querySelector('use')?.setAttribute('href', `assets/icons.svg#${muted ? 'volume-off' : 'volume'}`);
+            btn.querySelector('use')?.setAttribute('href', `#${muted ? 'volume-off' : 'volume'}`);
         });
     }
 
@@ -89,7 +89,7 @@ const RankedFx = (() => {
             <div class="intro-band">
                 <div class="intro-stripes"></div>
                 <div class="intro-main">
-                    <svg class="intro-crest" aria-hidden="true"><use href="assets/icons.svg#crest-${tier.level}"></use></svg>
+                    <svg class="intro-crest" aria-hidden="true"><use href="#crest-${tier.level}"></use></svg>
                     <div>
                         <p class="intro-en">${tier.en} ARENA</p>
                         <p class="intro-name">${tier.name}</p>

@@ -6,7 +6,7 @@
                 <h2 class="dlg-title" id="saveTitle">儲存迷宮</h2>
                 <p class="dlg-sub"><span id="saveCurrentSpec">10×10 格</span>・牆 <span id="saveCurrentWalls">0 段</span></p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseSaveMapModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseSaveMapModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="quota">
@@ -32,7 +32,7 @@
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost" id="btnCancelSaveMap">取消</button>
-            <button type="button" class="tool-btn btn-save" id="btnConfirmSaveMap"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#device-floppy"></use></svg>儲存</button>
+            <button type="button" class="tool-btn btn-save" id="btnConfirmSaveMap"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存</button>
         </div>
     </div>
 </div>
@@ -45,7 +45,7 @@
                 <h2 class="dlg-title" id="libraryTitle">我的地圖庫</h2>
                 <p class="dlg-sub">載入後可以繼續編輯</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseMapLibraryModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseMapLibraryModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="quota">
@@ -56,7 +56,7 @@
             <p class="dlg-note">在練習模式按「儲存」，地圖就會出現在這裡（每個帳號最多可存 8 張）。</p>
         </div>
         <div class="dlg-foot">
-            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#refresh"></use></svg>重新整理</button>
+            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>
         </div>
     </div>
 </div>
@@ -69,7 +69,7 @@
                 <h2 class="dlg-title" id="createShareTitle">產生分享碼</h2>
                 <p class="dlg-sub">限時 1 分鐘・最多供 3 人載入此迷宮</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseCreateShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseCreateShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="check-list">
@@ -86,7 +86,7 @@
                     <span class="share-code-val" id="shareCodeDisplay">------</span>
                     <div class="share-meta-row">
                         <span id="shareUsageInfo">已使用：<strong id="shareUsedCount">0</strong> / 3 人</span>
-                        <span class="share-timer-badge" id="shareTimerBadge"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#clock"></use></svg><span id="shareCountdownSeconds">60</span>s</span>
+                        <span class="share-timer-badge" id="shareTimerBadge"><svg class="icon" aria-hidden="true"><use href="#clock"></use></svg><span id="shareCountdownSeconds">60</span>s</span>
                     </div>
                     <div class="share-progress-bar">
                         <div class="share-progress-fill" id="shareProgressFill" style="width: 100%;"></div>
@@ -99,8 +99,8 @@
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost" id="btnCancelCreateShare">關閉</button>
-            <button type="button" class="tool-btn btn-save" id="btnDoGenerateShare"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#share"></use></svg>產生分享碼</button>
-            <button type="button" class="tool-btn btn-save" id="btnCopyShareCode" style="display: none;"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#copy"></use></svg>複製分享碼</button>
+            <button type="button" class="tool-btn btn-save" id="btnDoGenerateShare"><svg class="icon" aria-hidden="true"><use href="#share"></use></svg>產生分享碼</button>
+            <button type="button" class="tool-btn btn-save" id="btnCopyShareCode" style="display: none;"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg>複製分享碼</button>
         </div>
     </div>
 </div>
@@ -113,7 +113,7 @@
                 <h2 class="dlg-title" id="redeemShareTitle">載入分享地圖</h2>
                 <p class="dlg-sub">輸入他人分享的 6 碼代碼，即刻載入迷宮</p>
             </div>
-            <button type="button" class="dlg-close auth-modal-close" id="btnCloseRedeemShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#x"></use></svg></button>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseRedeemShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
         <div class="dlg-body">
             <div class="auth-alert" id="redeemAlert" role="alert" style="display: none;"></div>
@@ -125,7 +125,7 @@
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost" id="btnCancelRedeemShare">取消</button>
-            <button type="button" class="tool-btn btn-save" id="btnConfirmRedeemShare"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#file-import"></use></svg>載入迷宮</button>
+            <button type="button" class="tool-btn btn-save" id="btnConfirmRedeemShare"><svg class="icon" aria-hidden="true"><use href="#file-import"></use></svg>載入迷宮</button>
         </div>
     </div>
 </div>
