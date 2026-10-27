@@ -261,19 +261,6 @@ body {
     fill: rgba(239, 68, 68, 0.22);
 }
 
-/* 比賽計分用的步數數字 */
-.map-step-label {
-    fill: #E2E8F0;
-    font-weight: 700;
-    text-anchor: middle;
-    dominant-baseline: central;
-    pointer-events: none;
-}
-
-.map-viewport.theme-light .map-step-label {
-    fill: #0F172A;
-}
-
 /* 牆：方頭、以格線為中心，轉角與 T 字接頭剛好接滿不凸出 */
 .wall-visual {
     stroke: #D99B5A;

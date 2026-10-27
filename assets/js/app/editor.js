@@ -252,16 +252,6 @@ document.getElementById('btnRandom').addEventListener('click', () => {
     showToast('已隨機生成迷宮！', false, UNDO_TOAST_ACTION);
 });
 
-// 比賽計分用：每格顯示離終點幾步，開啟時匯出的 PNG 也會帶數字，可以印給裁判
-document.getElementById('btnToggleSteps').addEventListener('click', () => {
-    editor.setShowSteps(!editor.showSteps);
-    document.getElementById('stepsStatus').textContent = editor.showSteps ? '開' : '關';
-    if (editor.showSteps) {
-        const startSteps = editor.computeSteps()[editor.start.y][editor.start.x];
-        showToast(startSteps === null ? '起點走不到終點，請檢查牆壁' : `起點離終點 ${startSteps} 步`);
-    }
-});
-
 // 匯出 2D 地圖 (高解析 PNG 圖片)
 document.getElementById('btnExportPNG').addEventListener('click', () => {
     editor.exportPNG(
