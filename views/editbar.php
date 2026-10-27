@@ -66,6 +66,7 @@
         </div>
     </div>
     <div class="editbar-spacer"></div>
+    <button type="button" class="tool-btn btn-ghost" id="btnOpenSteps" title="另開頁面，查看每一格離終點幾步"><svg class="icon" aria-hidden="true"><use href="#ruler"></use></svg>計算步數</button>
     <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>發布到排位賽</button>
     <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（Ctrl+S 快速儲存）"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存</button>
 </div>

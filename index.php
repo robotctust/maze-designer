@@ -30,6 +30,8 @@
         </div>
     </div>
 
+    <?php include __DIR__ . '/views/steps-page.php'; ?>
+
     <!-- 提示訊息 -->
     <div class="toast" id="toastMsg" role="status" aria-live="polite"></div>
 
@@ -50,7 +52,7 @@
     <script src="assets/js/core/maze-3d.js?v=<?= filemtime(__DIR__ . "/assets/js/core/maze-3d.js") ?>"></script>
     <script src="assets/js/core/ranked-fx.js?v=<?= filemtime(__DIR__ . "/assets/js/core/ranked-fx.js") ?>"></script>
 
-<?php foreach (['common', 'timer', 'scene', 'editor', 'drive', 'auth', 'maps', 'ranked', 'share', 'publish', 'admin', 'main'] as $js): ?>
+<?php foreach (['common', 'timer', 'scene', 'editor', 'steps', 'drive', 'auth', 'maps', 'ranked', 'share', 'publish', 'admin', 'main'] as $js): ?>
     <script src="assets/js/app/<?= $js ?>.js?v=<?= filemtime(__DIR__ . "/assets/js/app/$js.js") ?>"></script>
 <?php endforeach; ?>
 </body>
