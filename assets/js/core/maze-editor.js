@@ -27,6 +27,9 @@ class MazeEditor {
         this.carPos = null;
         this.trailPoints = [];
 
+        // 比賽計分用：每格顯示沿通道走到終點的步數
+        this.showSteps = false;
+
         // 2D 地圖縮放 (Zoom) 與平移拖曳 (Pan) 狀態
         this.zoomScale = 1.0;
         this.panX = 0;
@@ -463,6 +466,44 @@ class MazeEditor {
         this.setOuterWalls(1);
     }
 
+    /**
+     * 從終點往外一格一格數，算出每格沿通道走到終點要幾步（走不到的格子為 null）
+     */
+    computeSteps() {
+        const steps = Array.from({ length: this.rows }, () => Array(this.cols).fill(null));
+        const queue = [this.goal];
+        steps[this.goal.y][this.goal.x] = 0;
+        for (let i = 0; i < queue.length; i++) {
+            const { x, y } = queue[i];
+            const next = [
+                [x, y - 1, !this.hWalls[y]?.[x]],
+                [x, y + 1, !this.hWalls[y + 1]?.[x]],
+                [x - 1, y, !this.vWalls[y]?.[x]],
+                [x + 1, y, !this.vWalls[y]?.[x + 1]]
+            ];
+            for (const [nx, ny, open] of next) {
+                if (open && nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows && steps[ny][nx] === null) {
+                    steps[ny][nx] = steps[y][x] + 1;
+                    queue.push({ x: nx, y: ny });
+                }
+            }
+        }
+        return steps;
+    }
+
+    setShowSteps(on) {
+        this.showSteps = on;
+        this.render();
+    }
+
+    /**
+     * 步數文字的位置：起點有圓形標記，數字改放到右下角
+     */
+    stepLabelPos(c, r, step) {
+        if (c === this.start.x && r === this.start.y) return [(c + 0.82) * step, (r + 0.84) * step, 0.24];
+        return [(c + 0.5) * step, (r + 0.5) * step, 0.38];
+    }
+
     render() {
         this.cachedCarGroup = null;
         this.cachedTrail = null;
@@ -573,6 +614,23 @@ class MazeEditor {
 
         renderBadge(this.start, 'S');
         renderBadge(this.goal, 'G');
+
+        if (this.showSteps) {
+            const steps = this.computeSteps();
+            for (let r = 0; r < this.rows; r++) {
+                for (let c = 0; c < this.cols; c++) {
+                    if (steps[r][c] === null || steps[r][c] === 0) continue;
+                    const [x, y, k] = this.stepLabelPos(c, r, step);
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', x);
+                    text.setAttribute('y', y);
+                    text.setAttribute('font-size', Math.round(step * k));
+                    text.setAttribute('class', 'map-step-label');
+                    text.textContent = steps[r][c];
+                    svg.appendChild(text);
+                }
+            }
+        }
 
         // 3. 牆壁可視化繪製
         // 3-1 水平牆壁
@@ -1026,6 +1084,24 @@ class MazeEditor {
 
             drawBadge(this.start, '起點', '#22c55e');
             drawBadge(this.goal, '終點', '#ef4444');
+
+            if (this.showSteps) {
+                const steps = this.computeSteps();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.lineWidth = Math.max(3, step * 0.04);
+                ctx.strokeStyle = '#ffffff';
+                ctx.fillStyle = '#0f172a';
+                for (let r = 0; r < this.rows; r++) {
+                    for (let c = 0; c < this.cols; c++) {
+                        if (steps[r][c] === null || steps[r][c] === 0) continue;
+                        const [x, y, k] = this.stepLabelPos(c, r, step);
+                        ctx.font = `bold ${Math.round(step * k)}px Arial, sans-serif`;
+                        ctx.strokeText(steps[r][c], x, y);
+                        ctx.fillText(steps[r][c], x, y);
+                    }
+                }
+            }
 
             // 觸發下載
             const dataUrl = canvas.toDataURL('image/png');
