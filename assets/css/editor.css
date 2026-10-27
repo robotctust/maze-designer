@@ -11,6 +11,17 @@
     border-bottom: 1px solid var(--border);
 }
 
+/* 目前開啟的地圖檔名稱 */
+.map-file-name {
+    max-width: 220px;
+    margin-right: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    color: var(--text);
+}
+
 .editbar-spacer,
 .status-spacer {
     flex: 1;

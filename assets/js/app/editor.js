@@ -277,7 +277,10 @@ fileInputJSON.addEventListener('change', (e) => {
     if (file) {
         editor.importJSON(
             file,
-            () => showToast('已成功載入迷宮設定！'),
+            () => {
+                setActiveMapInfo(0, '');
+                showToast('已成功載入迷宮設定！');
+            },
             (errMsg) => showToast(errMsg, true)
         );
     }

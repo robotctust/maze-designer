@@ -246,6 +246,7 @@ btnConfirmRedeemShare?.addEventListener('click', () => {
         closeRedeemShareModal();
         if (res.data) {
             editor.loadData(res.data);
+            setActiveMapInfo(0, '');
             maze3D.resetOrbitCamera();
         }
         showToast(res.message);

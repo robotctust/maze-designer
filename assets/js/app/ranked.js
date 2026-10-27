@@ -679,6 +679,7 @@ function loadRankedMapToEditor(m) {
         switchGameMode('practice');
     }
     if (typeof editor !== 'undefined') {
+        setActiveMapInfo(0, '');
         editor.loadData({
             gridSize: m.gridSize,
             cellSizeCm: 30,

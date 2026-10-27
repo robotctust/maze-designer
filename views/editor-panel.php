@@ -29,7 +29,7 @@
                     <button type="button" class="float-btn" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明" aria-label="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="#keyboard"></use></svg></button>
                     <div class="menu menu-end-align shortcuts-menu" id="shortcutsMenu" hidden>
                         <p class="menu-heading">2D 編輯</p>
-                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>S</kbd><span>快速儲存</span></div>
+                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>S</kbd><span>儲存</span></div>
                         <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Z</kbd><span>復原</span></div>
                         <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Shift</kbd><kbd>Z</kbd><span>重做</span></div>
                         <div class="kbd-row"><kbd>滾輪</kbd><span>縮放</span></div>

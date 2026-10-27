@@ -5,6 +5,7 @@
         <button type="button" class="hud-pill-btn active" id="btnViewDesign" role="tab" aria-selected="true">設計</button>
         <button type="button" class="hud-pill-btn" id="btnViewDrive" role="tab" aria-selected="false">試跑</button>
     </div>
+    <span class="map-file-name" id="activeMapName" title="目前開啟的地圖">未命名地圖</span>
     <div class="menu-wrap">
         <button type="button" class="tool-btn" id="btnSpecMenu" aria-haspopup="menu" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#ruler"></use></svg><span id="specMenuLabel">10 × 10</span><svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="#chevron-down"></use></svg></button>
         <div class="menu spec-menu" id="specMenu" hidden>
@@ -49,7 +50,7 @@
     <div class="menu-wrap">
         <button type="button" class="tool-btn btn-ghost" id="btnFileMenu" aria-haspopup="menu" aria-expanded="false">檔案<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="#chevron-down"></use></svg></button>
         <div class="menu" id="fileMenu" role="menu" hidden>
-            <button type="button" class="menu-item" id="btnQuickSave" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>快速儲存<span class="menu-end">Ctrl+S</span></button>
+            <button type="button" class="menu-item" id="btnSaveAs" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>另存新檔…</button>
             <button type="button" class="menu-item" id="btnFileMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#folder"></use></svg>我的地圖庫</button>
             <div class="menu-sep"></div>
             <button type="button" class="menu-item" id="btnImportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#file-import"></use></svg>匯入 JSON</button>
@@ -68,5 +69,5 @@
     <div class="editbar-spacer"></div>
     <button type="button" class="tool-btn btn-ghost" id="btnOpenSteps" title="另開頁面，查看每一格離終點幾步"><svg class="icon" aria-hidden="true"><use href="#ruler"></use></svg>計算步數</button>
     <button type="button" class="tool-btn" id="btnPublishToRanked" title="把這張迷宮發布到官方排位賽圖庫"><svg class="icon" aria-hidden="true"><use href="#upload"></use></svg>發布到排位賽</button>
-    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（Ctrl+S 快速儲存）"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存</button>
+    <button type="button" class="tool-btn btn-save" id="btnSave" title="存到你的雲端地圖庫（Ctrl+S）"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存</button>
 </div>

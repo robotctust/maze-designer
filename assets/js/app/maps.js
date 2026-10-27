@@ -69,9 +69,16 @@ let currentActiveMapName = '';
 function setActiveMapInfo(id, name) {
     currentActiveMapId = parseInt(id, 10) || 0;
     currentActiveMapName = name ? String(name).trim() : '';
+
+    // 編輯列左邊顯示目前開啟的地圖檔名稱；「儲存」會直接存回這個檔案
+    document.getElementById('activeMapName').textContent = currentActiveMapId ? currentActiveMapName : '未命名地圖';
+    document.getElementById('btnSave').title = currentActiveMapId
+        ? `存回「${currentActiveMapName}」（Ctrl+S）`
+        : '存到你的雲端地圖庫（Ctrl+S）';
 }
 
-function openSaveMapModal() {
+// saveAs：另存新檔，預設存成新的一張，不覆蓋目前開啟的地圖
+function openSaveMapModal(saveAs = false) {
     if (!currentUser) {
         openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
@@ -97,7 +104,9 @@ function openSaveMapModal() {
     if (saveCurrentWalls) saveCurrentWalls.textContent = `${wallCount} 段`;
 
     if (saveMapNameInput) {
-        saveMapNameInput.value = currentActiveMapName || `我的迷宮 (${cols}×${rows})`;
+        saveMapNameInput.value = saveAs && currentActiveMapName
+            ? `${currentActiveMapName} 副本`
+            : (currentActiveMapName || `我的迷宮 (${cols}×${rows})`);
     }
 
     saveMapModalBackdrop?.classList.add('show');
@@ -129,7 +138,7 @@ function openSaveMapModal() {
             const headerMapCountBadge = document.getElementById('headerMapCountBadge');
             if (headerMapCountBadge) headerMapCountBadge.textContent = `${count} / ${max}`;
 
-            const hasActiveExisting = currentActiveMapId > 0 && userSavedMapsCache.some(x => x.id === currentActiveMapId);
+            const hasActiveExisting = !saveAs && currentActiveMapId > 0 && userSavedMapsCache.some(x => x.id === currentActiveMapId);
 
             // 判斷是否已滿額
             if (count >= max) {
@@ -296,17 +305,16 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
-// 儲存按鈕點擊
-document.getElementById('btnSave').addEventListener('click', () => {
+// 儲存按鈕：已開啟地圖檔時直接存回該檔，還沒存過才跳出儲存視窗
+document.getElementById('btnSave').addEventListener('click', () => quickSaveMap());
+
+// 檔案選單中的「另存新檔」
+document.getElementById('btnSaveAs').addEventListener('click', () => {
     if (currentGameMode === 'ranked') {
         showToast('排位賽官方地圖禁止儲存至個人資料庫！請先回到練習模式再儲存。', true);
         return;
     }
-    if (!currentUser) {
-        openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
-        return;
-    }
-    openSaveMapModal();
+    openSaveMapModal(true);
 });
 
 // 快速儲存（Ctrl + S / Cmd + S）
@@ -318,7 +326,7 @@ function quickSaveMap() {
         return;
     }
     if (!currentUser) {
-        openAuthModal('訪客限制：「快速儲存」僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「儲存」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     if (isQuickSaving) return;
@@ -338,7 +346,7 @@ function quickSaveMap() {
     const btnSaveEl = document.getElementById('btnSave');
     if (btnSaveEl) btnSaveEl.classList.add('btn-saving');
 
-    showToast(`⏳ 正在快速儲存【${currentActiveMapName}】…`, false);
+    showToast(`正在儲存「${currentActiveMapName}」…`, false);
 
     fetch('api/maps.php', {
         method: 'POST',
@@ -353,14 +361,14 @@ function quickSaveMap() {
         if (res.success) {
             editor.markSaved();
             setActiveMapInfo(res.mapId || currentActiveMapId, res.mapName || currentActiveMapName);
-            showToast(`💾 已快速儲存至【${res.mapName || currentActiveMapName}】！`);
+            showToast(`已存回「${res.mapName || currentActiveMapName}」`);
             refreshMapLibraryBadge();
         } else {
             if (res.message && res.message.includes('不存在')) {
                 setActiveMapInfo(0, '');
                 openSaveMapModal();
             } else {
-                showToast(res.message || '快速儲存失敗', true);
+                showToast(res.message || '儲存失敗', true);
             }
         }
     })
@@ -385,8 +393,6 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// 檔案選單中的「快速儲存」
-document.getElementById('btnQuickSave')?.addEventListener('click', quickSaveMap);
 
 // 地圖庫彈窗相關 DOM 節點
 const mapLibraryModalBackdrop = document.getElementById('mapLibraryModalBackdrop');
