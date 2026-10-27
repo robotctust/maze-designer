@@ -50,8 +50,12 @@
     <div class="menu-wrap">
         <button type="button" class="tool-btn btn-ghost" id="btnFileMenu" aria-haspopup="menu" aria-expanded="false">檔案<svg class="icon" style="width:16px;height:16px" aria-hidden="true"><use href="#chevron-down"></use></svg></button>
         <div class="menu" id="fileMenu" role="menu" hidden>
-            <button type="button" class="menu-item" id="btnSaveAs" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>另存新檔…</button>
-            <button type="button" class="menu-item" id="btnFileMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#folder"></use></svg>我的地圖庫</button>
+            <button type="button" class="menu-item" id="btnNewMap" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#plus"></use></svg>新增空白地圖</button>
+            <button type="button" class="menu-item" id="btnFileMapLibrary" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#folder"></use></svg>開啟…</button>
+            <div class="menu-sep"></div>
+            <button type="button" class="menu-item" id="btnFileSave" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#device-floppy"></use></svg>儲存<span class="menu-end">Ctrl+S</span></button>
+            <button type="button" class="menu-item" id="btnSaveAs" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg>另存新檔…</button>
+            <button type="button" class="menu-item" id="btnRenameMap" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#pencil"></use></svg>重新命名…</button>
             <div class="menu-sep"></div>
             <button type="button" class="menu-item" id="btnImportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#file-import"></use></svg>匯入 JSON</button>
             <button type="button" class="menu-item" id="btnExportJSON" role="menuitem"><svg class="icon" aria-hidden="true"><use href="#file-code"></use></svg>匯出 JSON</button>

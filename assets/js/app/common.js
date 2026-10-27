@@ -30,8 +30,13 @@ function showToast(msg, isError = false, action = null) {
 }
 
 // 共用確認框：回傳 Promise，按確定為 true；danger 時確定鈕為紅色。按 Esc、點背景或取消為 false
-function showConfirm({ title, message = '', confirmLabel = '確定', danger = false }) {
+// 傳入 inputValue 時多一個輸入欄，確定後回傳輸入的文字（取消回傳 false）
+function showConfirm({ title, message = '', confirmLabel = '確定', danger = false, inputValue }) {
     const backdrop = document.getElementById('confirmModalBackdrop');
+    const input = document.getElementById('confirmInput');
+    const hasInput = inputValue !== undefined;
+    input.hidden = !hasInput;
+    input.value = hasInput ? inputValue : '';
     const okBtn = document.getElementById('btnConfirmOk');
     const cancelBtn = document.getElementById('btnConfirmCancel');
     document.getElementById('confirmTitle').textContent = title;
@@ -41,7 +46,8 @@ function showConfirm({ title, message = '', confirmLabel = '確定', danger = fa
     okBtn.classList.toggle('btn-save', !danger);
     backdrop.classList.add('show');
     // 危險操作預設停在「取消」，避免按 Enter 誤刪
-    (danger ? cancelBtn : okBtn).focus();
+    if (hasInput) input.select();
+    else (danger ? cancelBtn : okBtn).focus();
 
     return new Promise(resolve => {
         const finish = (result) => {
@@ -52,13 +58,16 @@ function showConfirm({ title, message = '', confirmLabel = '確定', danger = fa
             document.removeEventListener('keydown', onKey, true);
             resolve(result);
         };
-        const onOk = () => finish(true);
+        const onOk = () => finish(hasInput ? input.value.trim() : true);
         const onCancel = () => finish(false);
         const onBackdrop = (e) => { if (e.target === backdrop) finish(false); };
         const onKey = (e) => {
             if (e.key === 'Escape') {
                 e.stopPropagation();
                 finish(false);
+            } else if (e.key === 'Enter' && hasInput) {
+                e.preventDefault();
+                onOk();
             }
         };
         okBtn.addEventListener('click', onOk);

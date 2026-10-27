@@ -308,6 +308,84 @@ window.addEventListener('beforeunload', (e) => {
 // 儲存按鈕：已開啟地圖檔時直接存回該檔，還沒存過才跳出儲存視窗
 document.getElementById('btnSave').addEventListener('click', () => quickSaveMap());
 
+document.getElementById('btnFileSave').addEventListener('click', () => quickSaveMap());
+
+// 有未存的修改時，先問要不要放棄（新增、開啟其他地圖前）
+async function confirmDiscardChanges() {
+    if (!editor.isDirty()) return true;
+    return showConfirm({
+        title: '目前的地圖還沒儲存',
+        message: '繼續的話，還沒儲存的修改會遺失。',
+        confirmLabel: '不儲存，繼續',
+        danger: true
+    });
+}
+
+// 新增空白地圖：沿用目前的格數，起點左下、終點右上，存檔前都是「未命名地圖」
+document.getElementById('btnNewMap').addEventListener('click', async () => {
+    if (currentGameMode === 'ranked') return;
+    if (!await confirmDiscardChanges()) return;
+    editor.start = { x: 0, y: editor.rows - 1 };
+    editor.goal = { x: editor.cols - 1, y: 0 };
+    editor.setGridSize(editor.cols, editor.rows);
+    editor.clearHistory();
+    setActiveMapInfo(0, '');
+    maze3D.resetOrbitCamera();
+    showToast('已新增空白地圖');
+});
+
+async function renameUserMap(id, oldName) {
+    const name = await showConfirm({ title: '重新命名地圖', inputValue: oldName, confirmLabel: '重新命名' });
+    if (!name || name === oldName) return;
+    try {
+        const res = await fetch('api/maps.php?action=rename', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, name })
+        }).then(r => r.json());
+        if (!res.success) {
+            showToast(res.message || '重新命名失敗', true);
+            return;
+        }
+        if (currentActiveMapId === parseInt(id, 10)) setActiveMapInfo(id, res.mapName);
+        showToast(res.message);
+        if (mapLibraryModalBackdrop.classList.contains('show')) loadMapLibraryList();
+    } catch (err) {
+        showToast('無法連接伺服器重新命名', true);
+    }
+}
+
+// 目前的地圖還沒存過時，重新命名就是第一次儲存
+document.getElementById('btnRenameMap').addEventListener('click', () => {
+    if (currentGameMode === 'ranked') return;
+    if (!currentActiveMapId) {
+        quickSaveMap();
+        return;
+    }
+    renameUserMap(currentActiveMapId, currentActiveMapName);
+});
+
+// 複製地圖：在地圖庫裡多存一張「名稱 副本」，不影響目前開啟的地圖
+async function duplicateUserMap(id, name) {
+    try {
+        const loaded = await fetch(`api/maps.php?action=load&id=${id}`).then(r => r.json());
+        if (!loaded.success || !loaded.data) {
+            showToast(loaded.message || '讀取地圖失敗', true);
+            return;
+        }
+        const res = await fetch('api/maps.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...loaded.data, name: `${name} 副本`, targetMapId: 0, isRanked: false })
+        }).then(r => r.json());
+        showToast(res.success ? `已複製為「${res.mapName}」` : (res.message || '複製失敗'), !res.success);
+        loadMapLibraryList();
+        refreshMapLibraryBadge();
+    } catch (err) {
+        showToast('無法連接伺服器複製地圖', true);
+    }
+}
+
 // 檔案選單中的「另存新檔」
 document.getElementById('btnSaveAs').addEventListener('click', () => {
     if (currentGameMode === 'ranked') {
@@ -465,14 +543,18 @@ function loadMapLibraryList() {
 
             let html = '';
             list.forEach((m, idx) => {
+                const isOpen = m.id === currentActiveMapId;
+                const attrs = `data-id="${m.id}" data-name="${escapeHtml(m.name)}"`;
                 html += `
                     <div class="map-library-item">
                         <div class="library-item-main">
-                            <div class="library-item-title">${escapeHtml(m.name)}</div>
+                            <div class="library-item-title">${escapeHtml(m.name)}${isOpen ? '<span class="library-item-open">目前開啟</span>' : ''}</div>
                             <div class="library-item-meta">${m.spec}・更新於 ${(m.updatedAt || m.createdAt || '-').substring(5, 16)}</div>
                         </div>
-                        <button type="button" class="tool-btn btn-sm btn-map-load" data-id="${m.id}" data-name="${escapeHtml(m.name)}">載入</button>
-                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-map-load" ${attrs}>開啟</button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-copy" ${attrs} title="複製一份" aria-label="複製${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-rename" ${attrs} title="重新命名" aria-label="重新命名${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#pencil"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" ${attrs} title="刪除" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
                     </div>
                 `;
             });
@@ -485,6 +567,13 @@ function loadMapLibraryList() {
                     const name = btn.getAttribute('data-name');
                     loadUserMapById(id, name);
                 });
+            });
+
+            mapLibraryList.querySelectorAll('.btn-map-copy').forEach(btn => {
+                btn.addEventListener('click', () => duplicateUserMap(btn.dataset.id, btn.dataset.name));
+            });
+            mapLibraryList.querySelectorAll('.btn-map-rename').forEach(btn => {
+                btn.addEventListener('click', () => renameUserMap(btn.dataset.id, btn.dataset.name));
             });
 
             // 綁定刪除按鈕
@@ -501,7 +590,8 @@ function loadMapLibraryList() {
         });
 }
 
-function loadUserMapById(id, name) {
+async function loadUserMapById(id, name) {
+    if (!await confirmDiscardChanges()) return;
     fetch(`api/maps.php?action=load&id=${id}`)
         .then(res => res.json())
         .then(res => {

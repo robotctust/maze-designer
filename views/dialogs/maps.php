@@ -43,7 +43,7 @@
         <div class="dlg-head">
             <div class="dlg-titles">
                 <h2 class="dlg-title" id="libraryTitle">我的地圖庫</h2>
-                <p class="dlg-sub">載入後可以繼續編輯</p>
+                <p class="dlg-sub">開啟後按「儲存」會直接存回這張地圖</p>
             </div>
             <button type="button" class="dlg-close auth-modal-close" id="btnCloseMapLibraryModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
@@ -53,7 +53,7 @@
                 <div class="quota-progress-bar"><div class="quota-progress-fill" id="libraryQuotaProgressFill" style="width: 0%;"></div></div>
             </div>
             <div class="map-library-list" id="mapLibraryList"></div>
-            <p class="dlg-note">在練習模式按「儲存」，地圖就會出現在這裡（每個帳號最多可存 8 張）。</p>
+            <p class="dlg-note">每個帳號最多可存 8 張。可以複製一張來改，或在「檔案」選單新增空白地圖。</p>
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshMapLibrary"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>
