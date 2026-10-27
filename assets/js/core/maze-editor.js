@@ -27,6 +27,12 @@ class MazeEditor {
         this.carPos = null;
         this.trailPoints = [];
 
+        // 計算步數頁面用：格子標出離終點幾步，點格子回報座標
+        this.showSteps = !!options.showSteps;
+        this.onCellClick = options.onCellClick || null;
+        this.selectedCell = null;
+        this.zoomDisplay = options.zoomDisplay || document.getElementById('zoomPercentDisplay');
+
         // 2D 地圖縮放 (Zoom) 與平移拖曳 (Pan) 狀態
         this.zoomScale = 1.0;
         this.panX = 0;
@@ -463,6 +469,31 @@ class MazeEditor {
         this.setOuterWalls(1);
     }
 
+    /**
+     * 從終點往外一格一格數，算出每格沿通道走到終點要幾步（走不到的格子為 null）
+     */
+    computeSteps() {
+        const steps = Array.from({ length: this.rows }, () => Array(this.cols).fill(null));
+        const queue = [this.goal];
+        steps[this.goal.y][this.goal.x] = 0;
+        for (let i = 0; i < queue.length; i++) {
+            const { x, y } = queue[i];
+            const next = [
+                [x, y - 1, !this.hWalls[y]?.[x]],
+                [x, y + 1, !this.hWalls[y + 1]?.[x]],
+                [x - 1, y, !this.vWalls[y]?.[x]],
+                [x + 1, y, !this.vWalls[y]?.[x + 1]]
+            ];
+            for (const [nx, ny, open] of next) {
+                if (open && nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows && steps[ny][nx] === null) {
+                    steps[ny][nx] = steps[y][x] + 1;
+                    queue.push({ x: nx, y: ny });
+                }
+            }
+        }
+        return steps;
+    }
+
     render() {
         this.cachedCarGroup = null;
         this.cachedTrail = null;
@@ -517,6 +548,7 @@ class MazeEditor {
                 } else if (c === this.goal.x && r === this.goal.y) {
                     cls += ' cell-goal';
                 }
+                if (this.selectedCell && c === this.selectedCell.x && r === this.selectedCell.y) cls += ' cell-selected';
                 rect.setAttribute('class', cls);
 
                 rect.addEventListener('click', () => {
@@ -525,6 +557,8 @@ class MazeEditor {
                         this.setStartCell(c, r);
                     } else if (this.currentTool === 'goal') {
                         this.setGoalCell(c, r);
+                    } else if (this.onCellClick) {
+                        this.onCellClick(c, r);
                     }
                 });
 
@@ -573,6 +607,24 @@ class MazeEditor {
 
         renderBadge(this.start, 'S');
         renderBadge(this.goal, 'G');
+
+        // 步數：起點有圓形標記，數字改放右下角
+        if (this.showSteps) {
+            const steps = this.computeSteps();
+            for (let r = 0; r < this.rows; r++) {
+                for (let c = 0; c < this.cols; c++) {
+                    if (!steps[r][c]) continue;
+                    const atStart = c === this.start.x && r === this.start.y;
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', (c + (atStart ? 0.82 : 0.5)) * step);
+                    text.setAttribute('y', (r + (atStart ? 0.84 : 0.5)) * step);
+                    text.setAttribute('font-size', Math.round(step * (atStart ? 0.24 : 0.38)));
+                    text.setAttribute('class', 'map-step-label');
+                    text.textContent = steps[r][c];
+                    svg.appendChild(text);
+                }
+            }
+        }
 
         // 3. 牆壁可視化繪製
         // 3-1 水平牆壁
@@ -1366,7 +1418,7 @@ class MazeEditor {
     }
 
     updateZoomDisplay() {
-        const display = document.getElementById('zoomPercentDisplay');
+        const display = this.zoomDisplay;
         if (display) {
             display.textContent = Math.round(this.zoomScale * 100) + '%';
         }

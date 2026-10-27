@@ -392,3 +392,76 @@ kbd {
         justify-content: center;
     }
 }
+
+/* ========================================================
+   計算步數窗口：沿用設計窗口版面，右側顯示步數
+   ======================================================== */
+.workspace[hidden] {
+    display: none;
+}
+
+.steps-title {
+    font-weight: 600;
+}
+
+.steps-info {
+    flex: 0 0 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.steps-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.steps-stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.steps-stat-value {
+    font-size: 15px;
+}
+
+.steps-stat-value strong {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.steps-note {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* 只看不改：格線熱區不擋住點格子 */
+#stepsSvg .wall-hit-line {
+    pointer-events: none;
+}
+
+.map-step-label {
+    fill: #E2E8F0;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+}
+
+.map-viewport.theme-light .map-step-label {
+    fill: #0F172A;
+}
+
+#stepsSvg .cell-overlay:hover {
+    fill: rgba(56, 189, 248, 0.12);
+}
+
+#stepsSvg .cell-overlay.cell-selected {
+    fill: rgba(56, 189, 248, 0.32);
+}
