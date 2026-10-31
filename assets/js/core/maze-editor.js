@@ -77,7 +77,9 @@ class MazeEditor {
         this.render();
     }
 
-    setGridSize(cols, rows) {
+    // keepWalls：調整現有地圖大小時，保留新舊範圍重疊部分的內牆
+    setGridSize(cols, rows, keepWalls = false) {
+        const old = { rows: this.rows, cols: this.cols, hWalls: this.hWalls, vWalls: this.vWalls };
         cols = Math.max(2, Math.min(50, parseInt(cols, 10) || 10));
         rows = Math.max(2, Math.min(50, parseInt(rows, 10) || 10));
 
@@ -101,6 +103,16 @@ class MazeEditor {
         }
 
         this.initData();
+        if (keepWalls) {
+            const rMax = Math.min(rows, old.rows);
+            const cMax = Math.min(cols, old.cols);
+            for (let r = 1; r < rMax; r++) {
+                for (let c = 0; c < cMax; c++) this.hWalls[r][c] = old.hWalls[r][c];
+            }
+            for (let r = 0; r < rMax; r++) {
+                for (let c = 1; c < cMax; c++) this.vWalls[r][c] = old.vWalls[r][c];
+            }
+        }
         this.trailPoints = [];
         this.carPos = null;
 

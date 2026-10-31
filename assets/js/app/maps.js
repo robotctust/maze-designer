@@ -321,18 +321,19 @@ async function confirmDiscardChanges() {
     });
 }
 
-// 新增空白地圖：沿用目前的格數，起點左下、終點右上，存檔前都是「未命名地圖」
-document.getElementById('btnNewMap').addEventListener('click', async () => {
-    if (currentGameMode === 'ranked') return;
+// 新增空白地圖：先在地圖大小對話框選格數，起點左下、終點右上，存檔前都是「未命名地圖」
+document.getElementById('btnNewMap').addEventListener('click', () => openMapSizeModal('new'));
+
+async function createBlankMap(cols, rows) {
     if (!await confirmDiscardChanges()) return;
-    editor.start = { x: 0, y: editor.rows - 1 };
-    editor.goal = { x: editor.cols - 1, y: 0 };
-    editor.setGridSize(editor.cols, editor.rows);
+    editor.start = { x: 0, y: rows - 1 };
+    editor.goal = { x: cols - 1, y: 0 };
+    editor.setGridSize(cols, rows);
     editor.clearHistory();
     setActiveMapInfo(0, '');
     maze3D.resetOrbitCamera();
-    showToast('已新增空白地圖');
-});
+    showToast(`已新增 ${cols}×${rows} 空白地圖`);
+}
 
 async function renameUserMap(id, oldName) {
     const name = await showConfirm({ title: '重新命名地圖', inputValue: oldName, confirmLabel: '重新命名' });
@@ -641,7 +642,6 @@ async function deleteUserMapById(id, name) {
 
 // 我的地圖庫按鈕點擊
 document.getElementById('btnFileMapLibrary').addEventListener('click', () => document.getElementById('btnMapLibrary').click());
-setupMenu(document.getElementById('btnSpecMenu'), document.getElementById('specMenu'));
 setupMenu(document.getElementById('btnMapMenu'), document.getElementById('mapMenu'));
 setupMenu(document.getElementById('btnFileMenu'), document.getElementById('fileMenu'));
 setupMenu(document.getElementById('btnShareMenu'), document.getElementById('shareMenu'));

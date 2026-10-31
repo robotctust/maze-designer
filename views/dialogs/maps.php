@@ -37,6 +37,48 @@
     </div>
 </div>
 
+<!-- 地圖大小：新增空白地圖與調整地圖大小共用 -->
+<div class="auth-modal-backdrop" id="mapSizeModalBackdrop">
+    <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="mapSizeTitle">
+        <div class="dlg-head">
+            <div class="dlg-titles">
+                <h2 class="dlg-title" id="mapSizeTitle">新增空白地圖</h2>
+                <p class="dlg-sub" id="mapSizeSub">選擇地圖大小</p>
+            </div>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseMapSizeModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
+        </div>
+        <div class="dlg-body">
+            <div class="field">
+                <span class="field-label">格數</span>
+                <div class="spec-inputs-row">
+                    <label for="inputCols">寬</label>
+                    <input type="number" id="inputCols" min="2" max="50" value="10" class="spec-input">
+                    <span class="spec-times">×</span>
+                    <label for="inputRows">高</label>
+                    <input type="number" id="inputRows" min="2" max="50" value="10" class="spec-input">
+                </div>
+                <div class="spec-presets-row">
+                    <button type="button" class="spec-preset-btn" data-cols="5" data-rows="5">5×5</button>
+                    <button type="button" class="spec-preset-btn" data-cols="8" data-rows="8">8×8</button>
+                    <button type="button" class="spec-preset-btn active" data-cols="10" data-rows="10">10×10</button>
+                    <button type="button" class="spec-preset-btn" data-cols="12" data-rows="12">12×12</button>
+                    <button type="button" class="spec-preset-btn" data-cols="16" data-rows="16">16×16</button>
+                </div>
+            </div>
+            <dl class="spec-facts">
+                <dt>每格</dt><dd>30 × 30 cm</dd>
+                <dt>牆高</dt><dd>15 cm</dd>
+                <dt>總尺寸</dt><dd id="specDimensionsCm">300 × 300 cm</dd>
+            </dl>
+            <p class="dlg-note" id="mapSizeNote">可設定 2～50 格，訪客最多 10 × 10</p>
+        </div>
+        <div class="dlg-foot">
+            <button type="button" class="tool-btn btn-ghost" id="btnCancelMapSize">取消</button>
+            <button type="button" class="tool-btn btn-save" id="btnConfirmMapSize">建立</button>
+        </div>
+    </div>
+</div>
+
 <!-- 我的地圖庫 -->
 <div class="auth-modal-backdrop" id="mapLibraryModalBackdrop">
     <div class="auth-modal-card dlg-md" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
