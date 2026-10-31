@@ -78,7 +78,6 @@ class Maze3D {
         // 場景
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x0a0f1d);
-        this.scene.fog = new THREE.FogExp2(0x0a0f1d, 0.002);
 
         // 相機
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 6000);
@@ -203,9 +202,6 @@ class Maze3D {
             this.sunLight.shadow.camera.top = d;
             this.sunLight.shadow.camera.bottom = -d;
             this.sunLight.shadow.camera.updateProjectionMatrix();
-        }
-        if (this.scene && this.scene.fog) {
-            this.scene.fog.density = Math.min(0.002, 1.2 / Math.max(wSize, hSize, 600));
         }
     }
 
@@ -545,7 +541,6 @@ class Maze3D {
             ambient.lerp(new THREE.Color(this.arenaColor), 0.25);
         }
         this.scene.background = base;
-        this.scene.fog.color.copy(base);
         this.ambientLight.color.copy(ambient);
     }
 
