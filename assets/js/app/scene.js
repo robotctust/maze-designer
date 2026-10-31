@@ -169,7 +169,7 @@ editor = new MazeEditor(svgElement, {
         const tagGrid = document.getElementById('headerTagGrid');
         const tagTotal = document.getElementById('headerTagTotal');
         if (tagGrid) tagGrid.textContent = `規格：${cols}×${rows} 格`;
-        if (tagTotal) tagTotal.textContent = `總長寬：${cols * 30}×${rows * 30} cm`;
+        if (tagTotal) tagTotal.textContent = `總長寬：${mazeTotalCm(cols)}×${mazeTotalCm(rows)} cm`;
 
         // 更新 UI 狀態
         document.getElementById('statStart').textContent = `(${data.start.x}, ${data.start.y})`;

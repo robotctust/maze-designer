@@ -29,7 +29,7 @@ function getDefaultConfig() {
 
     return [
         'gridSize' => ['rows' => 10, 'cols' => 10],
-        'cellSizeCm' => 30,
+        'cellSizeCm' => 28.5,
         'wallHeightCm' => 15,
         'start' => ['x' => 0, 'y' => 9],
         'goal' => ['x' => 9, 'y' => 0],
@@ -380,7 +380,7 @@ if ($method === 'POST') {
 
     $saveData = [
         'gridSize' => ['rows' => $rows, 'cols' => $cols],
-        'cellSizeCm' => 30,
+        'cellSizeCm' => 28.5,
         'wallHeightCm' => 15,
         'start' => isset($payload['start']) ? $payload['start'] : ['x' => 0, 'y' => 9],
         'goal' => isset($payload['goal']) ? $payload['goal'] : ['x' => 9, 'y' => 0],

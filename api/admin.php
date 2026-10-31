@@ -261,7 +261,7 @@ if ($action === 'review_submission') {
         'author' => $sub['author_name'],
         'authorId' => intval($sub['author_id']),
         'gridSize' => $mazeData['gridSize'] ?? ['rows' => intval($sub['grid_rows']), 'cols' => intval($sub['grid_cols'])],
-        'cellSizeCm' => 30,
+        'cellSizeCm' => 28.5,
         'wallHeightCm' => 15,
         'start' => $mazeData['start'] ?? ['x' => 0, 'y' => intval($sub['grid_rows']) - 1],
         'goal' => $mazeData['goal'] ?? ['x' => intval($sub['grid_cols']) - 1, 'y' => 0],

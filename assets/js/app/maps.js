@@ -91,7 +91,7 @@ function openSaveMapModal(saveAs = false) {
     // 填入目前地圖資訊
     const cols = editor.cols;
     const rows = editor.rows;
-    if (saveCurrentSpec) saveCurrentSpec.textContent = `${cols} × ${rows}・${cols * 30} × ${rows * 30} cm`;
+    if (saveCurrentSpec) saveCurrentSpec.textContent = `${cols} × ${rows}・${mazeTotalCm(cols)} × ${mazeTotalCm(rows)} cm`;
 
     let wallCount = 0;
     const currentData = editor.getData();

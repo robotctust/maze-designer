@@ -216,7 +216,7 @@ function loadRankedMatch(size = '10x10') {
                 const tagGrid = document.getElementById('headerTagGrid');
                 const tagTotal = document.getElementById('headerTagTotal');
                 if (tagGrid) tagGrid.textContent = (size === 'special') ? `排位規格：特殊賽 (${mapCols}×${mapRows})` : ((size === 'apex') ? `排位規格：巔峰賽 (${mapCols}×${mapRows})` : `排位規格：${size}`);
-                if (tagTotal) tagTotal.textContent = `總長寬：${mapCols * 30}×${mapRows * 30} cm`;
+                if (tagTotal) tagTotal.textContent = `總長寬：${mazeTotalCm(mapCols)}×${mazeTotalCm(mapRows)} cm`;
 
                 btnStartDrive.classList.add('pulse-prompt');
                 showToast(`已換成 ${tierTitle} 的 ${mapLabel}`);
@@ -679,7 +679,7 @@ function loadRankedMapToEditor(m) {
         setActiveMapInfo(0, '');
         editor.loadData({
             gridSize: m.gridSize,
-            cellSizeCm: 30,
+            cellSizeCm: MAZE_CELL_CM,
             wallHeightCm: 15,
             start: m.start,
             goal: m.goal,

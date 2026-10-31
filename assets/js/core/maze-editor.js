@@ -1,7 +1,17 @@
 /**
  * 10x10 迷宮 2D 編輯器
- * 規格：10x10 格，每格 30x30cm，牆高 15cm
+ * 規格：每格內寬 28cm、黑線寬 0.5cm、外圍白邊 2cm，牆高 15cm
  */
+
+// 實體地墊尺寸（cm），3D 場景與畫面上的尺寸都用這組數字
+const MAZE_CELL_CM = 28.5; // 格距：內寬 28 + 黑線 0.5
+const MAZE_LINE_CM = 0.5;
+const MAZE_BORDER_CM = 2;
+
+// n 格的地墊總長：n 格 + 最外側多一條黑線 + 兩邊白邊
+function mazeTotalCm(n) {
+    return Math.round((n * MAZE_CELL_CM + MAZE_LINE_CM + MAZE_BORDER_CM * 2) * 10) / 10;
+}
 class MazeEditor {
     constructor(svgElement, options = {}) {
         this.svg = svgElement;
@@ -154,10 +164,10 @@ class MazeEditor {
     getData() {
         return {
             gridSize: { rows: this.rows, cols: this.cols },
-            cellSizeCm: 30,
+            cellSizeCm: MAZE_CELL_CM,
             wallHeightCm: 15,
-            widthCm: this.cols * 30,
-            heightCm: this.rows * 30,
+            widthCm: mazeTotalCm(this.cols),
+            heightCm: mazeTotalCm(this.rows),
             start: { ...this.start },
             goal: { ...this.goal },
             hWalls: JSON.parse(JSON.stringify(this.hWalls)),
@@ -307,11 +317,11 @@ class MazeEditor {
             return;
         }
         this.start = { x, y };
-        const halfW = (this.cols * 30) / 2;
-        const halfH = (this.rows * 30) / 2;
+        const halfW = (this.cols * MAZE_CELL_CM) / 2;
+        const halfH = (this.rows * MAZE_CELL_CM) / 2;
         this.carPos = {
-            rawX: -halfW + (x + 0.5) * 30,
-            rawZ: -halfH + (y + 0.5) * 30,
+            rawX: -halfW + (x + 0.5) * MAZE_CELL_CM,
+            rawZ: -halfH + (y + 0.5) * MAZE_CELL_CM,
             yaw: 0,
             isReset: true
         };
@@ -760,14 +770,14 @@ class MazeEditor {
 
         // 5. 渲染 2D 自走車即時位置與軌跡 (置於最頂層)
         this.renderCarMarker();
-        const halfW = (this.cols * 30) / 2;
-        const halfH = (this.rows * 30) / 2;
+        const halfW = (this.cols * MAZE_CELL_CM) / 2;
+        const halfH = (this.rows * MAZE_CELL_CM) / 2;
         if (this.carPos) {
             this.updateCarPosition(this.carPos);
         } else {
             this.updateCarPosition({
-                rawX: -halfW + (this.start.x + 0.5) * 30,
-                rawZ: -halfH + (this.start.y + 0.5) * 30,
+                rawX: -halfW + (this.start.x + 0.5) * MAZE_CELL_CM,
+                rawZ: -halfH + (this.start.y + 0.5) * MAZE_CELL_CM,
                 yaw: 0,
                 isReset: true
             });
@@ -903,10 +913,10 @@ class MazeEditor {
         if (!pos) return;
         this.carPos = pos;
 
-        const halfW = (this.cols * 30) / 2;
-        const halfH = (this.rows * 30) / 2;
-        const totalW = this.cols * 30;
-        const totalH = this.rows * 30;
+        const halfW = (this.cols * MAZE_CELL_CM) / 2;
+        const halfH = (this.rows * MAZE_CELL_CM) / 2;
+        const totalW = this.cols * MAZE_CELL_CM;
+        const totalH = this.rows * MAZE_CELL_CM;
 
         let rawX = pos.rawX !== undefined ? pos.rawX : (pos.xCm !== undefined ? pos.xCm - halfW : 0);
         let rawZ = pos.rawZ !== undefined ? pos.rawZ : (pos.zCm !== undefined ? pos.zCm - halfH : 0);
