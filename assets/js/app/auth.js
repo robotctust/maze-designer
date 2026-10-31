@@ -6,7 +6,7 @@
 // 8. 帳號認證與權限管理系統 (Auth & Permission System)
 // ============================================
 let currentUser = null; // null: 訪客 (限 10x10), { id, username }: 已登入會員 (解鎖至 50x50)
-let pendingTargetGrid = null; // 暫存使用者嘗試套用但受限的規格 { cols, rows }
+let pendingTargetGrid = null; // 暫存使用者嘗試套用但受限的規格 { cols, rows, mode }
 
 const authBadge = document.getElementById('authBadge');
 const btnOpenAuthModal = document.getElementById('btnOpenAuthModal');
@@ -183,8 +183,8 @@ function updateAuthUI(user) {
         if (btnOpenRedeemShare) btnOpenRedeemShare.classList.remove('guest-locked');
         if (btnOpenCreateShare) {
             btnOpenCreateShare.classList.remove('guest-locked');
-            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
-            btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
+            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼…';
+            btnOpenCreateShare.title = '產生迷宮分享碼，可設定有效期限與領取人數';
         }
 
         // 解除所有預設按鈕鎖定
@@ -333,10 +333,10 @@ document.getElementById('btnSubmitLogin')?.addEventListener('click', () => {
 
             // 若之前有嘗試套用受限規格，登入後自動執行！
             if (pendingTargetGrid) {
-                const { cols, rows } = pendingTargetGrid;
+                const { cols, rows, mode } = pendingTargetGrid;
                 pendingTargetGrid = null;
                 setTimeout(() => {
-                    applyGridSizeDirect(cols, rows);
+                    applyMapSize(mode, cols, rows);
                     showToast(`歡迎登入！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
                 }, 300);
             }
@@ -391,10 +391,10 @@ document.getElementById('btnSubmitRegister')?.addEventListener('click', () => {
             loadMapAfterSignIn(res.message);
 
             if (pendingTargetGrid) {
-                const { cols, rows } = pendingTargetGrid;
+                const { cols, rows, mode } = pendingTargetGrid;
                 pendingTargetGrid = null;
                 setTimeout(() => {
-                    applyGridSizeDirect(cols, rows);
+                    applyMapSize(mode, cols, rows);
                     showToast(`恭喜註冊！已自動為您解鎖並套用 ${cols}×${rows} 大型迷宮！`);
                 }, 300);
             }
@@ -442,7 +442,7 @@ btnLogout?.addEventListener('click', async () => {
                 switchGameMode('practice');
             }
             if (editor.cols > 10 || editor.rows > 10) {
-                applyGridSizeDirect(10, 10);
+                applyMapSize('resize', 10, 10);
                 showToast('已切換回訪客模式，迷宮規格已自動重設為 10×10！');
             }
         })

@@ -11,6 +11,26 @@
     border-bottom: 1px solid var(--border);
 }
 
+/* 編輯列的下拉選單按鈕：箭頭圖示左右自帶留白，收窄右側空間和文字間距，讓按鈕之間看起來等距 */
+.editbar .menu-wrap > .tool-btn {
+    padding: 0 4px 0 10px;
+}
+
+.editbar .menu-wrap > .tool-btn > .icon:last-child {
+    margin-left: -4px;
+}
+
+/* 目前開啟的地圖檔名稱 */
+.map-file-name {
+    max-width: 220px;
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    color: var(--text);
+}
+
 .editbar-spacer,
 .status-spacer {
     flex: 1;
@@ -184,21 +204,34 @@
 
 /* 快捷鍵說明（從右上角按鈕往下展開） */
 .menu.shortcuts-menu {
-    width: 300px;
+    width: 320px;
     padding: 10px 6px;
 }
 
+/* 兩欄：左邊說明、右邊按鍵，標題和每一列對齊同一條左緣 */
+.shortcuts-menu .menu-heading {
+    padding: 0 8px;
+}
+
 .kbd-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 112px 1fr;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     padding: 4px 8px;
     font-size: 13px;
     color: var(--text-muted);
 }
 
-.kbd-row span {
-    margin-left: auto;
+.kbd-desc {
+    color: var(--text-2);
+}
+
+.kbd-keys {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
 }
 
 kbd {

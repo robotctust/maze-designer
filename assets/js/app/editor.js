@@ -130,8 +130,48 @@ function setPortraitView(view) {
 btnViewDesign.addEventListener('click', () => setPortraitView('design'));
 btnViewDrive.addEventListener('click', () => setPortraitView('drive'));
 
-// 2-1. 規格調整與登入權限檢查 (未登入僅限使用 10×10 含以下地圖)
-function applyGridSizeDirect(c, r) {
+// 2-1. 地圖大小對話框：「新增空白地圖…」與「調整地圖大小…」共用（未登入僅限 10×10 含以下）
+const mapSizeModalBackdrop = document.getElementById('mapSizeModalBackdrop');
+const inputCols = document.getElementById('inputCols');
+const inputRows = document.getElementById('inputRows');
+let mapSizeMode = 'new'; // 'new' 新增空白地圖、'resize' 調整目前地圖
+
+function showMapSizeValues(c, r) {
+    inputCols.value = c;
+    inputRows.value = r;
+    updateMapSizePreview();
+}
+
+function updateMapSizePreview() {
+    const c = parseInt(inputCols.value, 10) || 0;
+    const r = parseInt(inputRows.value, 10) || 0;
+    document.getElementById('specDimensionsCm').textContent = `${c * 30} × ${r * 30} cm`;
+    document.querySelectorAll('.spec-preset-btn').forEach(btn => {
+        btn.classList.toggle('active', +btn.dataset.cols === c && +btn.dataset.rows === r);
+    });
+}
+
+function openMapSizeModal(mode) {
+    if (currentGameMode === 'ranked') return;
+    mapSizeMode = mode;
+    const isNew = mode === 'new';
+    document.getElementById('mapSizeTitle').textContent = isNew ? '新增空白地圖' : '調整地圖大小';
+    document.getElementById('mapSizeSub').textContent = isNew ? '選擇地圖大小' : `目前 ${editor.cols} × ${editor.rows} 格`;
+    document.getElementById('mapSizeNote').textContent = isNew
+        ? '可設定 2～50 格，訪客最多 10 × 10'
+        : '範圍內的牆會保留，超出新範圍的牆會移除；起點和終點會移到範圍內。';
+    document.getElementById('btnConfirmMapSize').textContent = isNew ? '建立' : '套用';
+    showMapSizeValues(editor.cols, editor.rows);
+    mapSizeModalBackdrop.classList.add('show');
+    inputCols.focus();
+}
+
+function closeMapSizeModal() {
+    mapSizeModalBackdrop.classList.remove('show');
+}
+
+// 套用大小：新增時建立空白地圖，調整時保留範圍內的牆
+function applyMapSize(mode, c, r) {
     if (timerRunning) {
         maze3D.stopDriving();
         resetTimer();
@@ -139,50 +179,49 @@ function applyGridSizeDirect(c, r) {
     if (currentMapMode === 'compact') {
         set2DMapMode('large', false);
     }
-    editor.setGridSize(c, r);
+    if (mode === 'new') {
+        createBlankMap(c, r);
+        return;
+    }
+    editor.setGridSize(c, r, true);
     maze3D.resetOrbitCamera();
-    showToast(`已成功切換規格為 ${c}×${r} 格！`, false, UNDO_TOAST_ACTION);
+    showToast(`已調整為 ${c}×${r} 格`, false, UNDO_TOAST_ACTION);
 }
 
-function requestApplyGridSize(c, r) {
+document.getElementById('btnConfirmMapSize').addEventListener('click', () => {
+    const c = parseInt(inputCols.value, 10);
+    const r = parseInt(inputRows.value, 10);
     if (isNaN(c) || c < 2 || c > 50 || isNaN(r) || r < 2 || r > 50) {
-        showToast('規格數值請輸入 2 ~ 50 之間的整數！', true);
-        return false;
+        showToast('格數請輸入 2～50 之間的整數', true);
+        return;
     }
+    closeMapSizeModal();
 
-    // 檢查未登入限制：沒有登入只能使用 10*10 含以下地圖
+    // 未登入只能使用 10×10 含以下，登入後自動套用（見 auth.js）
     if (!currentUser && (c > 10 || r > 10)) {
-        pendingTargetGrid = { cols: c, rows: r };
-        showToast(`訪客限制：未登入僅限使用 10×10 (含) 以下地圖！您欲使用 ${c}×${r} 格，請先登入！`, true);
-        openAuthModal(
-            `規格權限提示：\n您選擇了 ${c}×${r} 格大型地圖。\n未登入訪客僅限使用 10×10 (含) 以下規格！\n\n請先登入或註冊帳號，完成後將自動為您解鎖套用！`,
-            'login'
-        );
-        return false;
+        pendingTargetGrid = { cols: c, rows: r, mode: mapSizeMode };
+        openAuthModal(`未登入只能使用 10×10 以下的地圖。登入後會自動套用 ${c}×${r} 格。`, 'login');
+        return;
     }
-
-    applyGridSizeDirect(c, r);
-    return true;
-}
-
-const btnApplyGridSize = document.getElementById('btnApplyGridSize');
-if (btnApplyGridSize) {
-    btnApplyGridSize.addEventListener('click', () => {
-        const c = parseInt(document.getElementById('inputCols').value, 10);
-        const r = parseInt(document.getElementById('inputRows').value, 10);
-        requestApplyGridSize(c, r);
-    });
-}
+    if (mapSizeMode === 'resize' && c === editor.cols && r === editor.rows) return;
+    applyMapSize(mapSizeMode, c, r);
+});
 
 document.querySelectorAll('.spec-preset-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const c = parseInt(btn.getAttribute('data-cols'), 10);
-        const r = parseInt(btn.getAttribute('data-rows'), 10);
-        if (c && r) {
-            requestApplyGridSize(c, r);
-        }
+    btn.addEventListener('click', () => showMapSizeValues(+btn.dataset.cols, +btn.dataset.rows));
+});
+[inputCols, inputRows].forEach(el => {
+    el.addEventListener('input', updateMapSizePreview);
+    el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('btnConfirmMapSize').click();
     });
 });
+document.getElementById('btnCancelMapSize').addEventListener('click', closeMapSizeModal);
+document.getElementById('btnCloseMapSizeModal').addEventListener('click', closeMapSizeModal);
+mapSizeModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === mapSizeModalBackdrop) closeMapSizeModal();
+});
+document.getElementById('btnResizeMap').addEventListener('click', () => openMapSizeModal('resize'));
 
 // 3. 工具切換 (設置牆壁 / 設定起點 / 設定終點 / 拖曳平移)
 const toolButtons = [
@@ -277,7 +316,10 @@ fileInputJSON.addEventListener('change', (e) => {
     if (file) {
         editor.importJSON(
             file,
-            () => showToast('已成功載入迷宮設定！'),
+            () => {
+                setActiveMapInfo(0, '');
+                showToast('已成功載入迷宮設定！');
+            },
             (errMsg) => showToast(errMsg, true)
         );
     }

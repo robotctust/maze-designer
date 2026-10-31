@@ -168,27 +168,8 @@ editor = new MazeEditor(svgElement, {
         // 更新規格 Tags 與輸入框
         const tagGrid = document.getElementById('headerTagGrid');
         const tagTotal = document.getElementById('headerTagTotal');
-        const specDim = document.getElementById('specDimensionsCm');
         if (tagGrid) tagGrid.textContent = `規格：${cols}×${rows} 格`;
-        document.getElementById('specMenuLabel').textContent = `${cols} × ${rows}`;
         if (tagTotal) tagTotal.textContent = `總長寬：${cols * 30}×${rows * 30} cm`;
-        if (specDim) specDim.textContent = `${cols * 30} × ${rows * 30} cm`;
-
-        const inputCols = document.getElementById('inputCols');
-        const inputRows = document.getElementById('inputRows');
-        if (inputCols) inputCols.value = cols;
-        if (inputRows) inputRows.value = rows;
-
-        // 更新預設按鈕的高亮
-        document.querySelectorAll('.spec-preset-btn').forEach(btn => {
-            const bc = parseInt(btn.getAttribute('data-cols'), 10);
-            const br = parseInt(btn.getAttribute('data-rows'), 10);
-            if (bc === cols && br === rows) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
 
         // 更新 UI 狀態
         document.getElementById('statStart').textContent = `(${data.start.x}, ${data.start.y})`;

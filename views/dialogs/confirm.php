@@ -8,6 +8,7 @@
         </div>
         <div class="dlg-body">
             <p class="confirm-message" id="confirmMessage"></p>
+            <input type="text" class="dlg-input" id="confirmInput" maxlength="30" hidden>
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost" id="btnConfirmCancel">取消</button>

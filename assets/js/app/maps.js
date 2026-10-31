@@ -69,9 +69,16 @@ let currentActiveMapName = '';
 function setActiveMapInfo(id, name) {
     currentActiveMapId = parseInt(id, 10) || 0;
     currentActiveMapName = name ? String(name).trim() : '';
+
+    // 編輯列左邊顯示目前開啟的地圖檔名稱；「儲存」會直接存回這個檔案
+    document.getElementById('activeMapName').textContent = currentActiveMapId ? currentActiveMapName : '未命名地圖';
+    document.getElementById('btnSave').title = currentActiveMapId
+        ? `存回「${currentActiveMapName}」（Ctrl+S）`
+        : '存到你的雲端地圖庫（Ctrl+S）';
 }
 
-function openSaveMapModal() {
+// saveAs：另存新檔，預設存成新的一張，不覆蓋目前開啟的地圖
+function openSaveMapModal(saveAs = false) {
     if (!currentUser) {
         openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
@@ -97,7 +104,9 @@ function openSaveMapModal() {
     if (saveCurrentWalls) saveCurrentWalls.textContent = `${wallCount} 段`;
 
     if (saveMapNameInput) {
-        saveMapNameInput.value = currentActiveMapName || `我的迷宮 (${cols}×${rows})`;
+        saveMapNameInput.value = saveAs && currentActiveMapName
+            ? `${currentActiveMapName} 副本`
+            : (currentActiveMapName || `我的迷宮 (${cols}×${rows})`);
     }
 
     saveMapModalBackdrop?.classList.add('show');
@@ -129,7 +138,7 @@ function openSaveMapModal() {
             const headerMapCountBadge = document.getElementById('headerMapCountBadge');
             if (headerMapCountBadge) headerMapCountBadge.textContent = `${count} / ${max}`;
 
-            const hasActiveExisting = currentActiveMapId > 0 && userSavedMapsCache.some(x => x.id === currentActiveMapId);
+            const hasActiveExisting = !saveAs && currentActiveMapId > 0 && userSavedMapsCache.some(x => x.id === currentActiveMapId);
 
             // 判斷是否已滿額
             if (count >= max) {
@@ -296,17 +305,95 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
-// 儲存按鈕點擊
-document.getElementById('btnSave').addEventListener('click', () => {
+// 儲存按鈕：已開啟地圖檔時直接存回該檔，還沒存過才跳出儲存視窗
+document.getElementById('btnSave').addEventListener('click', () => quickSaveMap());
+
+document.getElementById('btnFileSave').addEventListener('click', () => quickSaveMap());
+
+// 有未存的修改時，先問要不要放棄（新增、開啟其他地圖前）
+async function confirmDiscardChanges() {
+    if (!editor.isDirty()) return true;
+    return showConfirm({
+        title: '目前的地圖還沒儲存',
+        message: '繼續的話，還沒儲存的修改會遺失。',
+        confirmLabel: '不儲存，繼續',
+        danger: true
+    });
+}
+
+// 新增空白地圖：先在地圖大小對話框選格數，起點左下、終點右上，存檔前都是「未命名地圖」
+document.getElementById('btnNewMap').addEventListener('click', () => openMapSizeModal('new'));
+
+async function createBlankMap(cols, rows) {
+    if (!await confirmDiscardChanges()) return;
+    editor.start = { x: 0, y: rows - 1 };
+    editor.goal = { x: cols - 1, y: 0 };
+    editor.setGridSize(cols, rows);
+    editor.clearHistory();
+    setActiveMapInfo(0, '');
+    maze3D.resetOrbitCamera();
+    showToast(`已新增 ${cols}×${rows} 空白地圖`);
+}
+
+async function renameUserMap(id, oldName) {
+    const name = await showConfirm({ title: '重新命名地圖', inputValue: oldName, confirmLabel: '重新命名' });
+    if (!name || name === oldName) return;
+    try {
+        const res = await fetch('api/maps.php?action=rename', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, name })
+        }).then(r => r.json());
+        if (!res.success) {
+            showToast(res.message || '重新命名失敗', true);
+            return;
+        }
+        if (currentActiveMapId === parseInt(id, 10)) setActiveMapInfo(id, res.mapName);
+        showToast(res.message);
+        if (mapLibraryModalBackdrop.classList.contains('show')) loadMapLibraryList();
+    } catch (err) {
+        showToast('無法連接伺服器重新命名', true);
+    }
+}
+
+// 目前的地圖還沒存過時，重新命名就是第一次儲存
+document.getElementById('btnRenameMap').addEventListener('click', () => {
+    if (currentGameMode === 'ranked') return;
+    if (!currentActiveMapId) {
+        quickSaveMap();
+        return;
+    }
+    renameUserMap(currentActiveMapId, currentActiveMapName);
+});
+
+// 複製地圖：在地圖庫裡多存一張「名稱 副本」，不影響目前開啟的地圖
+async function duplicateUserMap(id, name) {
+    try {
+        const loaded = await fetch(`api/maps.php?action=load&id=${id}`).then(r => r.json());
+        if (!loaded.success || !loaded.data) {
+            showToast(loaded.message || '讀取地圖失敗', true);
+            return;
+        }
+        const res = await fetch('api/maps.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...loaded.data, name: `${name} 副本`, targetMapId: 0, isRanked: false })
+        }).then(r => r.json());
+        showToast(res.success ? `已複製為「${res.mapName}」` : (res.message || '複製失敗'), !res.success);
+        loadMapLibraryList();
+        refreshMapLibraryBadge();
+    } catch (err) {
+        showToast('無法連接伺服器複製地圖', true);
+    }
+}
+
+// 檔案選單中的「另存新檔」
+document.getElementById('btnSaveAs').addEventListener('click', () => {
     if (currentGameMode === 'ranked') {
         showToast('排位賽官方地圖禁止儲存至個人資料庫！請先回到練習模式再儲存。', true);
         return;
     }
-    if (!currentUser) {
-        openAuthModal('訪客限制：「儲存到雲端地圖庫」僅限會員使用！請先登入或免費註冊帳號。', 'login');
-        return;
-    }
-    openSaveMapModal();
+    openSaveMapModal(true);
 });
 
 // 快速儲存（Ctrl + S / Cmd + S）
@@ -318,7 +405,7 @@ function quickSaveMap() {
         return;
     }
     if (!currentUser) {
-        openAuthModal('訪客限制：「快速儲存」僅限會員使用！請先登入或免費註冊帳號。', 'login');
+        openAuthModal('訪客限制：「儲存」僅限會員使用！請先登入或免費註冊帳號。', 'login');
         return;
     }
     if (isQuickSaving) return;
@@ -338,7 +425,7 @@ function quickSaveMap() {
     const btnSaveEl = document.getElementById('btnSave');
     if (btnSaveEl) btnSaveEl.classList.add('btn-saving');
 
-    showToast(`⏳ 正在快速儲存【${currentActiveMapName}】…`, false);
+    showToast(`正在儲存「${currentActiveMapName}」…`, false);
 
     fetch('api/maps.php', {
         method: 'POST',
@@ -353,14 +440,14 @@ function quickSaveMap() {
         if (res.success) {
             editor.markSaved();
             setActiveMapInfo(res.mapId || currentActiveMapId, res.mapName || currentActiveMapName);
-            showToast(`💾 已快速儲存至【${res.mapName || currentActiveMapName}】！`);
+            showToast(`已存回「${res.mapName || currentActiveMapName}」`);
             refreshMapLibraryBadge();
         } else {
             if (res.message && res.message.includes('不存在')) {
                 setActiveMapInfo(0, '');
                 openSaveMapModal();
             } else {
-                showToast(res.message || '快速儲存失敗', true);
+                showToast(res.message || '儲存失敗', true);
             }
         }
     })
@@ -385,8 +472,6 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// 檔案選單中的「快速儲存」
-document.getElementById('btnQuickSave')?.addEventListener('click', quickSaveMap);
 
 // 地圖庫彈窗相關 DOM 節點
 const mapLibraryModalBackdrop = document.getElementById('mapLibraryModalBackdrop');
@@ -459,14 +544,18 @@ function loadMapLibraryList() {
 
             let html = '';
             list.forEach((m, idx) => {
+                const isOpen = m.id === currentActiveMapId;
+                const attrs = `data-id="${m.id}" data-name="${escapeHtml(m.name)}"`;
                 html += `
                     <div class="map-library-item">
                         <div class="library-item-main">
-                            <div class="library-item-title">${escapeHtml(m.name)}</div>
+                            <div class="library-item-title">${escapeHtml(m.name)}${isOpen ? '<span class="library-item-open">目前開啟</span>' : ''}</div>
                             <div class="library-item-meta">${m.spec}・更新於 ${(m.updatedAt || m.createdAt || '-').substring(5, 16)}</div>
                         </div>
-                        <button type="button" class="tool-btn btn-sm btn-map-load" data-id="${m.id}" data-name="${escapeHtml(m.name)}">載入</button>
-                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" data-id="${m.id}" data-name="${escapeHtml(m.name)}" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-map-load" ${attrs}>開啟</button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-copy" ${attrs} title="複製一份" aria-label="複製${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-rename" ${attrs} title="重新命名" aria-label="重新命名${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#pencil"></use></svg></button>
+                        <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete" ${attrs} title="刪除" aria-label="刪除${escapeHtml(m.name)}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
                     </div>
                 `;
             });
@@ -479,6 +568,13 @@ function loadMapLibraryList() {
                     const name = btn.getAttribute('data-name');
                     loadUserMapById(id, name);
                 });
+            });
+
+            mapLibraryList.querySelectorAll('.btn-map-copy').forEach(btn => {
+                btn.addEventListener('click', () => duplicateUserMap(btn.dataset.id, btn.dataset.name));
+            });
+            mapLibraryList.querySelectorAll('.btn-map-rename').forEach(btn => {
+                btn.addEventListener('click', () => renameUserMap(btn.dataset.id, btn.dataset.name));
             });
 
             // 綁定刪除按鈕
@@ -495,7 +591,8 @@ function loadMapLibraryList() {
         });
 }
 
-function loadUserMapById(id, name) {
+async function loadUserMapById(id, name) {
+    if (!await confirmDiscardChanges()) return;
     fetch(`api/maps.php?action=load&id=${id}`)
         .then(res => res.json())
         .then(res => {
@@ -545,7 +642,6 @@ async function deleteUserMapById(id, name) {
 
 // 我的地圖庫按鈕點擊
 document.getElementById('btnFileMapLibrary').addEventListener('click', () => document.getElementById('btnMapLibrary').click());
-setupMenu(document.getElementById('btnSpecMenu'), document.getElementById('specMenu'));
 setupMenu(document.getElementById('btnMapMenu'), document.getElementById('mapMenu'));
 setupMenu(document.getElementById('btnFileMenu'), document.getElementById('fileMenu'));
 setupMenu(document.getElementById('btnShareMenu'), document.getElementById('shareMenu'));

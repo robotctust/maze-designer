@@ -7,7 +7,6 @@
 // ============================================
 const btnModeRanked = document.getElementById('btnModeRanked');
 const btnOpenLeaderboard = document.getElementById('btnOpenLeaderboard');
-const practiceSpecBar = document.getElementById('practiceSpecBar');
 const practiceToolsToolbar = document.getElementById('practiceToolsToolbar');
 const practiceZoomBar = document.getElementById('practiceZoomBar');
 const gridWrapper = document.getElementById('gridWrapper');
@@ -27,7 +26,6 @@ function switchGameMode(mode) {
         }
         currentGameMode = 'ranked';
 
-        practiceSpecBar.style.display = 'none';
         document.body.classList.add('is-ranked');
         practiceToolsToolbar.style.display = 'none';
         document.getElementById('practiceToolRail').style.display = 'none';
@@ -62,7 +60,6 @@ function switchGameMode(mode) {
         currentGameMode = 'practice';
         RankedFx.cancelIntro();
 
-        practiceSpecBar.style.display = '';
         document.body.classList.remove('is-ranked', 'ranked-live');
         practiceToolsToolbar.style.display = 'flex';
         document.getElementById('practiceToolRail').style.display = 'flex';
@@ -679,6 +676,7 @@ function loadRankedMapToEditor(m) {
         switchGameMode('practice');
     }
     if (typeof editor !== 'undefined') {
+        setActiveMapInfo(0, '');
         editor.loadData({
             gridSize: m.gridSize,
             cellSizeCm: 30,

@@ -216,6 +216,55 @@ if ($action === 'delete') {
 }
 
 // ============================================================
+// 3-1. 重新命名地圖（只改名稱，不動地圖內容）
+// ============================================================
+if ($action === 'rename') {
+    if (!$isLoggedIn) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'requireLogin' => true, 'message' => '請先登入帳號']);
+        exit;
+    }
+
+    $payload = json_decode(file_get_contents('php://input'), true);
+    $mapId = intval($payload['id'] ?? 0);
+    $newName = trim($payload['name'] ?? '');
+
+    if ($mapId <= 0 || $newName === '' || mb_strlen($newName) > 30) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => '請輸入 1～30 字的地圖名稱']);
+        exit;
+    }
+
+    try {
+        $db = getDbConnection();
+        $stmt = $db->prepare("UPDATE `user_mazes` SET maze_name = ? WHERE id = ? AND user_id = ?");
+        $stmt->bind_param('sii', $newName, $mapId, $userId);
+        $stmt->execute();
+        $stmt->close();
+
+        // 名稱沒變時 affected_rows 也是 0，所以另外確認地圖存在
+        $chk = $db->prepare("SELECT id FROM `user_mazes` WHERE id = ? AND user_id = ? LIMIT 1");
+        $chk->bind_param('ii', $mapId, $userId);
+        $chk->execute();
+        $exists = (bool)$chk->get_result()->fetch_assoc();
+        $chk->close();
+
+        if (!$exists) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => '找不到該地圖或已被刪除']);
+            exit;
+        }
+
+        echo json_encode(['success' => true, 'message' => "已重新命名為「{$newName}」", 'mapId' => $mapId, 'mapName' => $newName]);
+        exit;
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => '重新命名失敗：' . $e->getMessage()]);
+        exit;
+    }
+}
+
+// ============================================================
 // 4. GET 預設讀取 (頁面初始載入或重新載入最新地圖)
 // ============================================================
 if ($method === 'GET') {
