@@ -11,10 +11,19 @@
     border-bottom: 1px solid var(--border);
 }
 
+/* 編輯列的下拉選單按鈕：箭頭圖示左右自帶留白，收窄右側空間和文字間距，讓按鈕之間看起來等距 */
+.editbar .menu-wrap > .tool-btn {
+    padding: 0 4px 0 10px;
+}
+
+.editbar .menu-wrap > .tool-btn > .icon:last-child {
+    margin-left: -4px;
+}
+
 /* 目前開啟的地圖檔名稱 */
 .map-file-name {
     max-width: 220px;
-    margin-right: 6px;
+    margin-right: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
