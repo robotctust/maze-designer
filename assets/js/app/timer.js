@@ -273,66 +273,32 @@ if (btnApplyCustomTimer) {
     }
 });
 
+// 開始／暫停／繼續共用 btnStartDrive，依狀態換文字、圖示與顏色
+const PRACTICE_BTN = {
+    idle:    { label: '開始', icon: 'player-play',  title: '開始計時並操控自走車', pause: false },
+    running: { label: '暫停', icon: 'player-pause', title: '暫停試跑',             pause: true },
+    paused:  { label: '繼續', icon: 'player-play',  title: '繼續試跑',             pause: false }
+};
+
 function updatePracticeControlsUI() {
     if (currentGameMode === 'ranked') return;
+    if (practiceDriveState !== 'running' && practiceDriveState !== 'paused') practiceDriveState = 'idle';
 
-    if (practiceDriveState === 'running') {
-        if (btnStartDrive) {
-            btnStartDrive.disabled = true;
-            btnStartDrive.classList.remove('pulse-prompt', 'driving-active');
-        }
-        if (btnPauseDrive) {
-            btnPauseDrive.disabled = false;
-        }
-        if (btnResumeDrive) {
-            btnResumeDrive.disabled = true;
-            btnResumeDrive.classList.remove('pulse-prompt');
-        }
-        if (btnResetCar) {
-            btnResetCar.disabled = false;
-        }
-        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag active';
-        if (driveStatusText) driveStatusText.textContent = '操控中';
-        document.getElementById('simulatorPanel')?.classList.add('is-driving');
-    } else if (practiceDriveState === 'paused') {
-        if (btnStartDrive) {
-            btnStartDrive.disabled = true;
-            btnStartDrive.classList.remove('pulse-prompt', 'driving-active');
-        }
-        if (btnPauseDrive) {
-            btnPauseDrive.disabled = true;
-        }
-        if (btnResumeDrive) {
-            btnResumeDrive.disabled = false;
-            btnResumeDrive.classList.add('pulse-prompt');
-        }
-        if (btnResetCar) {
-            btnResetCar.disabled = false;
-        }
-        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag paused';
-        if (driveStatusText) driveStatusText.textContent = '已暫停（按「繼續」繼續跑）';
-        document.getElementById('simulatorPanel')?.classList.remove('is-driving');
-    } else {
-        practiceDriveState = 'idle';
-        if (btnStartDrive) {
-            btnStartDrive.disabled = false;
-            btnStartDrive.classList.remove('driving-active');
-            btnStartDrive.classList.add('pulse-prompt');
-        }
-        if (btnPauseDrive) {
-            btnPauseDrive.disabled = true;
-        }
-        if (btnResumeDrive) {
-            btnResumeDrive.disabled = true;
-            btnResumeDrive.classList.remove('pulse-prompt');
-        }
-        if (btnResetCar) {
-            btnResetCar.disabled = false;
-        }
-        if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag';
-        if (driveStatusText) driveStatusText.textContent = '按「開始」後可用鍵盤操控';
-        document.getElementById('simulatorPanel')?.classList.remove('is-driving');
+    const s = PRACTICE_BTN[practiceDriveState];
+    if (btnStartDrive) {
+        btnStartDrive.disabled = false;
+        btnStartDrive.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#${s.icon}"></use></svg>${s.label}`;
+        btnStartDrive.title = s.title;
+        btnStartDrive.classList.toggle('btn-start-drive', !s.pause);
+        btnStartDrive.classList.toggle('btn-pause-drive', s.pause);
+        btnStartDrive.classList.remove('driving-active');
+        btnStartDrive.classList.toggle('pulse-prompt', !s.pause);
     }
+    if (btnResetCar) btnResetCar.disabled = false;
+
+    if (driveStatusBadge) driveStatusBadge.className = 'drive-status-tag' + (practiceDriveState === 'running' ? ' active' : practiceDriveState === 'paused' ? ' paused' : '');
+    if (driveStatusText) driveStatusText.textContent = practiceDriveState === 'running' ? '操控中' : practiceDriveState === 'paused' ? '已暫停（按「繼續」繼續跑）' : '按「開始」後可用鍵盤操控';
+    document.getElementById('simulatorPanel')?.classList.toggle('is-driving', practiceDriveState === 'running');
 }
 
 function updateDrivingUI(isDriving) {

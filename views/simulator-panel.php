@@ -78,8 +78,6 @@
     <!-- 底部操控列 -->
     <div class="drive-bar">
         <button type="button" class="sim-btn btn-start-drive" id="btnStartDrive" title="開始計時並操控自走車"><svg class="icon" aria-hidden="true"><use href="#player-play"></use></svg>開始</button>
-        <button type="button" class="sim-btn btn-pause-drive" id="btnPauseDrive" disabled title="暫停試跑"><svg class="icon" aria-hidden="true"><use href="#player-pause"></use></svg>暫停</button>
-        <button type="button" class="sim-btn btn-resume-drive" id="btnResumeDrive" disabled title="繼續試跑"><svg class="icon" aria-hidden="true"><use href="#player-play"></use></svg>繼續</button>
         <button type="button" class="sim-btn btn-restart-drive" id="btnResetCar" title="重新開始（自走車回起點並重設計時）"><svg class="icon" aria-hidden="true"><use href="#arrow-back-up"></use></svg>重新開始</button>
         <button type="button" class="sim-btn btn-stop-drive" id="btnStopDrive" disabled title="放棄比賽" style="display: none;"><svg class="icon" aria-hidden="true"><use href="#player-stop"></use></svg>放棄</button>
         <button type="button" class="sim-btn sfx-toggle sfx-live" aria-pressed="true" title="音效：開" aria-label="音效：開"><svg class="icon" aria-hidden="true"><use href="#volume"></use></svg></button>

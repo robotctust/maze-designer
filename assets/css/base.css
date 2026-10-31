@@ -401,20 +401,6 @@ body {
     color: var(--danger-soft);
 }
 
-.sim-btn.btn-resume-drive {
-    background: var(--go-fill);
-    border-color: var(--go-fill);
-    color: var(--on-go);
-    font-weight: 700;
-}
-
-.sim-btn.btn-resume-drive:hover {
-    background: var(--go-fill-hover);
-    box-shadow: none !important;
-    transform: none !important;
-    color: var(--on-go);
-}
-
 .sim-btn.btn-pause-drive {
     background: transparent;
     border-color: #B45309;

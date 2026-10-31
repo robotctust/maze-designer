@@ -19,9 +19,27 @@ btnModeDriver.addEventListener('click', () => {
     maze3D.setMode('driver');
 });
 
-// 6. 開始 / 暫停 / 繼續 / 重新開始 操作
+// 6. 開始（暫停／繼續）/ 重新開始 操作
+// 練習模式：同一顆按鈕依狀態切換「開始 → 暫停 → 繼續」
 if (btnStartDrive) {
     btnStartDrive.addEventListener('click', () => {
+        if (currentGameMode === 'practice' && practiceDriveState === 'running') {
+            maze3D.stopDriving();
+            pauseTimer();
+            practiceDriveState = 'paused';
+            updatePracticeControlsUI();
+            showToast('已暫停，按「繼續」可接續試跑');
+            return;
+        }
+        if (currentGameMode === 'practice' && practiceDriveState === 'paused') {
+            maze3D.startDriving(false);
+            startTimer(false);
+            practiceDriveState = 'running';
+            updatePracticeControlsUI();
+            set2DMapMode('compact', true);
+            showToast('已繼續試跑！');
+            return;
+        }
         document.getElementById('victoryModal').style.display = 'none';
         document.getElementById('timeoutModal').style.display = 'none';
         document.getElementById('rankedVictoryModal').style.display = 'none';
@@ -36,31 +54,6 @@ if (btnStartDrive) {
             updatePracticeControlsUI();
             set2DMapMode('compact', true);
             showToast(currentTimerMode === 'up' ? '已自動定位起點，完賽計時開始！' : `已自動定位起點，${countdownLabel}開始！`);
-        }
-    });
-}
-
-if (btnPauseDrive) {
-    btnPauseDrive.addEventListener('click', () => {
-        if (currentGameMode === 'practice') {
-            maze3D.stopDriving();
-            pauseTimer();
-            practiceDriveState = 'paused';
-            updatePracticeControlsUI();
-            showToast('已暫停，按「繼續」可接續試跑');
-        }
-    });
-}
-
-if (btnResumeDrive) {
-    btnResumeDrive.addEventListener('click', () => {
-        if (currentGameMode === 'practice') {
-            maze3D.startDriving(false);
-            startTimer(false);
-            practiceDriveState = 'running';
-            updatePracticeControlsUI();
-            set2DMapMode('compact', true);
-            showToast('已繼續試跑！');
         }
     });
 }

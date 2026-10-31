@@ -59,8 +59,6 @@
 
 .is-ranked .editor-panel,
 .is-ranked #btnStartDrive,
-.is-ranked #btnPauseDrive,
-.is-ranked #btnResumeDrive,
 .is-ranked #btnResetCar,
 .is-ranked #btnToggleMapSize {
     display: none;

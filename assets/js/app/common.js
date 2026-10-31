@@ -78,8 +78,6 @@ function showConfirm({ title, message = '', confirmLabel = '確定', danger = fa
 }
 
 const btnStartDrive = document.getElementById('btnStartDrive');
-const btnPauseDrive = document.getElementById('btnPauseDrive');
-const btnResumeDrive = document.getElementById('btnResumeDrive');
 const btnStopDrive = document.getElementById('btnStopDrive');
 const btnResetCar = document.getElementById('btnResetCar');
 const btnModeOrbit = document.getElementById('btnModeOrbit');
