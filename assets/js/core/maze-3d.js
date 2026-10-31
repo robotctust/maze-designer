@@ -3,7 +3,7 @@
  * 1:1 公分精準建模：
  * - 格子尺寸：30cm x 30cm
  * - 牆壁高度：15cm
- * - 牆壁厚度：1.2cm
+ * - 牆壁厚度：0.5cm（和黑線同寬）
  * 
  * 流暢性優化：
  * 1. 空間網格分割 (Spatial Grid Partitioning)：碰撞檢測由 O(N) 降至 O(1)，25x25 規格 1300 道牆毫不掉幀
@@ -25,7 +25,7 @@ class Maze3D {
         this.cols = 10;
         this.cellSize = MAZE_CELL_CM; // 格距 28.5cm（內寬 28 + 黑線 0.5）
         this.wallHeight = 15; // 15cm
-        this.wallThick = 1.2; // 1.2cm
+        this.wallThick = MAZE_LINE_CM; // 和黑線同寬 0.5cm
         this.widthSize = this.cols * this.cellSize;
         this.heightSize = this.rows * this.cellSize;
 
@@ -443,7 +443,7 @@ class Maze3D {
             wallMat.emissiveIntensity = 0.08;
         }
         const h = this.wallHeight; // 15cm
-        const t = this.wallThick; // 1.2cm
+        const t = this.wallThick;
         const cSize = this.cellSize; // 30cm
 
         // 共享幾何體：避免為 1300 道牆重複創建 1300 個 Geometry 物件
