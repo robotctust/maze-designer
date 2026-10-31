@@ -1,13 +1,16 @@
 <?php
 /**
  * 分享碼 API (所有會員產生 / 全員兌換載入 / 狀態查詢 / 管理自己的分享碼)
- * 規則：有效期限由產生者選擇（可不限時），限 3 人使用，儲存於資料庫
+ * 規則：有效期限與可領取人數由產生者選擇（都可以不限），儲存於資料庫
  */
 require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
 
 // 可選的有效期限（秒）；0 代表不限時，用很遠的到期日存放，不必改資料表
 const SHARE_DURATIONS = [60, 600, 3600, 86400, 604800, 0];
 const SHARE_NO_EXPIRY = '9999-12-31 23:59:59';
+// 可選的領取人數；0 代表不限人數，用很大的上限存放
+const SHARE_MAX_USES = [1, 3, 5, 10, 30, 0];
+const SHARE_UNLIMITED_USES = 999999;
 
 $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;
@@ -101,7 +104,13 @@ if ($action === 'create') {
 
     $code = generateShareCode($db);
     $mazeJson = json_encode($mapData, JSON_UNESCAPED_UNICODE);
-    $maxUses = 3; // 限 3 人使用
+    $maxUses = intval($payload['maxUses'] ?? 3);
+    if (!in_array($maxUses, SHARE_MAX_USES, true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => '不支援的領取人數']);
+        exit;
+    }
+    if ($maxUses === 0) $maxUses = SHARE_UNLIMITED_USES;
     $durationSec = intval($payload['durationSec'] ?? 60);
     if (!in_array($durationSec, SHARE_DURATIONS, true)) {
         http_response_code(400);
@@ -135,7 +144,8 @@ if ($action === 'create') {
 
     echo json_encode([
         'success' => true,
-        'message' => "分享碼已產生，最多供 3 人使用。",
+        'message' => "分享碼已產生",
+        'noUseLimit' => $maxUses === SHARE_UNLIMITED_USES,
         'code' => $code,
         'name' => $mazeName,
         'spec' => "{$cols}×{$rows}",
@@ -195,10 +205,10 @@ if ($action === 'redeem') {
         exit;
     }
 
-    // 檢查使用次數是否已滿 3 人
+    // 檢查是否已達可領取人數
     if (intval($share['used_count']) >= intval($share['max_uses'])) {
         http_response_code(410);
-        echo json_encode(['success' => false, 'message' => '此分享碼已達 3 人使用上限，無法再次使用！']);
+        echo json_encode(['success' => false, 'message' => "此分享碼已達 {$share['max_uses']} 人領取上限，無法再次使用！"]);
         exit;
     }
 
@@ -226,7 +236,7 @@ if ($action === 'redeem') {
 
     echo json_encode([
         'success' => true,
-        'message' => "🎉 成功載入分享迷宮【{$share['maze_name']}】({$share['grid_cols']}×{$share['grid_rows']})！(目前使用人數：{$newUsedCount}/{$share['max_uses']})",
+        'message' => "已載入分享迷宮【{$share['maze_name']}】({$share['grid_cols']}×{$share['grid_rows']})",
         'name' => $share['maze_name'],
         'gridRows' => intval($share['grid_rows']),
         'gridCols' => intval($share['grid_cols']),
@@ -299,6 +309,7 @@ if ($action === 'list') {
             'spec' => "{$row['grid_cols']}×{$row['grid_rows']}",
             'usedCount' => intval($row['used_count']),
             'maxUses' => intval($row['max_uses']),
+            'noUseLimit' => intval($row['max_uses']) === SHARE_UNLIMITED_USES,
             'createdAt' => $row['created_at'],
             'noExpiry' => $row['expires_at'] === SHARE_NO_EXPIRY,
             'remainSec' => intval($row['remain_sec'])

@@ -425,11 +425,46 @@
     color: var(--danger);
 }
 
+/* 產生分享碼：期限與人數並排，和下方說明留出間距 */
+.share-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+/* 管理分享碼：代碼用等寬字的標籤，地圖名稱用一般內文，避免混淆 */
+.share-list-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
 .share-list-code {
-    margin-right: 8px;
+    flex: none;
+    padding: 2px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
     font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    color: var(--accent-soft);
+}
+
+.share-list-map {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    color: var(--text-2);
+}
+
+.share-list-head + .library-item-meta {
+    margin-top: 4px;
 }
 
 .text-go {

@@ -3,7 +3,7 @@
  * 與 assets/js/app/ 其他檔案共用同一個全域範圍，載入順序見 index.php。
  */
 // ============================================
-// 10-1. 分享碼系統 (可選有效期限，限 3 人使用)
+// 10-1. 分享碼系統 (可選有效期限與領取人數)
 // ============================================
 const createShareModalBackdrop = document.getElementById('createShareModalBackdrop');
 const btnCloseCreateShareModal = document.getElementById('btnCloseCreateShareModal');
@@ -112,7 +112,7 @@ function pollShareStatus() {
                 if (res.isFull) {
                     clearShareTimers();
                     if (shareStatusNote) {
-                        shareStatusNote.textContent = '此分享碼已達 3 人使用上限';
+                        shareStatusNote.textContent = `此分享碼已達 ${res.maxUses} 人領取上限`;
                         shareStatusNote.className = 'dlg-note text-go';
                     }
                     if (btnCopyShareCode) btnCopyShareCode.style.display = 'none';
@@ -132,7 +132,12 @@ btnDoGenerateShare?.addEventListener('click', () => {
     fetch('api/share.php?action=create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mapData, name: shareMapName(), durationSec: shareDurationSec })
+        body: JSON.stringify({
+            mapData,
+            name: shareMapName(),
+            durationSec: shareDurationSec,
+            maxUses: parseInt(document.getElementById('shareMaxUsesSelect').value, 10)
+        })
     })
     .then(res => res.json())
     .then(res => {
@@ -160,6 +165,7 @@ btnDoGenerateShare?.addEventListener('click', () => {
 
         if (shareCodeDisplay) shareCodeDisplay.textContent = res.code;
         if (shareUsedCount) shareUsedCount.textContent = '0';
+        document.getElementById('shareMaxUsesText').textContent = res.noUseLimit ? ' 人・不限人數' : ` / ${res.maxUses} 人`;
         if (shareStatusNote) {
             shareStatusNote.textContent = shareDurationSec ? '複製後傳給朋友，過期前都可以使用。' : '這組分享碼不限時，不需要時可以到「管理我的分享碼」刪除。';
             shareStatusNote.className = 'dlg-note';
@@ -306,7 +312,7 @@ function closeManageShareModal() {
 }
 
 function shareCodeStatus(s) {
-    if (s.usedCount >= s.maxUses) return { text: '已達人數上限', active: false };
+    if (!s.noUseLimit && s.usedCount >= s.maxUses) return { text: '已達人數上限', active: false };
     if (s.noExpiry) return { text: '不限時', active: true };
     if (s.remainSec <= 0) return { text: '已過期', active: false };
     return { text: `剩 ${formatShareRemain(s.remainSec)}`, active: true };
@@ -330,8 +336,8 @@ function loadShareCodeList() {
                 return `
                     <div class="map-library-item${st.active ? '' : ' is-inactive'}">
                         <div class="library-item-main">
-                            <div class="library-item-title"><span class="share-list-code">${s.code}</span>${escapeHtml(s.name)}</div>
-                            <div class="library-item-meta">${s.spec}・已使用 ${s.usedCount} / ${s.maxUses} 人・<span class="${st.active ? 'text-go' : ''}">${st.text}</span>・建立於 ${s.createdAt.substring(5, 16)}</div>
+                            <div class="share-list-head"><span class="share-list-code">${s.code}</span><span class="share-list-map">${escapeHtml(s.name)}・${s.spec}</span></div>
+                            <div class="library-item-meta">已領取 ${s.usedCount}${s.noUseLimit ? ' 人・不限人數' : ` / ${s.maxUses} 人`}・<span class="${st.active ? 'text-go' : ''}">${st.text}</span>・建立於 ${s.createdAt.substring(5, 16)}</div>
                         </div>
                         ${st.active ? `<button type="button" class="tool-btn btn-sm btn-ghost btn-share-copy" data-code="${s.code}" title="複製分享碼" aria-label="複製分享碼 ${s.code}"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg></button>` : ''}
                         <button type="button" class="tool-btn btn-sm btn-ghost btn-map-delete btn-share-delete" data-code="${s.code}" title="刪除" aria-label="刪除分享碼 ${s.code}"><svg class="icon" aria-hidden="true"><use href="#trash"></use></svg></button>
