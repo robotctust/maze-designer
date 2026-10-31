@@ -29,18 +29,18 @@
                     <button type="button" class="float-btn" id="btnShortcuts" aria-haspopup="true" aria-expanded="false" title="快捷鍵說明" aria-label="快捷鍵說明"><svg class="icon" aria-hidden="true"><use href="#keyboard"></use></svg></button>
                     <div class="menu menu-end-align shortcuts-menu" id="shortcutsMenu" hidden>
                         <p class="menu-heading">2D 編輯</p>
-                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>S</kbd><span>儲存</span></div>
-                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Z</kbd><span>復原</span></div>
-                        <div class="kbd-row"><kbd>Ctrl／⌘</kbd><kbd>Shift</kbd><kbd>Z</kbd><span>重做</span></div>
-                        <div class="kbd-row"><kbd>滾輪</kbd><span>縮放</span></div>
-                        <div class="kbd-row"><kbd>Ctrl</kbd><kbd>+</kbd><kbd>−</kbd><span>放大／縮小</span></div>
-                        <div class="kbd-row"><kbd>Ctrl</kbd><kbd>0</kbd><span>重設為 100%</span></div>
-                        <div class="kbd-row"><kbd>空白鍵</kbd>或<kbd>右鍵</kbd>拖曳<span>平移</span></div>
+                        <div class="kbd-row"><span class="kbd-desc">儲存</span><span class="kbd-keys"><kbd>Ctrl／⌘</kbd><kbd>S</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">復原</span><span class="kbd-keys"><kbd>Ctrl／⌘</kbd><kbd>Z</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">重做</span><span class="kbd-keys"><kbd>Ctrl／⌘</kbd><kbd>Shift</kbd><kbd>Z</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">縮放</span><span class="kbd-keys"><kbd>滾輪</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">放大／縮小</span><span class="kbd-keys"><kbd>Ctrl</kbd><kbd>+</kbd><kbd>−</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">重設為 100%</span><span class="kbd-keys"><kbd>Ctrl</kbd><kbd>0</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">平移</span><span class="kbd-keys"><kbd>空白鍵</kbd>或<kbd>右鍵</kbd>拖曳</span></div>
                         <div class="menu-sep"></div>
                         <p class="menu-heading">試跑</p>
-                        <div class="kbd-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵<span>操控</span></div>
-                        <div class="kbd-row"><kbd>空白鍵</kbd><span>跳躍</span></div>
-                        <div class="kbd-row"><kbd>拖曳</kbd><kbd>滾輪</kbd><span>旋轉／縮放 3D</span></div>
+                        <div class="kbd-row"><span class="kbd-desc">操控</span><span class="kbd-keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>或方向鍵</span></div>
+                        <div class="kbd-row"><span class="kbd-desc">跳躍</span><span class="kbd-keys"><kbd>空白鍵</kbd></span></div>
+                        <div class="kbd-row"><span class="kbd-desc">旋轉／縮放 3D</span><span class="kbd-keys"><kbd>拖曳</kbd><kbd>滾輪</kbd></span></div>
                     </div>
                 </div>
             </div>

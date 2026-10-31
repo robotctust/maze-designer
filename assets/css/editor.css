@@ -204,21 +204,34 @@
 
 /* 快捷鍵說明（從右上角按鈕往下展開） */
 .menu.shortcuts-menu {
-    width: 300px;
+    width: 320px;
     padding: 10px 6px;
 }
 
+/* 兩欄：左邊說明、右邊按鍵，標題和每一列對齊同一條左緣 */
+.shortcuts-menu .menu-heading {
+    padding: 0 8px;
+}
+
 .kbd-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 112px 1fr;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     padding: 4px 8px;
     font-size: 13px;
     color: var(--text-muted);
 }
 
-.kbd-row span {
-    margin-left: auto;
+.kbd-desc {
+    color: var(--text-2);
+}
+
+.kbd-keys {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
 }
 
 kbd {
