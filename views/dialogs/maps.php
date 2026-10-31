@@ -106,13 +106,13 @@
     </div>
 </div>
 
-<!-- 產生分享碼 (限時 1 分鐘，限 3 人使用) -->
+<!-- 產生分享碼 (可選有效期限，限 3 人使用) -->
 <div class="auth-modal-backdrop" id="createShareModalBackdrop">
     <div class="auth-modal-card dlg-sm" role="dialog" aria-modal="true" aria-labelledby="createShareTitle">
         <div class="dlg-head">
             <div class="dlg-titles">
                 <h2 class="dlg-title" id="createShareTitle">產生分享碼</h2>
-                <p class="dlg-sub">限時 1 分鐘・最多供 3 人載入此迷宮</p>
+                <p class="dlg-sub">最多供 3 人載入此迷宮</p>
             </div>
             <button type="button" class="dlg-close auth-modal-close" id="btnCloseCreateShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
         </div>
@@ -123,7 +123,18 @@
             </div>
 
             <div id="shareInitialArea">
-                <p class="dlg-note" style="margin-top: 12px;">點擊「產生分享碼」後將產生一組 6 位代碼並存入資料庫。限時 1 分鐘有效，最多可讓 3 個人載入。</p>
+                <div class="field" style="margin-top: 12px;">
+                    <label for="shareDurationSelect">有效期限</label>
+                    <select class="dlg-input" id="shareDurationSelect">
+                        <option value="60" selected>1 分鐘</option>
+                        <option value="600">10 分鐘</option>
+                        <option value="3600">1 小時</option>
+                        <option value="86400">1 天</option>
+                        <option value="604800">7 天</option>
+                        <option value="0">不限時</option>
+                    </select>
+                </div>
+                <p class="dlg-note">會產生一組 6 碼代碼，最多可讓 3 個人載入。產生後可在「分享碼」選單的「管理我的分享碼」查看或刪除。</p>
             </div>
 
             <div id="shareGeneratedArea" style="display: none;">
@@ -131,7 +142,7 @@
                     <span class="share-code-val" id="shareCodeDisplay">------</span>
                     <div class="share-meta-row">
                         <span id="shareUsageInfo">已使用：<strong id="shareUsedCount">0</strong> / 3 人</span>
-                        <span class="share-timer-badge" id="shareTimerBadge"><svg class="icon" aria-hidden="true"><use href="#clock"></use></svg><span id="shareCountdownSeconds">60</span>s</span>
+                        <span class="share-timer-badge" id="shareTimerBadge"><svg class="icon" aria-hidden="true"><use href="#clock"></use></svg><span id="shareCountdownSeconds">1 分</span></span>
                     </div>
                     <div class="share-progress-bar">
                         <div class="share-progress-fill" id="shareProgressFill" style="width: 100%;"></div>
@@ -146,6 +157,25 @@
             <button type="button" class="tool-btn btn-ghost" id="btnCancelCreateShare">關閉</button>
             <button type="button" class="tool-btn btn-save" id="btnDoGenerateShare"><svg class="icon" aria-hidden="true"><use href="#share"></use></svg>產生分享碼</button>
             <button type="button" class="tool-btn btn-save" id="btnCopyShareCode" style="display: none;"><svg class="icon" aria-hidden="true"><use href="#copy"></use></svg>複製分享碼</button>
+        </div>
+    </div>
+</div>
+
+<!-- 管理我的分享碼 -->
+<div class="auth-modal-backdrop" id="manageShareModalBackdrop">
+    <div class="auth-modal-card dlg-md" role="dialog" aria-modal="true" aria-labelledby="manageShareTitle">
+        <div class="dlg-head">
+            <div class="dlg-titles">
+                <h2 class="dlg-title" id="manageShareTitle">我的分享碼</h2>
+                <p class="dlg-sub">刪除後，別人就不能再用這組代碼載入</p>
+            </div>
+            <button type="button" class="dlg-close auth-modal-close" id="btnCloseManageShareModal" aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#x"></use></svg></button>
+        </div>
+        <div class="dlg-body">
+            <div class="map-library-list" id="shareCodeList"></div>
+        </div>
+        <div class="dlg-foot">
+            <button type="button" class="tool-btn btn-ghost btn-sm" id="btnRefreshShareCodes"><svg class="icon" aria-hidden="true"><use href="#refresh"></use></svg>重新整理</button>
         </div>
     </div>
 </div>
@@ -166,7 +196,7 @@
                 <label for="inputRedeemCode">分享代碼 (6 碼英數字)</label>
                 <input class="dlg-input" type="text" id="inputRedeemCode" placeholder="例如：8K2P9N" maxlength="10" autocomplete="off" style="font-family: var(--font-mono, monospace); font-size: 20px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;">
             </div>
-            <p class="dlg-note">分享碼限時 1 分鐘且最多僅供 3 人使用，載入後會直接載入並呈現於 2D 與 3D 視圖中。</p>
+            <p class="dlg-note">分享碼有有效期限，且最多供 3 人使用。載入後會直接顯示在 2D 與 3D 畫面中。</p>
         </div>
         <div class="dlg-foot">
             <button type="button" class="tool-btn btn-ghost" id="btnCancelRedeemShare">取消</button>

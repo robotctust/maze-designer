@@ -1,9 +1,13 @@
 <?php
 /**
- * 分享碼 API (所有會員產生 / 全員兌換載入 / 狀態查詢)
- * 規則：限時 1 分鐘，限 3 人使用，儲存於資料庫
+ * 分享碼 API (所有會員產生 / 全員兌換載入 / 狀態查詢 / 管理自己的分享碼)
+ * 規則：有效期限由產生者選擇（可不限時），限 3 人使用，儲存於資料庫
  */
 require_once dirname(__DIR__) . '/includes/api_bootstrap.php';
+
+// 可選的有效期限（秒）；0 代表不限時，用很遠的到期日存放，不必改資料表
+const SHARE_DURATIONS = [60, 600, 3600, 86400, 604800, 0];
+const SHARE_NO_EXPIRY = '9999-12-31 23:59:59';
 
 $isLoggedIn = !empty($_SESSION['user_id']);
 $userId = $isLoggedIn ? intval($_SESSION['user_id']) : 0;
@@ -98,12 +102,21 @@ if ($action === 'create') {
     $code = generateShareCode($db);
     $mazeJson = json_encode($mapData, JSON_UNESCAPED_UNICODE);
     $maxUses = 3; // 限 3 人使用
-    $durationSec = 60; // 限時 1 分鐘
-    $now = date('Y-m-d H:i:s');
-    $expiresAt = date('Y-m-d H:i:s', time() + $durationSec);
+    $durationSec = intval($payload['durationSec'] ?? 60);
+    if (!in_array($durationSec, SHARE_DURATIONS, true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => '不支援的有效期限']);
+        exit;
+    }
 
-    $stmt = $db->prepare("INSERT INTO `share_codes` (code, user_id, maze_name, grid_rows, grid_cols, maze_data, max_uses, used_count, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW(), DATE_ADD(NOW(), INTERVAL 1 MINUTE))");
-    $stmt->bind_param('sisiisi', $code, $userId, $mazeName, $rows, $cols, $mazeJson, $maxUses);
+    if ($durationSec === 0) {
+        $stmt = $db->prepare("INSERT INTO `share_codes` (code, user_id, maze_name, grid_rows, grid_cols, maze_data, max_uses, used_count, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW(), ?)");
+        $noExpiry = SHARE_NO_EXPIRY;
+        $stmt->bind_param('sisiisis', $code, $userId, $mazeName, $rows, $cols, $mazeJson, $maxUses, $noExpiry);
+    } else {
+        $stmt = $db->prepare("INSERT INTO `share_codes` (code, user_id, maze_name, grid_rows, grid_cols, maze_data, max_uses, used_count, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW(), DATE_ADD(NOW(), INTERVAL ? SECOND))");
+        $stmt->bind_param('sisiisii', $code, $userId, $mazeName, $rows, $cols, $mazeJson, $maxUses, $durationSec);
+    }
     
     if (!$stmt->execute()) {
         http_response_code(500);
@@ -118,11 +131,11 @@ if ($action === 'create') {
     $exStmt->execute();
     $exRow = $exStmt->get_result()->fetch_assoc();
     $exStmt->close();
-    $realExpiresAt = $exRow ? $exRow['expires_at'] : $expiresAt;
+    $realExpiresAt = $exRow['expires_at'] ?? null;
 
     echo json_encode([
         'success' => true,
-        'message' => "🎉 分享碼已成功產生！限時 1 分鐘，最多供 3 人使用。",
+        'message' => "分享碼已產生，最多供 3 人使用。",
         'code' => $code,
         'name' => $mazeName,
         'spec' => "{$cols}×{$rows}",
@@ -178,7 +191,7 @@ if ($action === 'redeem') {
     // 檢查是否超過 1 分鐘有效時間
     if (!empty($share['is_expired'])) {
         http_response_code(410);
-        echo json_encode(['success' => false, 'message' => '此分享碼已逾期失效（限時 1 分鐘）！請對方重新產生。']);
+        echo json_encode(['success' => false, 'message' => '此分享碼已過期，請對方重新產生。']);
         exit;
     }
 
@@ -264,5 +277,64 @@ if ($action === 'status') {
     exit;
 }
 
+// ============================================================
+// 4. 列出自己產生的分享碼 (管理分享碼彈窗)
+// ============================================================
+if ($action === 'list') {
+    if (!$isLoggedIn) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'requireLogin' => true, 'message' => '請先登入帳號']);
+        exit;
+    }
+
+    $stmt = $db->prepare("SELECT code, maze_name, grid_rows, grid_cols, max_uses, used_count, created_at, expires_at, GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expires_at)) AS remain_sec FROM `share_codes` WHERE user_id = ? ORDER BY created_at DESC, id DESC LIMIT 50");
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $list = [];
+    while ($row = $res->fetch_assoc()) {
+        $list[] = [
+            'code' => $row['code'],
+            'name' => $row['maze_name'],
+            'spec' => "{$row['grid_cols']}×{$row['grid_rows']}",
+            'usedCount' => intval($row['used_count']),
+            'maxUses' => intval($row['max_uses']),
+            'createdAt' => $row['created_at'],
+            'noExpiry' => $row['expires_at'] === SHARE_NO_EXPIRY,
+            'remainSec' => intval($row['remain_sec'])
+        ];
+    }
+    $stmt->close();
+
+    echo json_encode(['success' => true, 'list' => $list]);
+    exit;
+}
+
+// ============================================================
+// 5. 刪除自己產生的分享碼 (刪除後立即失效)
+// ============================================================
+if ($action === 'delete') {
+    if (!$isLoggedIn) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'requireLogin' => true, 'message' => '請先登入帳號']);
+        exit;
+    }
+
+    $code = strtoupper(trim($jsonBody['code'] ?? ''));
+    $stmt = $db->prepare("DELETE FROM `share_codes` WHERE code = ? AND user_id = ?");
+    $stmt->bind_param('si', $code, $userId);
+    $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
+
+    if ($affected <= 0) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'message' => '找不到這組分享碼']);
+        exit;
+    }
+    echo json_encode(['success' => true, 'message' => "已刪除分享碼 {$code}，別人無法再用它載入"]);
+    exit;
+}
+
 http_response_code(400);
-echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: create, redeem, status)']);
+echo json_encode(['success' => false, 'message' => '未知的操作 (支援 action: create, redeem, status, list, delete)']);

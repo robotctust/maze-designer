@@ -183,8 +183,8 @@ function updateAuthUI(user) {
         if (btnOpenRedeemShare) btnOpenRedeemShare.classList.remove('guest-locked');
         if (btnOpenCreateShare) {
             btnOpenCreateShare.classList.remove('guest-locked');
-            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼<span class="menu-end">限時 1 分</span>';
-            btnOpenCreateShare.title = '產生限時 1 分鐘、最多 3 人的迷宮分享碼';
+            btnOpenCreateShare.innerHTML = '<svg class="icon"><use href="#share"></use></svg>產生分享碼…';
+            btnOpenCreateShare.title = '產生最多 3 人使用的迷宮分享碼，可設定有效期限';
         }
 
         // 解除所有預設按鈕鎖定

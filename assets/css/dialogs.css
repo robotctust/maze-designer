@@ -425,6 +425,26 @@
     color: var(--danger);
 }
 
+.share-list-code {
+    margin-right: 8px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.text-go {
+    color: var(--go);
+}
+
+.map-library-item.is-inactive .library-item-main {
+    opacity: 0.55;
+}
+
+.share-meta-row [hidden],
+.share-progress-bar[hidden] {
+    display: none;
+}
+
 .library-item-open {
     margin-left: 8px;
     padding: 1px 6px;
