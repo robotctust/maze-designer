@@ -62,6 +62,6 @@
         <span>起點 <strong id="statStart">(0, 9)</strong> → 終點 <strong id="statGoal">(9, 0)</strong></span>
         <span>牆 <strong id="statWallCount">0</strong> 段</span>
         <span id="headerTagGrid" hidden></span>
-        <span id="headerTagTotal">總長寬：300×300 cm</span>
+        <span id="headerTagTotal">總長寬：289.5×289.5 cm</span>
     </div>
 </section>

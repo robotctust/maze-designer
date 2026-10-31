@@ -23,12 +23,11 @@ class Maze3D {
 
         this.rows = 10;
         this.cols = 10;
-        this.cellSize = 30; // 30cm
+        this.cellSize = MAZE_CELL_CM; // 格距 28.5cm（內寬 28 + 黑線 0.5）
         this.wallHeight = 15; // 15cm
         this.wallThick = 1.2; // 1.2cm
         this.widthSize = this.cols * this.cellSize;
         this.heightSize = this.rows * this.cellSize;
-        this.totalSize = 300;
 
         this.currentMode = 'orbit'; // 'orbit' or 'driver'
         this.currentTheme = 'wood'; // 'wood', 'white', 'cyber'
@@ -148,19 +147,18 @@ class Maze3D {
         this.headlight.target = this.headlightTarget;
     }
 
-    createFloor() {
-        // 載入底圖作為地面貼圖
-        const textureLoader = new THREE.TextureLoader();
-        this.mapTexture10x10 = textureLoader.load('assets/img/map_10x10.jpg?v=' + Date.now(), (tex) => {
-            tex.generateMipmaps = true;
-            tex.minFilter = THREE.LinearMipmapLinearFilter;
-            this.renderer.render(this.scene, this.camera);
-        });
+    // 地墊含最外側黑線與白邊，比格子範圍大一圈
+    floorSizeOf(gridSize) {
+        return gridSize + MAZE_LINE_CM + MAZE_BORDER_CM * 2;
+    }
 
-        // 地板
-        const floorGeo = new THREE.PlaneGeometry(this.widthSize, this.heightSize);
+    createFloor() {
+        // 地板：白底黑線地墊（照實際尺寸畫）
+        const floorW = this.floorSizeOf(this.widthSize);
+        const floorH = this.floorSizeOf(this.heightSize);
+        const floorGeo = new THREE.PlaneGeometry(floorW, floorH);
         const floorMat = new THREE.MeshStandardMaterial({
-            map: this.mapTexture10x10,
+            map: this.createDynamicFloorTexture(this.cols, this.rows),
             roughness: 0.8,
             metalness: 0.08
         });
@@ -171,7 +169,7 @@ class Maze3D {
         this.scene.add(this.floorMesh);
 
         // 地面外圈保護台
-        const baseGeo = new THREE.BoxGeometry(this.widthSize + 8, 2, this.heightSize + 8);
+        const baseGeo = new THREE.BoxGeometry(floorW + 8, 2, floorH + 8);
         const baseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
         this.baseMesh = new THREE.Mesh(baseGeo, baseMat);
         this.baseMesh.position.y = -1.5; // 頂面低於地板 0.5，避免與地板重疊閃爍
@@ -182,18 +180,17 @@ class Maze3D {
     updateFloor(wSize, hSize, cols, rows) {
         if (!this.floorMesh || !this.baseMesh) return;
 
+        const floorW = this.floorSizeOf(wSize);
+        const floorH = this.floorSizeOf(hSize);
         if (this.floorMesh.geometry) this.floorMesh.geometry.dispose();
-        this.floorMesh.geometry = new THREE.PlaneGeometry(wSize, hSize);
+        this.floorMesh.geometry = new THREE.PlaneGeometry(floorW, floorH);
 
-        if (cols === 10 && rows === 10 && this.mapTexture10x10) {
-            this.floorMesh.material.map = this.mapTexture10x10;
-        } else {
-            this.floorMesh.material.map = this.createDynamicFloorTexture(cols, rows);
-        }
+        if (this.floorMesh.material.map) this.floorMesh.material.map.dispose();
+        this.floorMesh.material.map = this.createDynamicFloorTexture(cols, rows);
         this.floorMesh.material.needsUpdate = true;
 
         if (this.baseMesh.geometry) this.baseMesh.geometry.dispose();
-        this.baseMesh.geometry = new THREE.BoxGeometry(wSize + 8, 2, hSize + 8);
+        this.baseMesh.geometry = new THREE.BoxGeometry(floorW + 8, 2, floorH + 8);
 
         // 調整主光源陰影範圍以完全覆蓋新尺寸
         const maxDim = Math.max(wSize, hSize);
@@ -212,32 +209,29 @@ class Maze3D {
         }
     }
 
+    // 地墊貼圖：白底、2cm 白邊、0.5cm 黑線、每格內寬 28cm，依實際比例畫
     createDynamicFloorTexture(cols, rows) {
+        const floorW = this.floorSizeOf(cols * MAZE_CELL_CM);
+        const floorH = this.floorSizeOf(rows * MAZE_CELL_CM);
+        const px = Math.min(8, 2048 / Math.max(floorW, floorH)); // 每公分幾個像素
         const canvas = document.createElement('canvas');
-        canvas.width = 1024;
-        canvas.height = 1024;
+        canvas.width = Math.round(floorW * px);
+        canvas.height = Math.round(floorH * px);
         const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 1024, 1024);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 3;
-
-        const stepX = 1024 / cols;
-        const stepY = 1024 / rows;
-
+        ctx.fillStyle = '#111111';
+        const line = Math.max(1, MAZE_LINE_CM * px);
+        const gridW = (cols * MAZE_CELL_CM + MAZE_LINE_CM) * px;
+        const gridH = (rows * MAZE_CELL_CM + MAZE_LINE_CM) * px;
+        const origin = MAZE_BORDER_CM * px;
         for (let r = 0; r <= rows; r++) {
-            ctx.beginPath();
-            ctx.moveTo(0, r * stepY);
-            ctx.lineTo(1024, r * stepY);
-            ctx.stroke();
+            ctx.fillRect(origin, origin + r * MAZE_CELL_CM * px, gridW, line);
         }
         for (let c = 0; c <= cols; c++) {
-            ctx.beginPath();
-            ctx.moveTo(c * stepX, 0);
-            ctx.lineTo(c * stepX, 1024);
-            ctx.stroke();
+            ctx.fillRect(origin + c * MAZE_CELL_CM * px, origin, line, gridH);
         }
 
         const texture = new THREE.CanvasTexture(canvas);

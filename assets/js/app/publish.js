@@ -140,7 +140,7 @@ function openPublishModal() {
     currentData.vWalls.forEach(r => r.forEach(v => { if (v) vCount++; }));
     const wallTotal = hCount + vCount;
 
-    if (publishModalStats) publishModalStats.textContent = `${wallTotal} 段・${cols * 30} × ${rows * 30} cm`;
+    if (publishModalStats) publishModalStats.textContent = `${wallTotal} 段・${mazeTotalCm(cols)} × ${mazeTotalCm(rows)} cm`;
     if (publishModalAuthor) publishModalAuthor.textContent = currentUser ? currentUser.username : '訪客';
     if (publishCustomName) {
         const curName = document.getElementById('saveMapNameInput')?.value.trim() || '';

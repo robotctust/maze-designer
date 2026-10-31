@@ -145,7 +145,7 @@ function showMapSizeValues(c, r) {
 function updateMapSizePreview() {
     const c = parseInt(inputCols.value, 10) || 0;
     const r = parseInt(inputRows.value, 10) || 0;
-    document.getElementById('specDimensionsCm').textContent = `${c * 30} × ${r * 30} cm`;
+    document.getElementById('specDimensionsCm').textContent = `${mazeTotalCm(c)} × ${mazeTotalCm(r)} cm`;
     document.querySelectorAll('.spec-preset-btn').forEach(btn => {
         btn.classList.toggle('active', +btn.dataset.cols === c && +btn.dataset.rows === r);
     });

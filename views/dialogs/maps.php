@@ -69,9 +69,11 @@
                 </div>
             </div>
             <dl class="spec-facts">
-                <dt>每格</dt><dd>30 × 30 cm</dd>
+                <dt>每格</dt><dd>內寬 28 × 28 cm（不含黑線）</dd>
+                <dt>黑線</dt><dd>0.5 cm</dd>
+                <dt>白邊</dt><dd>外圍 2 cm</dd>
                 <dt>牆高</dt><dd>15 cm</dd>
-                <dt>總尺寸</dt><dd id="specDimensionsCm">300 × 300 cm</dd>
+                <dt>總尺寸</dt><dd id="specDimensionsCm">289.5 × 289.5 cm</dd>
             </dl>
             <p class="dlg-note" id="mapSizeNote">可設定 2～50 格，訪客最多 10 × 10</p>
         </div>

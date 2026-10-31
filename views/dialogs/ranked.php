@@ -92,7 +92,7 @@
             <div class="check-list">
                 <div class="check-row"><span class="check-key">級別</span><span id="publishModalSpec">10 × 10 菁英級</span></div>
                 <div class="check-row"><span class="check-key">起點到終點</span><span id="publishModalPathCheck">走得通</span></div>
-                <div class="check-row"><span class="check-key">牆壁</span><span id="publishModalStats">0 段・300 × 300 cm</span></div>
+                <div class="check-row"><span class="check-key">牆壁</span><span id="publishModalStats">0 段・289.5 × 289.5 cm</span></div>
                 <div class="check-row"><span class="check-key">發布者</span><span class="text-ranked" id="publishModalAuthor">-</span></div>
             </div>
             <p class="dlg-note">只接受 10、15、20、25 格的正方形地圖</p>

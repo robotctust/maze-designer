@@ -401,7 +401,7 @@ function openPreview2DModal(mazeData, title = '2D 地圖預覽', meta = '') {
     if (preview2DTitle) preview2DTitle.textContent = title;
     const rows = mazeData.gridSize?.rows || (mazeData.hWalls ? mazeData.hWalls.length - 1 : 10);
     const cols = mazeData.gridSize?.cols || (mazeData.hWalls ? mazeData.hWalls[0].length : 10);
-    if (preview2DSub) preview2DSub.textContent = `迷宮規格：${cols} × ${rows} 格（${cols * 30} × ${rows * 30} cm）`;
+    if (preview2DSub) preview2DSub.textContent = `迷宮規格：${cols} × ${rows} 格（${mazeTotalCm(cols)} × ${mazeTotalCm(rows)} cm）`;
     if (preview2DMeta) preview2DMeta.textContent = meta || '-';
 
     render2DMapToCanvas(preview2DCanvas, mazeData);
