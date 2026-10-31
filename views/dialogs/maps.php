@@ -63,6 +63,9 @@
                     <button type="button" class="spec-preset-btn active" data-cols="10" data-rows="10">10×10</button>
                     <button type="button" class="spec-preset-btn" data-cols="12" data-rows="12">12×12</button>
                     <button type="button" class="spec-preset-btn" data-cols="16" data-rows="16">16×16</button>
+                    <button type="button" class="spec-preset-btn" data-cols="20" data-rows="20">20×20</button>
+                    <button type="button" class="spec-preset-btn" data-cols="30" data-rows="30">30×30</button>
+                    <button type="button" class="spec-preset-btn" data-cols="50" data-rows="50">50×50</button>
                 </div>
             </div>
             <dl class="spec-facts">
